@@ -1,0 +1,11 @@
+
+- Task 1 scaffold compliance expects Tailwind config-file setup (`tailwind.config.js` + `postcss.config.js`), not the Tailwind v4 Vite plugin path.
+- Keeping `src/App.tsx` to a plain HashRouter shell avoids scope creep while still giving Task 2 a clean `/` and `/moon-throw` entry point.
+- React Router future flags can stay on the router shell to keep Vitest output clean without adding UI complexity.
+- Task 3 can stay lightweight by testing reduced-motion fallback and rAF cleanup instead of asserting canvas draw internals.
+- A DPR-aware background canvas is simplest when resize recalculates CSS size from the element bounds, then resets `canvas.width`/`canvas.height` with a capped device pixel ratio.
+- Task 4 data extraction ports cleanly with a shared `src/game/types.ts` model (`DiseaseKey`, `TagDefinition`, `GameConfig`, `GameState`) and plain named exports per data module.
+- Source/target tag parity is 62 entries; to satisfy the explicit no-`purple`/`violet` tag-file verification, all `bg-purple-*` tag colors were remapped to `bg-amber-*` by matching intensity (`700/800/900`).
+- Task 4 orchestration QA requires exact canonical type exports in `src/game/types.ts` (`GameState`, `Partner`, `Tag`, `Disease`, `ActionType`, `TurnRecord`, `Constraint`) and requires tag schema key `colorClass` (not `color`) in `src/game/data/tags.ts`.
+- Task 5 red-phase characterization tests can stay type-clean before engine implementation by loading future modules via variable-based dynamic imports (e.g. `import(modulePath)`), which preserves runtime red failures without TypeScript missing-module diagnostics.
+- Keep RNG determinism explicitly verified (`createRng(42)` sequence equality) and ensure characterization tests avoid direct `Math.random` references so randomness is always injectable.

@@ -1,9 +1,6 @@
 # Dependencies
 node_modules/
 
-# AI agent logs
-.sisyphus/
-
 # Build output
 dist/
 
