@@ -1,71 +1,17 @@
 {
-  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/owltree-portal-implementation.md",
-  "started_at": "2026-04-03T01:11:57.287Z",
+  "active_plan": "F:\\All\\Desktop\\project\\owltree\\.sisyphus\\plans\\owltree-portal-implementation.md",
+  "started_at": "2026-04-03T15:36:04.191Z",
   "session_ids": [
-    "ses_2b2ab80bcffes7QcODiYvJUpt9",
-    "ses_2af0ef0c4ffe7EQ7J7PCr39OYJ",
-    "ses_2af0ef0beffeV7KBdwVoVLnDue",
-    "ses_2af0ef0baffepoyL38emmYx6G3",
-    "ses_2aeaf5477ffeTaXqyiY21oOKEf",
-    "ses_2aeaf5472ffeOpqCLvRkKDTp7i",
-    "ses_2aea3b6c7ffenz0nhkww795IfX",
-    "ses_2ae89d8c0ffeGhOKaa8X8KzlsT",
-    "ses_2ae89d8cfffeZw2wjnh2ontB4r",
-    "ses_2ae7991cbffe74ixAQWZ1vcMh0",
-    "ses_2ae798edcffecWrgi0HB3Z9sh6",
-    "ses_2ae737060ffeS8C1h8bilD5mZ3",
-    "ses_2ae5b2746ffeQ7t34KRnioDwpH",
-    "ses_2ae3b31e4ffeb56pe0G5CpAPUu",
-    "ses_2ae30dd9dffe1448DQ56QlZNnN",
-    "ses_2ae0110c0ffeoiAZ91mZcIxbiD",
-    "ses_2ae0110acffezri43IH2Y0DToK",
-    "ses_2adf83e1dffe6XUk1Cagt79JXY",
-    "ses_2ade6877fffeu1RqoTeeaeaElf",
-    "ses_2ade6871cffejbWsGgN3nC7pRz",
-    "ses_2ade2fd6dffelDHXF4eAKFbUWj",
-    "ses_2ad649df4ffeEqbCVDVCZNkZVo",
-    "ses_2ad5f21b5ffeGMVTkzP6LWNp6T",
-    "ses_2ad5f21bcffe6RJBXqBGoKF4cC",
-    "ses_2ad5399ecffe9sdk4XrdHLothJ"
+    "ses_2ac034981ffeHsNWKAATHuefrn",
+    "ses_2a9c37159fferIAYpLJI2vhMxr",
+    "ses_2a9be7e30ffef0KY1Ofsy52K8Y",
+    "ses_2a9be30cbffeW4130ILu9iOPE4",
+    "ses_2a9bead86ffe7UYM0tPY40oWGm",
+    "ses_2a9be96d2ffeZr5do5AdbWk1wJ",
+    "ses_2a1b5b6daffe9Z3bIyk6XkZQO1",
+    "ses_2a1b2f580ffeLkYBIyUQ3fL70x"
   ],
   "plan_name": "owltree-portal-implementation",
   "agent": "atlas",
-  "task_sessions": {
-    "todo:1": {
-      "task_key": "todo:1",
-      "task_label": "1",
-      "task_title": "Scaffold Vite + React + TypeScript project with all tooling",
-      "session_id": "ses_2af18c0abffeAZm7AxaMGPMltP",
-      "agent": "Sisyphus-Junior",
-      "category": "unspecified-high",
-      "updated_at": "2026-04-03T01:16:09.061Z"
-    },
-    "todo:3": {
-      "task_key": "todo:3",
-      "task_label": "3",
-      "task_title": "Create ParticleBackground component with mixed particle system",
-      "session_id": "ses_2ae737060ffeS8C1h8bilD5mZ3",
-      "agent": "Sisyphus-Junior",
-      "category": "unspecified-high",
-      "updated_at": "2026-04-03T04:29:21.842Z"
-    },
-    "todo:4": {
-      "task_key": "todo:4",
-      "task_label": "4",
-      "task_title": "Extract game data models and constants into TypeScript",
-      "session_id": "ses_2adf83e1dffe6XUk1Cagt79JXY",
-      "agent": "Sisyphus-Junior",
-      "category": "deep",
-      "updated_at": "2026-04-03T06:34:19.431Z"
-    },
-    "todo:5": {
-      "task_key": "todo:5",
-      "task_label": "5",
-      "task_title": "Create deterministic RNG interface and write characterization tests",
-      "session_id": "ses_2ad5399ecffe9sdk4XrdHLothJ",
-      "agent": "Sisyphus-Junior",
-      "category": "deep",
-      "updated_at": "2026-04-03T09:35:55.418Z"
-    }
-  }
+  "task_sessions": {}
 }

@@ -1,0 +1,12 @@
+- generic [ref=e78]:
+  - generic [ref=e79]:
+    - heading "月抛模拟器" [level=1] [ref=e80]
+    - generic [ref=e81]: ROUND 01
+  - generic [ref=e83]:
+    - generic [ref=e84]: 🌙
+    - heading "月抛模拟器" [level=1] [ref=e85]
+    - paragraph [ref=e86]: Moon-Throw Simulator
+    - paragraph [ref=e88]: 一个关于选择与后果的实验性互动叙事。 每一次选择都可能改变你的命运。
+    - generic [ref=e89]:
+      - button "开始游戏" [ref=e90] [cursor=pointer]
+      - button "游戏规则" [ref=e91] [cursor=pointer]

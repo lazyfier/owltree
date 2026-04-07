@@ -1,0 +1,62 @@
+- generic [ref=e3]:
+  - main [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: 🦉
+        - heading "O W L T R E E" [level=1] [ref=e8]:
+          - generic [ref=e9]: O
+          - generic [ref=e10]: W
+          - generic [ref=e11]: L
+          - generic [ref=e12]: T
+          - generic [ref=e13]: R
+          - generic [ref=e14]: E
+          - generic [ref=e15]: E
+      - paragraph [ref=e16]: 数字神殿 // 代码与创造
+      - separator [ref=e18]
+    - generic [ref=e19]:
+      - separator [ref=e20]
+      - generic [ref=e22]:
+        - img [ref=e24]
+        - generic [ref=e28]: Your Name
+        - generic [ref=e31]: Building things that matter
+        - generic [ref=e32]:
+          - generic [ref=e33]: React
+          - generic [ref=e34]: TypeScript
+          - generic [ref=e35]: Design
+          - generic [ref=e36]: ...
+      - separator [ref=e37]
+      - region "Projects" [ref=e38]:
+        - heading "项目" [level=2] [ref=e39]
+        - generic [ref=e40]:
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - generic [ref=e44]: 🌙
+              - generic [ref=e45]: 月抛模拟器
+            - paragraph [ref=e46]: 关于选择与后果的实验性互动叙事
+            - generic [ref=e47]:
+              - generic [ref=e48]: 游戏
+              - generic [ref=e49]: 教育
+            - link "进入 →" [ref=e50] [cursor=pointer]:
+              - /url: "#/#/moon-throw"
+          - generic [ref=e52]:
+            - generic [ref=e53]:
+              - generic [ref=e54]: ⚡
+              - generic [ref=e55]: Coming Soon
+            - paragraph [ref=e56]: 更多项目正在路上...
+            - generic [ref=e58]: 待定
+            - link "进入 →" [ref=e59] [cursor=pointer]:
+              - /url: "#/"
+  - contentinfo [ref=e60]:
+    - separator [ref=e61]
+    - generic [ref=e62]:
+      - generic [ref=e63]:
+        - link "GitHub" [ref=e64] [cursor=pointer]:
+          - /url: "#"
+          - img [ref=e65]
+        - link "Twitter" [ref=e68] [cursor=pointer]:
+          - /url: "#"
+          - img [ref=e69]
+        - link "Email" [ref=e71] [cursor=pointer]:
+          - /url: "#"
+          - img [ref=e72]
+      - paragraph [ref=e75]: © 2026 Owltree。咖啡与代码构建。

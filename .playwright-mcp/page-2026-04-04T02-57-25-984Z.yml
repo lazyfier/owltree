@@ -1,0 +1,56 @@
+- generic [ref=e78]:
+  - generic [ref=e79]:
+    - heading "月抛模拟器" [level=1] [ref=e80]
+    - generic [ref=e81]: ROUND 01
+  - generic [ref=e92]:
+    - generic [ref=e94]:
+      - generic [ref=e95]: 生理压抑
+      - generic [ref=e96]: 50%
+    - generic [ref=e100]:
+      - generic [ref=e101]: 心理压力
+      - generic [ref=e102]: 0%
+    - generic [ref=e105]: 🧪 检测试剂 x1
+  - generic [ref=e106]:
+    - generic [ref=e107]:
+      - generic [ref=e108]: 🐶
+      - paragraph [ref=e109]: “别说话，吻我。”
+    - generic [ref=e110]:
+      - generic [ref=e111]: 说『如果你是干净的就能无套』
+      - generic [ref=e112]: App显示24小时在线
+      - generic [ref=e113]: ❓ 隐藏信息
+      - generic [ref=e114]: 🚫 特别讨厌橡胶味
+  - generic [ref=e115]:
+    - button "💬 试探/聊天 (压抑值+3)" [ref=e116] [cursor=pointer]:
+      - text: 💬 试探/聊天
+      - generic [ref=e117]: (压抑值+3)
+    - generic [ref=e118]:
+      - generic [ref=e119]:
+        - button "戴套口交 (压力+2)" [disabled]:
+          - text: 戴套口交
+          - generic: (压力+2)
+        - generic [ref=e121]: 对方拒绝
+      - generic [ref=e122]:
+        - button "戴套性交 (压力+5)" [disabled]:
+          - text: 戴套性交
+          - generic: (压力+5)
+        - generic [ref=e124]: 对方拒绝
+      - button "无套口交 (压力+15)" [ref=e126] [cursor=pointer]:
+        - text: 无套口交
+        - generic [ref=e127]: (压力+15)
+      - button "无套性交 (压力+30)" [ref=e129] [cursor=pointer]:
+        - text: 无套性交
+        - generic [ref=e130]: (压力+30)
+    - generic [ref=e131]:
+      - button "🏥 去医院 (压抑值+10)" [ref=e132] [cursor=pointer]:
+        - text: 🏥 去医院
+        - generic [ref=e133]: (压抑值+10)
+      - button "🏃 离开" [ref=e134] [cursor=pointer]
+  - button "🧪 使用检测试剂 (剩余 x1)" [ref=e135] [cursor=pointer]
+  - generic [ref=e83]:
+    - generic [ref=e84]: 🌙
+    - heading "月抛模拟器" [level=1] [ref=e85]
+    - paragraph [ref=e86]: Moon-Throw Simulator
+    - paragraph [ref=e88]: 一个关于选择与后果的实验性互动叙事。 每一次选择都可能改变你的命运。
+    - generic [ref=e89]:
+      - button "开始游戏" [active] [ref=e90] [cursor=pointer]
+      - button "游戏规则" [ref=e91] [cursor=pointer]
