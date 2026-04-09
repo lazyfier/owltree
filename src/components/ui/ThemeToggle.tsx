@@ -1,4 +1,4 @@
-import { useTheme, type Theme } from '../hooks/useTheme';
+import { useTheme, type Theme } from '@/hooks/useTheme';
 
 const themeIcons: Record<Theme, string> = {
   galgame: '🎮',
