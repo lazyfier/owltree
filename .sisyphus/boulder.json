@@ -1,16 +1,12 @@
 {
-  "active_plan": "F:\\All\\Desktop\\project\\owltree\\.sisyphus\\plans\\owltree-portal-implementation.md",
-  "started_at": "2026-04-03T15:36:04.191Z",
+  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/owltree-portal-implementation.md",
+  "started_at": "2026-04-07T02:13:43.783Z",
   "session_ids": [
-    "ses_2ac034981ffeHsNWKAATHuefrn",
-    "ses_2a9c37159fferIAYpLJI2vhMxr",
-    "ses_2a9be7e30ffef0KY1Ofsy52K8Y",
-    "ses_2a9be30cbffeW4130ILu9iOPE4",
-    "ses_2a9bead86ffe7UYM0tPY40oWGm",
-    "ses_2a9be96d2ffeZr5do5AdbWk1wJ",
-    "ses_2a1b5b6daffe9Z3bIyk6XkZQO1",
-    "ses_2a1b2f580ffeLkYBIyUQ3fL70x"
+    "ses_29a5fb06effejwGWH1SB3s55wY"
   ],
+  "session_origins": {
+    "ses_29a5fb06effejwGWH1SB3s55wY": "direct"
+  },
   "plan_name": "owltree-portal-implementation",
   "agent": "atlas",
   "task_sessions": {}

@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 线条极简</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --line-bg: #0f0f11;
+            --line-fg: #f5f5f5;
+            --line-accent: #f59e0b;
+            --line-subtle: #2a2a2e;
+            --line-dim: #6b6b6b;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--line-bg);
+            color: var(--line-fg);
+            line-height: 1.5;
+        }
+        
+        /* 线条背景 */
+        .line-bg {
+            background-image: 
+                linear-gradient(rgba(245, 245, 245, 0.02) 1px, transparent 1px);
+            background-size: 100% 40px;
+        }
+        
+        /* 节点装饰 */
+        .node {
+            width: 12px;
+            height: 12px;
+            border: 2px solid var(--line-accent);
+            border-radius: 50%;
+        }
+        
+        .node-filled {
+            background: var(--line-accent);
+        }
+        
+        .node-square {
+            border-radius: 0;
+        }
+        
+        /* 连接线 */
+        .connector-h {
+            height: 1px;
+            background: var(--line-subtle);
+            flex: 1;
+        }
+        
+        .connector-v {
+            width: 1px;
+            background: var(--line-subtle);
+        }
+        
+        /* 极简按钮 */
+        .line-btn {
+            background: transparent;
+            border: 1px solid var(--line-subtle);
+            color: var(--line-fg);
+            padding: 14px 32px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .line-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: var(--line-accent);
+            transition: width 0.3s;
+        }
+        
+        .line-btn:hover {
+            border-color: var(--line-accent);
+        }
+        
+        .line-btn:hover::after {
+            width: 100%;
+        }
+        
+        .line-btn-primary {
+            background: var(--line-accent);
+            border-color: var(--line-accent);
+            color: var(--line-bg);
+        }
+        
+        .line-btn-primary::after {
+            display: none;
+        }
+        
+        .line-btn-primary:hover {
+            background: var(--line-fg);
+            border-color: var(--line-fg);
+        }
+        
+        /* 卡片 */
+        .line-card {
+            border: 1px solid var(--line-subtle);
+            padding: 28px;
+            position: relative;
+        }
+        
+        .line-card::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 30px;
+            width: 60px;
+            height: 1px;
+            background: var(--line-accent);
+        }
+        
+        /* 进度条 */
+        .line-progress {
+            height: 2px;
+            background: var(--line-subtle);
+            position: relative;
+        }
+        
+        .line-progress-fill {
+            height: 100%;
+            background: var(--line-accent);
+            position: relative;
+        }
+        
+        .line-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 8px;
+            height: 8px;
+            border: 2px solid var(--line-accent);
+            border-radius: 50%;
+            background: var(--line-bg);
+        }
+        
+        /* 标签 */
+        .line-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 11px;
+            border: 1px solid var(--line-subtle);
+            color: var(--line-dim);
+        }
+        
+        .line-tag::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            border: 1px solid currentColor;
+            border-radius: 50%;
+        }
+        
+        .line-tag-active {
+            border-color: var(--line-accent);
+            color: var(--line-accent);
+        }
+        
+        .line-tag-active::before {
+            background: var(--line-accent);
+            border-color: var(--line-accent);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--line-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--line-subtle);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--line-accent);
+        }
+    </style>
+</head>
+<body class="min-h-screen line-bg">
+    <div class="container mx-auto px-8 py-20 max-w-2xl">
+        
+        <header class="mb-20">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="node node-filled node-square"></div>
+                <div class="connector-h"></div>
+                <div class="node"></div>
+            </div>
+            <h1 class="text-3xl font-semibold tracking-tight mb-3">
+                OWLTREE
+            </h1>
+            <p class="text-xs" style="color: var(--line-dim);">
+                LINE_MINIMAL_SYSTEM
+            </p>
+        </header>
+        
+        <nav class="flex flex-col gap-3 mb-16">
+            <button type="button" class="line-btn line-btn-primary w-full text-left">初始化连接</button>
+            <button type="button" class="line-btn w-full text-left">恢复会话</button>
+            <button type="button" class="line-btn w-full text-left">系统设置</button>
+        </nav>
+        
+        <section class="line-card mb-6">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="node"></div>
+                <span class="text-xs" style="color: var(--line-dim);">系统状态</span>
+                <div class="connector-h"></div>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-xs mb-3" style="color: var(--line-dim);">
+                        <span>生命值</span>
+                        <span>75/100</span>
+                    </div>
+                    <div class="line-progress">
+                        <div class="line-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-xs mb-3" style="color: var(--line-dim);">
+                        <span>焦虑值</span>
+                        <span>45/100</span>
+                    </div>
+                    <div class="line-progress">
+                        <div class="line-progress-fill" style="width: 45%;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 flex gap-8 text-xs" style="border-top: 1px solid var(--line-subtle);">
+                <div>
+                    <span class="block mb-1" style="color: var(--line-dim);">回合</span>
+                    <span>03</span>
+                </div>
+                <div class="connector-v"></div>
+                <div>
+                    <span class="block mb-1" style="color: var(--line-dim);">道具</span>
+                    <span>x2</span>
+                </div>
+                <div class="connector-v"></div>
+                <div>
+                    <span class="block mb-1" style="color: var(--line-dim);">节点</span>
+                    <span>ONLINE</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="line-card" style="border-color: var(--line-dim);">
+            <div class="flex gap-4">
+                <div class="connector-v mt-2" style="height: 40px;"></div>
+                <div>
+                    <p class="text-sm leading-relaxed mb-4">
+                        系统启动完成。<br>
+                        等待用户输入。<br>
+                        请谨慎选择行动路径。
+                    </p>
+                    <p class="text-xs" style="color: var(--line-accent);">
+                        > _
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="flex flex-wrap gap-3 mt-6">
+            <span class="line-tag">正常</span>
+            <span class="line-tag line-tag-active">警告</span>
+            <span class="line-tag">离线</span>
+        </section>
+        
+        <footer class="mt-20 pt-6 flex items-center justify-between text-xs" style="color: var(--line-dim); border-top: 1px solid var(--line-subtle);">
+            <div class="flex items-center gap-3">
+                <div class="node" style="width: 8px; height: 8px;"></div>
+                <span>OWLTREE_CORE</span>
+            </div>
+            <span>v2.0.1</span>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 杂志编辑风</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&family=Source+Sans+3:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --editorial-bg: #f7f5f3;
+            --editorial-paper: #ffffff;
+            --editorial-ink: #1a1a1a;
+            --editorial-gray: #6b6b6b;
+            --editorial-accent: #c41e3a;
+            --editorial-gold: #c9a961;
+        }
+        
+        body {
+            font-family: 'Source Sans 3', sans-serif;
+            background: var(--editorial-bg);
+            color: var(--editorial-ink);
+        }
+        
+        .font-display { font-family: 'Playfair Display', serif; }
+        
+        /* 杂志网格系统 */
+        .magazine-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+        }
+        
+        /* 编辑式标题 */
+        .editorial-headline {
+            font-family: 'Playfair Display', serif;
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        
+        /* 杂志按钮 */
+        .magazine-btn {
+            background: var(--editorial-ink);
+            color: white;
+            padding: 14px 32px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn:hover {
+            background: var(--editorial-accent);
+        }
+        
+        .magazine-btn-outline {
+            background: transparent;
+            color: var(--editorial-ink);
+            border: 2px solid var(--editorial-ink);
+        }
+        
+        .magazine-btn-outline:hover {
+            background: var(--editorial-ink);
+            color: white;
+        }
+        
+        /* 杂志卡片 */
+        .magazine-card {
+            background: var(--editorial-paper);
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        /* 编辑式标签 */
+        .editorial-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: 1px solid var(--editorial-ink);
+        }
+        
+        .editorial-tag-accent {
+            background: var(--editorial-accent);
+            border-color: var(--editorial-accent);
+            color: white;
+        }
+        
+        /* 杂志分隔线 */
+        .editorial-hr {
+            height: 1px;
+            background: var(--editorial-ink);
+            opacity: 0.2;
+        }
+        
+        .editorial-hr-accent {
+            height: 3px;
+            background: var(--editorial-accent);
+            width: 60px;
+        }
+        
+        /* 首字下沉 */
+        .drop-cap::first-letter {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5em;
+            float: left;
+            line-height: 0.8;
+            padding-right: 12px;
+            color: var(--editorial-accent);
+        }
+        
+        /* 杂志进度条 */
+        .editorial-progress {
+            height: 4px;
+            background: rgba(0, 0, 0, 0.08);
+        }
+        
+        .editorial-progress-fill {
+            height: 100%;
+            background: var(--editorial-accent);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="container mx-auto px-8 py-12 max-w-5xl">
+        
+        <header class="mb-16">
+            <div class="flex justify-between items-end mb-8">
+                <div>
+                    <p class="text-xs font-semibold tracking-[0.3em] text-[#6b6b6b] uppercase mb-2">Vol. 01 — Issue 01</p>
+                    <div class="editorial-hr-accent mb-4"></div>
+                    <h1 class="editorial-headline text-5xl">OWLTREE</h1>
+                </div>
+                <div class="text-right">
+                    <p class="font-display italic text-lg text-[#6b6b6b]">Digital Magazine</p>
+                    <p class="text-xs tracking-widest mt-1">EST. 2024</p>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="flex gap-4 mb-12 border-b border-black/10 pb-6">
+            <button class="magazine-btn">Start Reading</button>
+            <button class="magazine-btn magazine-btn-outline">Browse Archive</button>
+            <button class="magazine-btn magazine-btn-outline">Settings</button>
+        </nav>
+        
+        <div class="magazine-grid">
+            <div class="col-span-7">
+                <section class="magazine-card mb-6">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="editorial-tag">Feature</span>
+                        <span class="text-xs text-[#6b6b6b] uppercase tracking-wider">Current Status</span>
+                    </div>
+                    
+                    <h2 class="editorial-headline text-3xl mb-6">Player Statistics</h2>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between items-baseline mb-2">
+                                <span class="text-sm font-medium uppercase tracking-wider">Health Points</span>
+                                <span class="font-display text-2xl">75<span class="text-base text-[#6b6b6b]">/100</span></span>
+                            </div>
+                            <div class="editorial-progress">
+                                <div class="editorial-progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between items-baseline mb-2">
+                                <span class="text-sm font-medium uppercase tracking-wider">Stress Level</span>
+                                <span class="font-display text-2xl">45<span class="text-base text-[#6b6b6b]">/100</span></span>
+                            </div>
+                            <div class="editorial-progress">
+                                <div class="editorial-progress-fill" style="width: 45%; opacity: 0.7;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="editorial-hr my-6"></div>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div>
+                            <p class="text-xs uppercase tracking-wider text-[#6b6b6b] mb-1">Turn</p>
+                            <p class="font-display text-xl">Round 03</p>
+                        </div>
+                        <div>
+                            <p class="text-xs uppercase tracking-wider text-[#6b6b6b] mb-1">Inventory</p>
+                            <p class="font-display text-xl">Test Kits ×2</p>
+                        </div>
+                    </div>
+                </section>
+            </div>
+            
+            <div class="col-span-5">
+                <section class="magazine-card bg-[#1a1a1a] text-white">
+                    <span class="editorial-tag-accent mb-4 inline-block">Editor's Note</span>
+                    <p class="drop-cap text-lg leading-relaxed mb-4" style="color: rgba(255,255,255,0.9);">
+                        欢迎来到月抛模拟器。这是一个关于选择、关于责任、关于自我保护的数字体验。
+                    </p>
+                    <p class="text-sm leading-relaxed" style="color: rgba(255,255,255,0.7);">
+                        每一期，我们都将深入探讨不同的主题，带给你独特的思考角度。本期聚焦于健康教育与决策模拟。
+                    </p>
+                </section>
+            </div>
+        </div>
+        
+        <section class="mt-8 flex flex-wrap gap-3">
+            <span class="editorial-tag">Safe</span>
+            <span class="editorial-tag-accent">Caution</span>
+            <span class="editorial-tag">Exploring</span>
+        </section>
+        
+        <footer class="mt-16 pt-8 border-t border-black/10">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-display text-lg">Owltree Magazine</p>
+                    <p class="text-xs text-[#6b6b6b] mt-1">Curated stories for the digital age</p>
+                </div>
+                <p class="text-xs tracking-widest text-[#6b6b6b]">© 2024 ALL RIGHTS RESERVED</p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

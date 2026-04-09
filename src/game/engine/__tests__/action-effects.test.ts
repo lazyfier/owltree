@@ -44,7 +44,12 @@ describe('action effects characterization (red phase)', () => {
 
     const nextState = executeAction(startState, actionType, createRng(1234))
 
-    expect(nextState.frustration).toBe(startState.frustration + CONFIG.passiveGain - CONFIG.rewards[actionType])
-    expect(nextState.anxiety).toBe(startState.anxiety + CONFIG.stress[actionType])
+    const expectedFrustration = Math.max(0, startState.frustration + CONFIG.passiveGain - CONFIG.rewards[actionType])
+    expect(nextState.frustration).toBe(expectedFrustration)
+
+    // anxietyGainPassive (+2) kicks in when anxiety exceeds 20 after adding action stress
+    const baseAnxiety = startState.anxiety + CONFIG.stress[actionType]
+    const expectedAnxiety = baseAnxiety > 20 ? baseAnxiety + CONFIG.anxietyGainPassive : baseAnxiety
+    expect(nextState.anxiety).toBe(expectedAnxiety)
   })
 })

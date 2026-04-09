@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 复古二次元</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pink-soft: #ffe4ec;
+            --pink-medium: #ffb8d0;
+            --pink-deep: #ff8fab;
+            --mint-soft: #e0f5e9;
+            --mint-medium: #b8e0c8;
+            --cream: #fff9f0;
+            --cream-warm: #fef5e7;
+            --lavender: #e8e0f5;
+            --baby-blue: #e0f0ff;
+        }
+        
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Nunito', 'ZCOOL KuaiLe', sans-serif;
+            background: linear-gradient(180deg, var(--pink-soft) 0%, var(--cream) 100%);
+            color: #5a4a5c;
+            line-height: 1.6;
+        }
+        
+        /* 棋盘格背景 */
+        .checkered-bg {
+            background-image: 
+                repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,184,208,0.1) 10px, rgba(255,184,208,0.1) 20px),
+                repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(184,224,200,0.1) 10px, rgba(184,224,200,0.1) 20px);
+        }
+        
+        /* 蕾丝边框效果 */
+        .lace-border {
+            border: 3px solid var(--pink-medium);
+            border-radius: 20px;
+            box-shadow: 
+                0 0 0 4px white,
+                0 0 0 7px var(--pink-medium),
+                0 8px 20px rgba(255,184,208,0.3);
+        }
+        
+        /* 泡泡字标题 */
+        .bubble-title {
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--pink-deep), var(--pink-medium));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 
+                3px 3px 0 rgba(255,255,255,0.8),
+                5px 5px 0 rgba(255,184,208,0.5);
+            letter-spacing: 0.05em;
+        }
+        
+        /* 圆角标签导航 */
+        .tab-btn {
+            background: white;
+            border: 2px solid var(--pink-medium);
+            padding: 10px 24px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #5a4a5c;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 3px 0 var(--pink-medium);
+        }
+        
+        .tab-btn:hover {
+            background: var(--pink-soft);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 0 var(--pink-medium);
+        }
+        
+        .tab-btn:active {
+            transform: translateY(2px);
+            box-shadow: 0 1px 0 var(--pink-medium);
+        }
+        
+        .tab-btn.active {
+            background: var(--pink-medium);
+            color: white;
+        }
+        
+        /* 卡片 */
+        .anime-card {
+            background: white;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 
+                0 4px 15px rgba(255,184,208,0.2),
+                0 0 0 3px rgba(255,255,255,0.8);
+            border: 2px solid rgba(255,184,208,0.3);
+            transition: all 0.3s;
+        }
+        
+        .anime-card:hover {
+            transform: translateY(-5px) rotate(1deg);
+            box-shadow: 
+                0 8px 25px rgba(255,184,208,0.3),
+                0 0 0 3px rgba(255,255,255,0.8);
+        }
+        
+        .anime-card-mint {
+            background: linear-gradient(135deg, white, var(--mint-soft));
+            border-color: rgba(184,224,200,0.5);
+            box-shadow: 
+                0 4px 15px rgba(184,224,200,0.2),
+                0 0 0 3px rgba(255,255,255,0.8);
+        }
+        
+        .anime-card-lavender {
+            background: linear-gradient(135deg, white, var(--lavender));
+            border-color: rgba(232,224,245,0.5);
+            box-shadow: 
+                0 4px 15px rgba(232,224,245,0.2),
+                0 0 0 3px rgba(255,255,255,0.8);
+        }
+        
+        /* 装饰性头像框 */
+        .avatar-frame {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 4px solid var(--pink-medium);
+            box-shadow: 
+                0 0 0 4px white,
+                0 4px 10px rgba(255,184,208,0.4);
+            overflow: hidden;
+            background: linear-gradient(135deg, var(--pink-soft), var(--mint-soft));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+        }
+        
+        /* 星星装饰 */
+        .star-deco::before {
+            content: '✦';
+            color: var(--pink-deep);
+            font-size: 20px;
+        }
+        
+        .star-deco-gold::before {
+            content: '★';
+            color: #ffd700;
+        }
+        
+        /* 彩带装饰 */
+        .ribbon {
+            background: linear-gradient(90deg, var(--pink-medium), var(--mint-medium), var(--lavender));
+            height: 8px;
+            border-radius: 4px;
+            margin: 16px 0;
+        }
+        
+        /* 圆形按钮 */
+        .circle-btn {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--pink-medium), var(--pink-deep));
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(255,184,208,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .circle-btn:hover {
+            transform: scale(1.1) rotate(10deg);
+        }
+        
+        /* 标签贴纸 */
+        .sticker-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--cream-warm);
+            border: 2px dashed var(--pink-medium);
+            border-radius: 16px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #5a4a5c;
+            transform: rotate(-2deg);
+        }
+        
+        /* 进度条 */
+        .cute-progress {
+            height: 20px;
+            background: white;
+            border: 2px solid var(--pink-medium);
+            border-radius: 10px;
+            overflow: hidden;
+            padding: 2px;
+        }
+        
+        .cute-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--pink-medium), var(--pink-deep));
+            border-radius: 8px;
+            position: relative;
+        }
+        
+        .cute-progress-fill::after {
+            content: '🌸';
+            position: absolute;
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 16px;
+        }
+        
+        /* 心形列表标记 */
+        .heart-list li::before {
+            content: '♥';
+            color: var(--pink-deep);
+            margin-right: 8px;
+        }
+        
+        /* 浮动动画 */
+        @keyframes float-cute {
+            0%, 100% { transform: translateY(0) rotate(-2deg); }
+            50% { transform: translateY(-8px) rotate(2deg); }
+        }
+        
+        .float-cute {
+            animation: float-cute 3s ease-in-out infinite;
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--pink-soft);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--pink-medium), var(--mint-medium));
+            border-radius: 6px;
+            border: 2px solid var(--pink-soft);
+        }
+    </style>
+</head>
+<body class="min-h-screen checkered-bg">
+    <div class="container mx-auto px-4 py-6 max-w-6xl">
+        
+        <!-- 顶部导航标签 -->
+        <nav class="flex justify-center gap-3 mb-8 flex-wrap">
+            <button type="button" class="tab-btn active">🏠 首页</button>
+            <button type="button" class="tab-btn">🎮 游戏</button>
+            <button type="button" class="tab-btn">📝 笔记</button>
+            <button type="button" class="tab-btn">🛠 工具</button>
+            <button type="button" class="tab-btn">💕 关于</button>
+        </nav>
+        
+        <!-- Banner区域 -->
+        <header class="lace-border p-8 mb-8 bg-white">
+            <div class="flex flex-col md:flex-row items-center gap-6">
+                <div class="avatar-frame float-cute">
+                    🦉
+                </div>
+                <div class="text-center md:text-left flex-1">
+                    <h1 class="bubble-title text-5xl mb-3">Owltree</h1>
+                    <p class="text-lg" style="color: #8b7a8d;">
+                        ✦ 欢迎来到我的二次元小天地 ✦
+                    </p>
+                    <div class="ribbon"></div>
+                </div>
+                <div class="flex flex-col gap-3">
+                    <div class="circle-btn">💌</div>
+                    <div class="circle-btn" style="background: linear-gradient(135deg, var(--mint-medium), #a8d8ba);">⭐</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 主内容区 - 多栏布局 -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 左侧：个人信息卡 -->
+            <aside class="lg:col-span-1 space-y-6">
+                <div class="anime-card text-center">
+                    <div class="avatar-frame mx-auto mb-4" style="width: 100px; height: 100px; font-size: 48px;">
+                        🌸
+                    </div>
+                    <h3 class="text-xl font-bold mb-2" style="color: var(--pink-deep);">站长Owltree</h3>
+                    <p class="text-sm mb-4" style="color: #8b7a8d;">记录日常 × 分享游戏</p>
+                    <div class="flex justify-center gap-2">
+                        <span class="sticker-tag">#萌系</span>
+                        <span class="sticker-tag" style="transform: rotate(2deg);">#独立开发</span>
+                    </div>
+                </div>
+                
+                <div class="anime-card anime-card-mint">
+                    <h4 class="font-bold mb-3 flex items-center gap-2">
+                        <span class="star-deco"></span>
+                        状态
+                    </h4>
+                    <div class="space-y-3">
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>活力值</span>
+                                <span>75%</span>
+                            </div>
+                            <div class="cute-progress">
+                                <div class="cute-progress-fill" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex justify-between text-sm mb-1">
+                                <span>心情值</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="cute-progress">
+                                <div class="cute-progress-fill" style="width: 45%; background: linear-gradient(90deg, var(--mint-medium), #a8d8ba);"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- 中间：主要内容 -->
+            <main class="lg:col-span-2 space-y-6">
+                
+                <!-- 特色入口 - 游戏 -->
+                <div class="anime-card" style="background: linear-gradient(135deg, white, #fff0f5);">
+                    <div class="flex items-start gap-4">
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl" style="background: linear-gradient(135deg, var(--pink-medium), var(--pink-deep));">
+                            🎮
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="sticker-tag" style="background: var(--pink-medium); color: white; border-style: solid;">HOT</span>
+                                <h3 class="text-xl font-bold">月抛模拟器</h3>
+                            </div>
+                            <p class="text-sm mb-3" style="color: #8b7a8d;">
+                                一款关于健康教育的决策游戏，在可爱的画风下探讨严肃话题 ♡
+                            </p>
+                            <button type="button" class="tab-btn" style="padding: 8px 20px;">开始游戏 →</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 其他入口 -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="anime-card anime-card-mint">
+                        <div class="text-3xl mb-2">📝</div>
+                        <h4 class="font-bold mb-1">笔记</h4>
+                        <p class="text-xs" style="color: #8b7a8d;">文章与播客</p>
+                    </div>
+                    <div class="anime-card anime-card-lavender">
+                        <div class="text-3xl mb-2">🛠</div>
+                        <h4 class="font-bold mb-1">工具</h4>
+                        <p class="text-xs" style="color: #8b7a8d;">实用小工具</p>
+                    </div>
+                    <div class="anime-card" style="background: linear-gradient(135deg, white, var(--baby-blue));">
+                        <div class="text-3xl mb-2">📈</div>
+                        <h4 class="font-bold mb-1">趋势</h4>
+                        <p class="text-xs" style="color: #8b7a8d;">每日热点</p>
+                    </div>
+                    <div class="anime-card" style="background: linear-gradient(135deg, white, var(--cream-warm));">
+                        <div class="text-3xl mb-2">🎵</div>
+                        <h4 class="font-bold mb-1">音乐</h4>
+                        <p class="text-xs" style="color: #8b7a8d;">最近在听</p>
+                    </div>
+                </div>
+                
+                <!-- 更新日志 -->
+                <div class="anime-card">
+                    <h4 class="font-bold mb-4 flex items-center gap-2">
+                        <span class="star-deco-gold"></span>
+                        更新日志
+                    </h4>
+                    <ul class="space-y-2 text-sm heart-list">
+                        <li>新增了游戏模块！</li>
+                        <li>优化了移动端体验</li>
+                        <li>更新了主题配色</li>
+                    </ul>
+                </div>
+            </main>
+        </div>
+        
+        <!-- 底部 -->
+        <footer class="mt-12 text-center">
+            <div class="ribbon mb-4"></div>
+            <p class="text-sm" style="color: #8b7a8d;">
+                Owltree © 2024 ♡ Made with love
+            </p>
+            <div class="flex justify-center gap-4 mt-4">
+                <span class="sticker-tag">Twitter</span>
+                <span class="sticker-tag" style="transform: rotate(2deg);">GitHub</span>
+                <span class="sticker-tag" style="transform: rotate(-1deg);">Email</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

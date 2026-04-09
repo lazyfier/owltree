@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 复古8-bit风格</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --gb-darkest: #0f380f;
+            --gb-dark: #306230;
+            --gb-light: #8bac0f;
+            --gb-lightest: #9bbc0f;
+            --nes-red: #e4000f;
+            --nes-blue: #0048b8;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', 'ZCOOL KuaiLe', cursive;
+            background-color: var(--gb-darkest);
+            color: var(--gb-lightest);
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+        }
+        
+        /* CRT扫描线效果 */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.1) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 9999;
+        }
+        
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+        
+        /* 像素边框 */
+        .pixel-border {
+            box-shadow: 
+                -4px 0 0 0 var(--gb-light),
+                4px 0 0 0 var(--gb-light),
+                0 -4px 0 0 var(--gb-light),
+                0 4px 0 0 var(--gb-light),
+                -4px -4px 0 0 var(--gb-lightest),
+                4px -4px 0 0 var(--gb-lightest),
+                -4px 4px 0 0 var(--gb-lightest),
+                4px 4px 0 0 var(--gb-lightest);
+            margin: 8px;
+        }
+        
+        .pixel-border-dark {
+            box-shadow: 
+                -4px 0 0 0 var(--gb-dark),
+                4px 0 0 0 var(--gb-dark),
+                0 -4px 0 0 var(--gb-dark),
+                0 4px 0 0 var(--gb-dark);
+            margin: 8px;
+        }
+        
+        /* 像素按钮 */
+        .pixel-btn {
+            background: var(--gb-dark);
+            border: none;
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 12px;
+            color: var(--gb-lightest);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
+            box-shadow: 
+                inset -4px -4px 0 0 var(--gb-darkest),
+                inset 4px 4px 0 0 var(--gb-light);
+        }
+        
+        .pixel-btn:hover {
+            background: var(--gb-light);
+            color: var(--gb-darkest);
+            box-shadow: 
+                inset -4px -4px 0 0 var(--gb-dark),
+                inset 4px 4px 0 0 var(--gb-lightest);
+        }
+        
+        .pixel-btn:active {
+            transform: translateY(2px);
+            box-shadow: 
+                inset -4px -4px 0 0 var(--gb-lightest),
+                inset 4px 4px 0 0 var(--gb-dark);
+        }
+        
+        .pixel-btn-red {
+            background: var(--nes-red);
+            box-shadow: 
+                inset -4px -4px 0 0 #8b0000,
+                inset 4px 4px 0 0 #ff6b6b;
+        }
+        
+        .pixel-btn-red:hover {
+            background: #ff1a1a;
+        }
+        
+        /* 像素卡片 */
+        .pixel-card {
+            background: var(--gb-dark);
+            padding: 20px;
+            position: relative;
+        }
+        
+        .pixel-card::before {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background: var(--gb-light);
+            z-index: -1;
+        }
+        
+        /* 像素猫头鹰Logo */
+        .pixel-owl {
+            width: 64px;
+            height: 64px;
+            background: var(--gb-lightest);
+            position: relative;
+            display: inline-block;
+        }
+        
+        .pixel-owl::before {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            background: var(--gb-darkest);
+            top: 16px;
+            left: 12px;
+            box-shadow: 
+                24px 0 0 0 var(--gb-darkest),
+                8px 8px 0 0 var(--gb-darkest),
+                16px 8px 0 0 var(--gb-darkest),
+                12px 24px 0 0 var(--gb-darkest),
+                8px 32px 0 0 var(--gb-darkest),
+                16px 32px 0 0 var(--gb-darkest),
+                -4px 40px 0 0 var(--gb-darkest),
+                28px 40px 0 0 var(--gb-darkest);
+        }
+        
+        /* 打字机光标 */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        /* 像素网格背景 */
+        .pixel-grid {
+            background-image: 
+                linear-gradient(var(--gb-dark) 1px, transparent 1px),
+                linear-gradient(90deg, var(--gb-dark) 1px, transparent 1px);
+            background-size: 16px 16px;
+        }
+        
+        /* 对话框 */
+        .pixel-dialog {
+            background: var(--gb-lightest);
+            color: var(--gb-darkest);
+            padding: 20px;
+            position: relative;
+            border: 4px solid var(--gb-light);
+        }
+        
+        .pixel-dialog::after {
+            content: '▼';
+            position: absolute;
+            bottom: 8px;
+            right: 16px;
+            animation: bounce 0.5s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(4px); }
+        }
+        
+        /* 生命值条 */
+        .health-bar {
+            width: 200px;
+            height: 16px;
+            background: var(--gb-darkest);
+            border: 2px solid var(--gb-lightest);
+            position: relative;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: var(--gb-light);
+            width: 75%;
+            box-shadow: inset 0 2px 0 0 var(--gb-lightest);
+        }
+        
+        /* 滚动条像素风 */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--gb-darkest);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--gb-light);
+            border: 2px solid var(--gb-darkest);
+        }
+    </style>
+</head>
+<body class="min-h-screen pixel-grid crt-flicker">
+    <div class="crt-overlay"></div>
+    
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- 标题区 -->
+        <header class="text-center mb-12">
+            <div class="pixel-owl mb-6 mx-auto"></div>
+            <h1 class="text-2xl md:text-4xl mb-4 text-[#9bbc0f]" style="text-shadow: 4px 4px 0 #0f380f;">
+                OWLTREE
+            </h1>
+            <p class="text-xs md:text-sm text-[#8bac0f]">
+                复古8-BIT风格演示<span class="cursor-blink">_</span>
+            </p>
+        </header>
+        
+        <!-- 主菜单 -->
+        <nav class="flex flex-wrap justify-center gap-6 mb-12">
+            <button class="pixel-btn">开始游戏</button>
+            <button class="pixel-btn">继续</button>
+            <button class="pixel-btn pixel-btn-red">设置</button>
+        </nav>
+        
+        <!-- 游戏状态面板 -->
+        <section class="pixel-card pixel-border mb-8">
+            <h2 class="text-sm mb-6 text-[#9bbc0f]" style="border-bottom: 2px dashed #8bac0f; padding-bottom: 8px;">
+                ◆ 玩家状态
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-xs mb-2">生命值 HP</p>
+                    <div class="health-bar">
+                        <div class="health-fill"></div>
+                    </div>
+                    <p class="text-xs mt-1">75/100</p>
+                </div>
+                
+                <div>
+                    <p class="text-xs mb-2">焦虑值 STRESS</p>
+                    <div class="health-bar">
+                        <div class="health-fill" style="width: 45%; background: #8bac0f;"></div>
+                    </div>
+                    <p class="text-xs mt-1">45/100</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4" style="border-top: 2px solid #306230;">
+                <p class="text-xs">回合: <span class="text-[#9bbc0f]">第 3 轮</span></p>
+                <p class="text-xs mt-2">道具: <span class="text-[#9bbc0f]">检测试剂 x2</span></p>
+            </div>
+        </section>
+        
+        <!-- 对话框区域 -->
+        <section class="pixel-dialog mb-8">
+            <p class="text-xs leading-loose">
+                欢迎来到月抛模拟器！<br><br>
+                在这个8-bit复古世界中，你需要谨慎选择每一次行动。
+                记住：安全第一，健康最重要！
+            </p>
+        </section>
+        
+        <!-- 标签展示区 -->
+        <section class="pixel-card pixel-border-dark">
+            <h3 class="text-xs mb-4">◆ 可选标签</h3>
+            <div class="flex flex-wrap gap-3">
+                <span class="px-3 py-1 text-xs" style="background: #306230; border: 2px solid #8bac0f;">
+                    [健康]
+                </span>
+                <span class="px-3 py-1 text-xs" style="background: #e4000f; border: 2px solid #ff6b6b;">
+                    [危险]
+                </span>
+                <span class="px-3 py-1 text-xs" style="background: #0048b8; border: 2px solid #6b9aff;">
+                    [安全]
+                </span>
+                <span class="px-3 py-1 text-xs" style="background: #8bac0f; color: #0f380f; border: 2px solid #9bbc0f;">
+                    [未知]
+                </span>
+            </div>
+        </section>
+        
+        <!-- 底部版权 -->
+        <footer class="text-center mt-12 text-xs opacity-70">
+            <p>© 2024 OWLTREE</p>
+            <p class="mt-2">PRESS START TO CONTINUE</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 按键音效模拟
+        document.querySelectorAll('.pixel-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'translateY(2px)';
+                setTimeout(() => {
+                    this.style.transform = 'translateY(0)';
+                }, 100);
+            });
+        });
+        
+        // 随机闪烁效果
+        setInterval(() => {
+            const healthFill = document.querySelector('.health-fill');
+            if (healthFill && Math.random() > 0.95) {
+                healthFill.style.opacity = '0.8';
+                setTimeout(() => {
+                    healthFill.style.opacity = '1';
+                }, 50);
+            }
+        }, 100);
+    </script>
+</body>
+</html>

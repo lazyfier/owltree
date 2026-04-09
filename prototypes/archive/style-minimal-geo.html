@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 几何极简游戏风</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --accent: #2dd4bf;
+            --accent-dim: rgba(45, 212, 191, 0.1);
+            --text-primary: #fafafa;
+            --text-secondary: #737373;
+            --grid: rgba(45, 212, 191, 0.03);
+        }
+        
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+        }
+        
+        /* 极简网格背景 */
+        .grid-bg {
+            background-image: 
+                linear-gradient(var(--grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        
+        /* 几何装饰元素 */
+        .geo-square {
+            width: 8px;
+            height: 8px;
+            background: var(--accent);
+        }
+        
+        .geo-line {
+            height: 2px;
+            background: var(--accent);
+            opacity: 0.3;
+        }
+        
+        .geo-circle {
+            width: 6px;
+            height: 6px;
+            border: 2px solid var(--accent);
+            border-radius: 50%;
+        }
+        
+        .geo-cross {
+            position: relative;
+            width: 12px;
+            height: 12px;
+        }
+        
+        .geo-cross::before,
+        .geo-cross::after {
+            content: '';
+            position: absolute;
+            background: var(--accent);
+            opacity: 0.5;
+        }
+        
+        .geo-cross::before {
+            width: 12px;
+            height: 2px;
+            top: 5px;
+        }
+        
+        .geo-cross::after {
+            width: 2px;
+            height: 12px;
+            left: 5px;
+        }
+        
+        /* 极简按钮 */
+        .minimal-btn {
+            background: transparent;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-primary);
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .minimal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--accent);
+            transform: scaleY(0);
+            transition: transform 0.2s;
+        }
+        
+        .minimal-btn:hover {
+            border-color: var(--accent);
+            padding-left: 28px;
+        }
+        
+        .minimal-btn:hover::before {
+            transform: scaleY(1);
+        }
+        
+        .minimal-btn-primary {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: var(--bg-primary);
+        }
+        
+        .minimal-btn-primary::before {
+            display: none;
+        }
+        
+        .minimal-btn-primary:hover {
+            padding-left: 24px;
+            background: var(--text-primary);
+            border-color: var(--text-primary);
+        }
+        
+        /* 极简卡片 */
+        .minimal-card {
+            background: var(--bg-secondary);
+            border-left: 2px solid var(--accent);
+            padding: 24px;
+            position: relative;
+        }
+        
+        .minimal-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, var(--accent), transparent);
+            opacity: 0.3;
+        }
+        
+        /* 进度条 */
+        .minimal-progress {
+            height: 4px;
+            background: var(--bg-secondary);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .minimal-progress-fill {
+            height: 100%;
+            background: var(--accent);
+            position: relative;
+        }
+        
+        .minimal-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--text-primary);
+        }
+        
+        /* 像素光标 */
+        .pixel-cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--accent);
+            animation: blink 1s step-end infinite;
+            margin-left: 4px;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        /* 浮动动画 */
+        .float-slow {
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 标签 */
+        .minimal-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            font-size: 12px;
+            border: 1px solid var(--text-secondary);
+            color: var(--text-secondary);
+        }
+        
+        .minimal-tag::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: currentColor;
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--text-secondary);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent);
+        }
+    </style>
+</head>
+<body class="min-h-screen grid-bg">
+    <div class="container mx-auto px-6 py-16 max-w-3xl">
+        
+        <header class="mb-20">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="geo-square"></div>
+                <div class="geo-line w-12"></div>
+            </div>
+            <h1 class="text-4xl font-bold tracking-tight mb-4">
+                OWLTREE<span class="pixel-cursor"></span>
+            </h1>
+            <p class="text-sm" style="color: var(--text-secondary);">
+                几何极简游戏风格 / v1.0.0
+            </p>
+        </header>
+        
+        <nav class="flex flex-wrap gap-4 mb-16">
+            <button type="button" class="minimal-btn minimal-btn-primary">开始</button>
+            <button type="button" class="minimal-btn">继续</button>
+            <button type="button" class="minimal-btn">设置</button>
+        </nav>
+        
+        <section class="minimal-card mb-8">
+            <div class="flex items-start justify-between mb-6">
+                <h2 class="text-sm font-medium" style="color: var(--text-secondary);">
+                    状态
+                </h2>
+                <div class="geo-circle"></div>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between text-xs mb-2" style="color: var(--text-secondary);">
+                        <span>HP</span>
+                        <span>75/100</span>
+                    </div>
+                    <div class="minimal-progress">
+                        <div class="minimal-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-xs mb-2" style="color: var(--text-secondary);">
+                        <span>STRESS</span>
+                        <span>45/100</span>
+                    </div>
+                    <div class="minimal-progress">
+                        <div class="minimal-progress-fill" style="width: 45%; opacity: 0.6;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 flex gap-8 text-xs" style="color: var(--text-secondary); border-top: 1px solid rgba(115, 115, 115, 0.2);">
+                <div>
+                    <span class="block mb-1">回合</span>
+                    <span class="text-white">03</span>
+                </div>
+                <div>
+                    <span class="block mb-1">道具</span>
+                    <span class="text-white">x2</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="minimal-card mb-8" style="border-left-color: var(--text-secondary);">
+            <div class="flex gap-4">
+                <div class="geo-cross mt-1 flex-shrink-0"></div>
+                <div>
+                    <p class="text-sm leading-relaxed mb-3">
+                        欢迎来到月抛模拟器。在这个极简的几何世界中，
+                        每一个选择都至关重要。
+                    </p>
+                    <p class="text-xs" style="color: var(--text-secondary);">
+                        按任意键继续
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="flex flex-wrap gap-3">
+            <span class="minimal-tag">安全</span>
+            <span class="minimal-tag" style="border-color: var(--accent); color: var(--accent);">警告</span>
+            <span class="minimal-tag">未知</span>
+        </section>
+        
+        <footer class="mt-20 pt-8 flex items-center justify-between text-xs" style="color: var(--text-secondary); border-top: 1px solid rgba(115, 115, 115, 0.2);">
+            <div class="flex items-center gap-2">
+                <div class="geo-square" style="width: 4px; height: 4px;"></div>
+                <span>OWLTREE</span>
+            </div>
+            <span>SYSTEM_READY</span>
+        </footer>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.minimal-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

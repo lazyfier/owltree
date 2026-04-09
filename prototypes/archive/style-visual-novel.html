@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 视觉小说</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --retro-cream: #f5f1e8;
+            --retro-paper: #faf8f3;
+            --retro-ink: #1a1a1a;
+            --burnt-orange: #c75b39;
+            --mustard: #d4a574;
+            --sage-gray: #8b9a8b;
+            --copper: #b87333;
+            --crt-glow: rgba(199, 91, 57, 0.15);
+        }
+        
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background: var(--retro-cream);
+            color: var(--retro-ink);
+            line-height: 1.5;
+            position: relative;
+        }
+        
+        /* 纸张纹理 */
+        .paper-texture {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.01) 2px,
+                    rgba(0,0,0,0.01) 4px
+                ),
+                var(--retro-cream);
+        }
+        
+        /* 网格背景 */
+        .grid-retro {
+            background-image: 
+                linear-gradient(rgba(139, 154, 139, 0.15) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 154, 139, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        /* 弧形彩带 */
+        .ribbon-orange {
+            height: 12px;
+            background: linear-gradient(90deg, transparent 0%, var(--burnt-orange) 20%, var(--burnt-orange) 80%, transparent 100%);
+            border-radius: 6px;
+            opacity: 0.9;
+        }
+        
+        .ribbon-multi {
+            height: 16px;
+            background: linear-gradient(90deg, 
+                transparent 0%,
+                var(--burnt-orange) 15%,
+                var(--mustard) 35%,
+                var(--sage-gray) 55%,
+                var(--mustard) 75%,
+                var(--burnt-orange) 85%,
+                transparent 100%
+            );
+            border-radius: 8px;
+            opacity: 0.85;
+        }
+        
+        /* CRT屏幕效果 */
+        .crt-screen {
+            background: var(--retro-ink);
+            border: 4px solid var(--copper);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 40px rgba(199, 91, 57, 0.3),
+                0 0 0 8px var(--retro-cream),
+                0 0 0 10px var(--copper),
+                0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .crt-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(199, 91, 57, 0.03) 2px,
+                rgba(199, 91, 57, 0.03) 4px
+            );
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .crt-screen::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.4) 100%);
+            pointer-events: none;
+            z-index: 11;
+        }
+        
+        /* CRT文字效果 */
+        .crt-text {
+            color: #fff;
+            text-shadow: 
+                2px 0 rgba(255, 0, 0, 0.4),
+                -2px 0 rgba(0, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+        }
+        
+        /* 粗体标题 */
+        .heavy-title {
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+        }
+        
+        /* 杂志按钮 */
+        .magazine-btn {
+            background: var(--retro-ink);
+            color: white;
+            padding: 16px 32px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: -4px;
+            bottom: -4px;
+            background: var(--burnt-orange);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn:hover {
+            transform: translate(2px, 2px);
+        }
+        
+        .magazine-btn:hover::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .magazine-btn-outline {
+            background: transparent;
+            color: var(--retro-ink);
+            border: 3px solid var(--retro-ink);
+        }
+        
+        .magazine-btn-outline::before {
+            background: var(--mustard);
+        }
+        
+        /* 杂志卡片 */
+        .magazine-card {
+            background: var(--retro-paper);
+            border: 2px solid var(--retro-ink);
+            padding: 32px;
+            position: relative;
+        }
+        
+        .magazine-card::before {
+            content: '';
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: -8px;
+            bottom: -8px;
+            background: var(--mustard);
+            z-index: -1;
+        }
+        
+        /* 期号标签 */
+        .issue-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            background: var(--burnt-orange);
+            color: white;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 0.2em;
+        }
+        
+        /* 分隔线 */
+        .divider-thick {
+            height: 3px;
+            background: var(--retro-ink);
+        }
+        
+        .divider-accent {
+            height: 2px;
+            background: var(--burnt-orange);
+            width: 80px;
+        }
+        
+        /* 进度条 */
+        .retro-progress {
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border: 1px solid var(--retro-ink);
+            padding: 2px;
+        }
+        
+        .retro-progress-fill {
+            height: 100%;
+            background: var(--burnt-orange);
+        }
+        
+        /* 标签 */
+        .retro-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            border: 1px solid var(--retro-ink);
+            background: transparent;
+        }
+        
+        /* 设备装饰 */
+        .device-frame {
+            border: 3px solid var(--copper);
+            background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 
+                inset 0 2px 0 rgba(255,255,255,0.1),
+                0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .device-button {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--burnt-orange);
+            box-shadow: 
+                inset 0 -2px 4px rgba(0,0,0,0.3),
+                0 2px 4px rgba(0,0,0,0.3);
+            display: inline-block;
+            margin: 4px;
+        }
+        
+        /* 波形动画 */
+        @keyframes waveform {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        
+        .wave-bar {
+            display: inline-block;
+            width: 4px;
+            background: var(--burnt-orange);
+            margin: 0 2px;
+            animation: waveform 1s ease-in-out infinite;
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--retro-cream);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--burnt-orange);
+            border: 2px solid var(--retro-cream);
+        }
+    </style>
+</head>
+<body class="min-h-screen paper-texture grid-retro">
+    <div class="container mx-auto px-6 py-8 max-w-5xl">
+        
+        <!-- 顶部杂志封面式Header -->
+        <header class="mb-12">
+            <div class="flex justify-between items-start mb-6">
+                <div class="issue-badge">VOL. 01 — 2024</div>
+                <div class="text-right">
+                    <p class="text-xs tracking-widest" style="color: var(--sage-gray);">DIGITAL MAGAZINE</p>
+                    <p class="text-sm font-bold">RETRO-FUTURISM</p>
+                </div>
+            </div>
+            
+            <div class="divider-thick mb-6"></div>
+            
+            <div class="flex flex-col md:flex-row items-end gap-8">
+                <div class="flex-1">
+                    <h1 class="heavy-title text-6xl md:text-7xl mb-4">
+                        视觉<br>
+                        <span style="color: var(--burnt-orange);">小说</span>
+                    </h1>
+                    <div class="divider-accent mb-4"></div>
+                    <p class="text-lg tracking-wide" style="color: var(--sage-gray);">
+                        Visual Novel Interface System
+                    </p>
+                </div>
+                <div class="md:text-right">
+                    <p class="text-sm leading-relaxed max-w-xs" style="color: #666;">
+                        复古未来主义美学与数字叙事的完美结合。每一个细节都诉说着时代的交错。
+                    </p>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 弧形彩带 -->
+        <div class="ribbon-multi mb-12"></div>
+        
+        <!-- CRT屏幕主区域 -->
+        <section class="mb-12">
+            <div class="device-frame mb-4">
+                <div class="flex items-center gap-2 mb-4">
+                    <span class="device-button"></span>
+                    <span class="device-button" style="background: var(--mustard);"></span>
+                    <span class="device-button" style="background: var(--sage-gray);"></span>
+                    <div class="flex-1 text-center">
+                        <div class="flex justify-center gap-1 h-6 items-end">
+                            <span class="wave-bar" style="height: 60%; animation-delay: 0s;"></span>
+                            <span class="wave-bar" style="height: 80%; animation-delay: 0.1s;"></span>
+                            <span class="wave-bar" style="height: 40%; animation-delay: 0.2s;"></span>
+                            <span class="wave-bar" style="height: 90%; animation-delay: 0.3s;"></span>
+                            <span class="wave-bar" style="height: 50%; animation-delay: 0.4s;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="crt-screen p-8 md:p-12">
+                <div class="relative z-20">
+                    <p class="text-xs mb-4 tracking-widest" style="color: var(--mustard);">SYSTEM MESSAGE</p>
+                    <h2 class="crt-text text-3xl md:text-4xl font-bold mb-6">
+                        欢迎来到<br>Owltree
+                    </h2>
+                    <p class="text-sm leading-relaxed mb-6" style="color: rgba(255,255,255,0.8);">
+                        这是一个关于选择、关于叙事、关于复古未来主义美学的数字体验。<br>
+                        每一个界面都是一个故事，每一次交互都是一次穿越。
+                    </p>
+                    <p class="text-xs" style="color: var(--burnt-orange);">
+                        ▶ PRESS ANY KEY TO CONTINUE
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 导航按钮 -->
+        <nav class="flex flex-wrap gap-4 mb-12">
+            <button type="button" class="magazine-btn">开始游戏</button>
+            <button type="button" class="magazine-btn magazine-btn-outline">继续</button>
+            <button type="button" class="magazine-btn magazine-btn-outline">设置</button>
+        </nav>
+        
+        <!-- 内容卡片区 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+            <div class="magazine-card">
+                <div class="flex items-center gap-3 mb-4">
+                    <span class="retro-tag">Status</span>
+                    <div class="flex-1 h-px bg-black/20;"></div>
+                </div>
+                
+                <div class="space-y-5">
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="font-bold">HP</span>
+                            <span>75/100</span>
+                        </div>
+                        <div class="retro-progress">
+                            <div class="retro-progress-fill" style="width: 75%;"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-sm mb-2">
+                            <span class="font-bold">STRESS</span>
+                            <span>45/100</span>
+                        </div>
+                        <div class="retro-progress">
+                            <div class="retro-progress-fill" style="width: 45%; opacity: 0.7;"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="divider-thick mt-6 mb-4"></div>
+                
+                <div class="flex gap-8 text-sm">
+                    <div>
+                        <span class="block text-xs mb-1" style="color: var(--sage-gray);">TURN</span>
+                        <span class="font-bold text-xl">03</span>
+                    </div>
+                    <div>
+                        <span class="block text-xs mb-1" style="color: var(--sage-gray);">ITEMS</span>
+                        <span class="font-bold text-xl">×2</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="space-y-4">
+                <div class="magazine-card" style="padding: 24px;">
+                    <h3 class="font-bold text-lg mb-2">游戏</h3>
+                    <p class="text-sm" style="color: #666;">实验性互动体验</p>
+                    <div class="ribbon-orange mt-4"></div>
+                </div>
+                
+                <div class="magazine-card" style="padding: 24px;">
+                    <h3 class="font-bold text-lg mb-2">笔记</h3>
+                    <p class="text-sm" style="color: #666;">文章与播客</p>
+                    <div class="ribbon-orange mt-4; opacity: 0.7;"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 底部标签 -->
+        <section class="flex flex-wrap gap-3 mb-12">
+            <span class="retro-tag">SAFE</span>
+            <span class="retro-tag" style="background: var(--burnt-orange); color: white; border-color: var(--burnt-orange);">ALERT</span>
+            <span class="retro-tag">UNKNOWN</span>
+        </section>
+        
+        <!-- 底部 -->
+        <footer class="pt-8" style="border-top: 3px solid var(--retro-ink);">
+            <div class="flex justify-between items-center">
+                <div>
+                    <p class="font-bold text-lg">Owltree</p>
+                    <p class="text-xs" style="color: var(--sage-gray);">© 2024 All Rights Reserved</p>
+                </div>
+                <div class="text-right">
+                    <p class="text-xs tracking-widest" style="color: var(--burnt-orange);">SYSTEM READY</p>
+                    <p class="text-xs" style="color: var(--sage-gray);">RETRO-FUTURISM EDITION</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

@@ -40,7 +40,9 @@ export interface InfectionData {
 }
 
 export interface TurnRecord {
-  partner: string
+  avatar: string
+  tags: PartnerTag[]
+  diseases: DiseaseKey[]
   action: string
   outcomeLabel: string
   outcomeClass: string

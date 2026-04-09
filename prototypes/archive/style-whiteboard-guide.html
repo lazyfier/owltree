@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 白板看板</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --board-bg: #f5f5f0;
+            --board-shadow: #e0e0d8;
+            --ink-black: #2d2d2d;
+            --marker-red: #e74c3c;
+            --marker-blue: #3498db;
+            --marker-green: #27ae60;
+            --marker-orange: #f39c12;
+        }
+        
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Kalam', 'Patrick Hand', cursive;
+            background: var(--board-bg);
+            color: var(--ink-black);
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        /* 白板纹理 */
+        .board-texture {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 40px,
+                    rgba(0,0,0,0.015) 40px,
+                    rgba(0,0,0,0.015) 41px
+                ),
+                var(--board-bg);
+        }
+        
+        /* 手绘边框 */
+        .hand-border {
+            border: 3px solid var(--ink-black);
+            border-radius: 8px 12px 10px 14px;
+            box-shadow: 3px 3px 0 rgba(0,0,0,0.1);
+        }
+        
+        .hand-border-red {
+            border-color: var(--marker-red);
+            border-width: 3px;
+            border-radius: 12px 8px 14px 10px;
+        }
+        
+        .hand-border-blue {
+            border-color: var(--marker-blue);
+            border-width: 2px;
+            border-radius: 10px 14px 8px 12px;
+        }
+        
+        /* 手绘按钮 */
+        .sketch-btn {
+            background: white;
+            border: 2px solid var(--ink-black);
+            padding: 12px 24px;
+            font-family: inherit;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px 10px 6px 12px;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .sketch-btn:hover {
+            transform: rotate(-1deg) scale(1.02);
+            box-shadow: 4px 4px 0 rgba(0,0,0,0.1);
+        }
+        
+        .sketch-btn-primary {
+            background: var(--marker-green);
+            color: white;
+            border-color: var(--marker-green);
+        }
+        
+        /* 圈选效果 */
+        .circle-highlight {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .circle-highlight::after {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: -12px;
+            right: -12px;
+            bottom: -8px;
+            border: 3px solid var(--marker-red);
+            border-radius: 50%;
+            transform: rotate(-3deg);
+            opacity: 0.8;
+        }
+        
+        /* 箭头 */
+        .arrow-right::after {
+            content: '→';
+            margin-left: 8px;
+            color: var(--marker-blue);
+            font-weight: bold;
+        }
+        
+        .arrow-down::after {
+            content: '↓';
+            display: block;
+            text-align: center;
+            color: var(--marker-green);
+            font-size: 24px;
+            margin: 8px 0;
+        }
+        
+        /* 编号标记 */
+        .number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            background: var(--marker-orange);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 18px;
+            border: 2px solid var(--ink-black);
+        }
+        
+        /* 手写卡片 */
+        .sketch-card {
+            background: white;
+            border: 2px solid var(--ink-black);
+            padding: 20px;
+            border-radius: 10px 8px 12px 6px;
+            position: relative;
+        }
+        
+        .sketch-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 20px;
+            width: 40px;
+            height: 4px;
+            background: var(--marker-blue);
+            border-radius: 2px;
+        }
+        
+        /* 便利贴 */
+        .sticky-note {
+            background: #fef3c7;
+            padding: 16px;
+            box-shadow: 2px 3px 8px rgba(0,0,0,0.15);
+            transform: rotate(-2deg);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        
+        .sticky-note-blue {
+            background: #dbeafe;
+            transform: rotate(1deg);
+        }
+        
+        .sticky-note-green {
+            background: #d1fae5;
+            transform: rotate(-1deg);
+        }
+        
+        /* 下划线 */
+        .underline-hand {
+            border-bottom: 3px solid var(--marker-red);
+            border-radius: 0 0 50% 50%;
+            padding-bottom: 2px;
+        }
+        
+        /* 涂鸦装饰 */
+        .doodle-star::before {
+            content: '★';
+            color: var(--marker-orange);
+            font-size: 20px;
+        }
+        
+        .doodle-check::before {
+            content: '✓';
+            color: var(--marker-green);
+            font-weight: bold;
+        }
+        
+        /* 连接线 */
+        .connector-line {
+            width: 2px;
+            background: repeating-linear-gradient(
+                to bottom,
+                var(--marker-blue) 0px,
+                var(--marker-blue) 8px,
+                transparent 8px,
+                transparent 12px
+            );
+            margin: 0 auto;
+        }
+        
+        /* 擦除痕迹效果 */
+        .smudge {
+            position: absolute;
+            width: 60px;
+            height: 30px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.03) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body class="min-h-screen board-texture">
+    <div class="container mx-auto px-4 py-8 max-w-5xl relative">
+        
+        <!-- 擦除痕迹装饰 -->
+        <div class="smudge" style="top: 60px; left: 10%;"></div>
+        <div class="smudge" style="top: 200px; right: 15%; width: 80px;"></div>
+        
+        <!-- 标题区 -->
+        <header class="mb-12">
+            <div class="flex items-center gap-4 mb-4">
+                <span class="text-3xl">🦉</span>
+                <div class="h-1 flex-1 bg-gray-300 rounded" style="border-top: 2px dashed var(--ink-black); opacity: 0.3;"></div>
+            </div>
+            <h1 class="text-5xl font-bold mb-3" style="transform: rotate(-1deg);">
+                <span class="circle-highlight">Owltree</span>
+            </h1>
+            <p class="text-xl text-gray-600 ml-4">
+                看板导航页 <span style="color: var(--marker-blue);">// 手绘讲解版</span>
+            </p>
+            <div class="arrow-down"></div>
+        </header>
+        
+        <!-- 核心概念区 -->
+        <section class="mb-12 hand-border-red p-6 bg-white">
+            <div class="flex items-center gap-3 mb-4">
+                <span class="doodle-star"></span>
+                <span class="text-lg font-bold underline-hand">核心设计理念</span>
+            </div>
+            <p class="text-lg leading-relaxed">
+                不是换一层颜色，而是让<span style="color: var(--marker-red); font-weight: bold;">整个入口页</span> 
+                像 <span style="color: var(--marker-blue);">视觉小说主菜单</span> 那样有 
+                <span style="background: rgba(39, 174, 96, 0.2); padding: 2px 6px;">章节感</span>、
+                <span style="background: rgba(243, 156, 18, 0.2); padding: 2px 6px;">路线感</span>、
+                <span style="background: rgba(231, 76, 60, 0.2); padding: 2px 6px;">界面叙事感</span>。
+            </p>
+        </section>
+        
+        <!-- 导航模块区 - 1-4编号 -->
+        <section class="mb-12">
+            <div class="flex items-center gap-3 mb-6">
+                <span style="color: var(--marker-green); font-size: 24px;">①→④</span>
+                <span class="text-2xl font-bold">主要入口</span>
+                <div class="flex-1 h-0.5 bg-gray-300 ml-4" style="border-top: 2px dotted var(--ink-black); opacity: 0.4;"></div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- 模块1 -->
+                <div class="sketch-card">
+                    <div class="flex items-start gap-4">
+                        <span class="number-badge">1</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2 arrow-right">游戏</h3>
+                            <p class="text-gray-600 mb-3">实验性互动体验</p>
+                            <div class="sticky-note inline-block">
+                                <span class="text-sm">包含月抛模拟器 🎮</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 模块2 -->
+                <div class="sketch-card">
+                    <div class="flex items-start gap-4">
+                        <span class="number-badge" style="background: var(--marker-blue);">2</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2 arrow-right">笔记</h3>
+                            <p class="text-gray-600 mb-3">文章与播客</p>
+                            <div class="sticky-note sticky-note-blue inline-block">
+                                <span class="text-sm">思考的痕迹 📝</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 模块3 -->
+                <div class="sketch-card">
+                    <div class="flex items-start gap-4">
+                        <span class="number-badge" style="background: var(--marker-green);">3</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2 arrow-right">工具</h3>
+                            <p class="text-gray-600 mb-3">实用工具集</p>
+                            <div class="sticky-note sticky-note-green inline-block">
+                                <span class="text-sm">日常助手 🛠</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 模块4 -->
+                <div class="sketch-card">
+                    <div class="flex items-start gap-4">
+                        <span class="number-badge" style="background: var(--marker-red);">4</span>
+                        <div class="flex-1">
+                            <h3 class="text-xl font-bold mb-2 arrow-right">趋势</h3>
+                            <p class="text-gray-600 mb-3">每日热点追踪</p>
+                            <div class="sticky-note inline-block" style="background: #fee2e2;">
+                                <span class="text-sm">热点资讯 📈</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 连接线 -->
+        <div class="connector-line h-16 mb-8"></div>
+        
+        <!-- 状态面板 -->
+        <section class="mb-12 hand-border-blue p-6 bg-white">
+            <div class="flex items-center gap-3 mb-6">
+                <span style="color: var(--marker-blue); font-size: 20px;">📊</span>
+                <span class="text-xl font-bold">当前状态</span>
+            </div>
+            
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span>HP</span>
+                        <span style="color: var(--marker-green);">75/100</span>
+                    </div>
+                    <div class="h-4 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-200">
+                        <div class="h-full rounded-full" style="width: 75%; background: var(--marker-green);"></div>
+                    </div>
+                </div>
+                <div>
+                    <div class="flex justify-between mb-2">
+                        <span>STRESS</span>
+                        <span style="color: var(--marker-orange);">45/100</span>
+                    </div>
+                    <div class="h-4 bg-gray-100 rounded-full overflow-hidden border-2 border-gray-200">
+                        <div class="h-full rounded-full" style="width: 45%; background: var(--marker-orange);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 flex gap-8" style="border-top: 2px dashed rgba(0,0,0,0.1);">
+                <div>
+                    <span class="text-sm text-gray-500">回合</span>
+                    <p class="text-xl font-bold">03</p>
+                </div>
+                <div>
+                    <span class="text-sm text-gray-500">道具</span>
+                    <p class="text-xl font-bold">×2</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 按钮区 -->
+        <nav class="flex flex-wrap gap-4 justify-center">
+            <button type="button" class="sketch-btn sketch-btn-primary">开始探索 ✓</button>
+            <button type="button" class="sketch-btn">继续 →</button>
+            <button type="button" class="sketch-btn">设置 ⚙</button>
+        </nav>
+        
+        <!-- 底部注释 -->
+        <footer class="mt-16 pt-8 text-center" style="border-top: 3px solid rgba(0,0,0,0.1);">
+            <p class="text-gray-400 text-sm">
+                (白板风格设计 // 手绘讲解风)
+            </p>
+            <div class="flex justify-center gap-2 mt-2">
+                <span style="color: var(--marker-red);">●</span>
+                <span style="color: var(--marker-blue);">●</span>
+                <span style="color: var(--marker-green);">●</span>
+                <span style="color: var(--marker-orange);">●</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

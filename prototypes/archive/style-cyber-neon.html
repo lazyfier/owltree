@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 霓虹赛博像素</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Noto+Sans+SC:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cyber-pink: #ff006e;
+            --cyber-cyan: #00f5ff;
+            --cyber-purple: #8338ec;
+            --cyber-yellow: #ffbe0b;
+            --cyber-dark: #0a0a0f;
+            --cyber-darker: #050508;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'VT323', 'Noto Sans SC', monospace;
+            background: var(--cyber-darker);
+            color: var(--cyber-cyan);
+            font-size: 18px;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* 霓虹扫描线 */
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0, 0, 0, 0.15),
+                rgba(0, 0, 0, 0.15) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            z-index: 9999;
+        }
+        
+        /* 网格背景动画 */
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(90deg, rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            animation: gridMove 20s linear infinite;
+            z-index: -1;
+        }
+        
+        @keyframes gridMove {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(40px); }
+        }
+        
+        /* 霓虹发光效果 */
+        .neon-text {
+            text-shadow: 
+                0 0 5px var(--cyber-cyan),
+                0 0 10px var(--cyber-cyan),
+                0 0 20px var(--cyber-cyan),
+                0 0 40px var(--cyber-cyan);
+        }
+        
+        .neon-text-pink {
+            color: var(--cyber-pink);
+            text-shadow: 
+                0 0 5px var(--cyber-pink),
+                0 0 10px var(--cyber-pink),
+                0 0 20px var(--cyber-pink);
+        }
+        
+        .neon-border {
+            border: 2px solid var(--cyber-cyan);
+            box-shadow: 
+                0 0 5px var(--cyber-cyan),
+                inset 0 0 5px rgba(0, 245, 255, 0.1);
+        }
+        
+        .neon-border-pink {
+            border: 2px solid var(--cyber-pink);
+            box-shadow: 
+                0 0 5px var(--cyber-pink),
+                inset 0 0 5px rgba(255, 0, 110, 0.1);
+        }
+        
+        /* 赛博按钮 */
+        .cyber-btn {
+            background: transparent;
+            border: 2px solid var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            padding: 12px 32px;
+            font-family: inherit;
+            font-size: 20px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            transition: all 0.3s;
+            clip-path: polygon(
+                10px 0, 100% 0, 
+                100% calc(100% - 10px), calc(100% - 10px) 100%, 
+                0 100%, 0 10px
+            );
+        }
+        
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(0, 245, 255, 0.3),
+                transparent
+            );
+            transition: left 0.5s;
+        }
+        
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+        
+        .cyber-btn:hover {
+            background: rgba(0, 245, 255, 0.1);
+            box-shadow: 
+                0 0 20px var(--cyber-cyan),
+                inset 0 0 20px rgba(0, 245, 255, 0.1);
+        }
+        
+        .cyber-btn-pink {
+            border-color: var(--cyber-pink);
+            color: var(--cyber-pink);
+        }
+        
+        .cyber-btn-pink:hover {
+            background: rgba(255, 0, 110, 0.1);
+            box-shadow: 
+                0 0 20px var(--cyber-pink),
+                inset 0 0 20px rgba(255, 0, 110, 0.1);
+        }
+        
+        /* 赛博面板 */
+        .cyber-panel {
+            background: rgba(10, 10, 15, 0.9);
+            border: 1px solid var(--cyber-cyan);
+            position: relative;
+            backdrop-filter: blur(10px);
+        }
+        
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            right: -1px;
+            bottom: -1px;
+            background: linear-gradient(45deg, var(--cyber-cyan), transparent, var(--cyber-pink));
+            z-index: -1;
+            opacity: 0.3;
+        }
+        
+        .cyber-panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--cyber-cyan), transparent);
+            animation: scan 3s linear infinite;
+        }
+        
+        @keyframes scan {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+        
+        /* 角标装饰 */
+        .cyber-corner {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--cyber-cyan);
+        }
+        
+        .cyber-corner-tl { top: -2px; left: -2px; border-right: none; border-bottom: none; }
+        .cyber-corner-tr { top: -2px; right: -2px; border-left: none; border-bottom: none; }
+        .cyber-corner-bl { bottom: -2px; left: -2px; border-right: none; border-top: none; }
+        .cyber-corner-br { bottom: -2px; right: -2px; border-left: none; border-top: none; }
+        
+        /* 进度条 */
+        .cyber-progress {
+            height: 24px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--cyber-cyan);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--cyber-purple), var(--cyber-cyan));
+            position: relative;
+            animation: progressPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes progressPulse {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.3); }
+        }
+        
+        .cyber-progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--cyber-cyan);
+            box-shadow: 0 0 10px var(--cyber-cyan);
+        }
+        
+        /* 故障文字效果 */
+        .glitch {
+            position: relative;
+            animation: glitch-skew 1s infinite linear alternate-reverse;
+        }
+        
+        .glitch::before,
+        .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch::before {
+            animation: glitch-anim-1 2s infinite linear alternate-reverse;
+            color: var(--cyber-pink);
+            z-index: -1;
+        }
+        
+        .glitch::after {
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+            color: var(--cyber-cyan);
+            z-index: -2;
+        }
+        
+        @keyframes glitch-anim-1 {
+            0% { clip-path: inset(20% 0 80% 0); transform: translate(-2px, -2px); }
+            20% { clip-path: inset(60% 0 10% 0); transform: translate(2px, 2px); }
+            40% { clip-path: inset(40% 0 50% 0); transform: translate(-2px, 2px); }
+            60% { clip-path: inset(80% 0 5% 0); transform: translate(2px, -2px); }
+            80% { clip-path: inset(10% 0 70% 0); transform: translate(-2px, 2px); }
+            100% { clip-path: inset(30% 0 50% 0); transform: translate(2px, -2px); }
+        }
+        
+        @keyframes glitch-anim-2 {
+            0% { clip-path: inset(10% 0 60% 0); transform: translate(2px, 2px); }
+            20% { clip-path: inset(30% 0 20% 0); transform: translate(-2px, -2px); }
+            40% { clip-path: inset(70% 0 10% 0); transform: translate(2px, -2px); }
+            60% { clip-path: inset(20% 0 50% 0); transform: translate(-2px, 2px); }
+            80% { clip-path: inset(50% 0 30% 0); transform: translate(2px, -2px); }
+            100% { clip-path: inset(5% 0 80% 0); transform: translate(-2px, 2px); }
+        }
+        
+        /* 标签 */
+        .cyber-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border: 1px solid;
+            font-size: 14px;
+            letter-spacing: 1px;
+            position: relative;
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
+        .cyber-tag::before {
+            content: '[';
+            margin-right: 4px;
+        }
+        
+        .cyber-tag::after {
+            content: ']';
+            margin-left: 4px;
+        }
+        
+        .cyber-tag-cyan {
+            border-color: var(--cyber-cyan);
+            color: var(--cyber-cyan);
+            text-shadow: 0 0 5px var(--cyber-cyan);
+        }
+        
+        .cyber-tag-pink {
+            border-color: var(--cyber-pink);
+            color: var(--cyber-pink);
+            text-shadow: 0 0 5px var(--cyber-pink);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--cyber-dark);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--cyber-cyan);
+            box-shadow: 0 0 5px var(--cyber-cyan);
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="cyber-grid"></div>
+    <div class="scanlines"></div>
+    
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+        <!-- 标题 -->
+        <header class="text-center mb-12">
+            <h1 class="text-5xl md:text-7xl mb-4 neon-text glitch" data-text="OWLTREE">
+                OWLTREE
+            </h1>
+            <p class="text-xl neon-text-pink tracking-widest">
+                // NEON_CYBER_PIXEL v2.0.77
+            </p>
+            <div class="mt-4 text-sm opacity-60">
+                &lt; SYSTEM_STATUS: ONLINE &gt;
+            </div>
+        </header>
+        
+        <!-- 主菜单 -->
+        <nav class="flex flex-wrap justify-center gap-6 mb-12">
+            <button class="cyber-btn">初始化连接</button>
+            <button class="cyber-btn">恢复会话</button>
+            <button class="cyber-btn cyber-btn-pink">系统设置</button>
+        </nav>
+        
+        <!-- 状态面板 -->
+        <section class="cyber-panel p-6 mb-8">
+            <div class="cyber-corner cyber-corner-tl"></div>
+            <div class="cyber-corner cyber-corner-tr"></div>
+            <div class="cyber-corner cyber-corner-bl"></div>
+            <div class="cyber-corner cyber-corner-br"></div>
+            
+            <h2 class="text-2xl mb-6 neon-text border-b border-cyan-500/30 pb-2">
+                &gt; 玩家数据节点
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <div class="flex justify-between mb-2 text-sm">
+                        <span class="neon-text">生命值 HP</span>
+                        <span class="neon-text-pink">75/100</span>
+                    </div>
+                    <div class="cyber-progress">
+                        <div class="cyber-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between mb-2 text-sm">
+                        <span class="neon-text">焦虑值 STRESS</span>
+                        <span class="neon-text-pink">45/100</span>
+                    </div>
+                    <div class="cyber-progress">
+                        <div class="cyber-progress-fill" style="width: 45%; background: linear-gradient(90deg, #ff006e, #8338ec);"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t border-cyan-500/20 grid grid-cols-2 gap-4 text-sm">
+                <div>
+                    <span class="opacity-60">回合:</span>
+                    <span class="neon-text ml-2">ROUND_03</span>
+                </div>
+                <div>
+                    <span class="opacity-60">检测试剂:</span>
+                    <span class="neon-text ml-2">x2</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 终端对话框 -->
+        <section class="cyber-panel p-6 mb-8 neon-border">
+            <div class="flex items-start gap-4">
+                <span class="text-2xl neon-text-pink">&gt;</span>
+                <div>
+                    <p class="neon-text mb-2">// 系统消息</p>
+                    <p class="leading-relaxed opacity-90">
+                        欢迎来到月抛模拟器。在这个霓虹闪耀的数字世界中，<br>
+                        每一个选择都将被记录。请保持警惕，注意安全协议。
+                    </p>
+                    <p class="mt-4 text-sm neon-text-pink animate-pulse">
+                        [等待用户输入...]
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 标签展示区 -->
+        <section class="cyber-panel p-6">
+            <div class="cyber-corner cyber-corner-tl" style="border-color: var(--cyber-pink);"></div>
+            <div class="cyber-corner cyber-corner-br" style="border-color: var(--cyber-pink);"></div>
+            
+            <h3 class="text-xl mb-4 neon-text-pink">&gt; 可用标签</h3>
+            <div class="flex flex-wrap gap-4">
+                <span class="cyber-tag cyber-tag-cyan">安全协议</span>
+                <span class="cyber-tag cyber-tag-pink">高危警告</span>
+                <span class="cyber-tag cyber-tag-cyan">数据加密</span>
+                <span class="cyber-tag" style="border-color: var(--cyber-yellow); color: var(--cyber-yellow); text-shadow: 0 0 5px var(--cyber-yellow);">
+                    未验证
+                </span>
+            </div>
+        </section>
+        
+        <!-- 底部 -->
+        <footer class="text-center mt-12 text-sm opacity-60">
+            <p class="neon-text">OWLTREE CORP // 2077</p>
+            <p class="mt-2">// CONNECTION_SECURED</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 随机故障效果
+        setInterval(() => {
+            const glitch = document.querySelector('.glitch');
+            if (glitch && Math.random() > 0.9) {
+                glitch.style.animation = 'none';
+                setTimeout(() => {
+                    glitch.style.animation = '';
+                }, 100);
+            }
+        }, 2000);
+        
+        // 鼠标跟随光效
+        document.addEventListener('mousemove', (e) => {
+            const grid = document.querySelector('.cyber-grid');
+            const x = (e.clientX / window.innerWidth - 0.5) * 20;
+            const y = (e.clientY / window.innerHeight - 0.5) * 20;
+            grid.style.transform = `perspective(500px) rotateX(${60 + y}deg) translateY(${x}px)`;
+        });
+    </script>
+</body>
+</html>

@@ -5,9 +5,17 @@ interface PartnerCardProps {
   partner: Partner | null
   isPanic: boolean
   flirtLine?: string
+  showDangerBadge?: boolean
 }
 
-export function PartnerCard({ partner, isPanic, flirtLine }: PartnerCardProps) {
+function getTagIcon(colorClass: string, constraint?: string): string {
+  if (constraint) return '🚫'
+  if (colorClass.includes('red')) return '⚠️'
+  if (colorClass.includes('emerald')) return '🛡️'
+  return '⏺'
+}
+
+export function PartnerCard({ partner, isPanic, flirtLine, showDangerBadge }: PartnerCardProps) {
   if (!partner) {
     return (
       <div className="glass-card p-6 text-center">
@@ -19,20 +27,20 @@ export function PartnerCard({ partner, isPanic, flirtLine }: PartnerCardProps) {
   return (
     <div className="glass-card p-4 mb-4">
       {/* Avatar and flirt line */}
-      <div className="flex items-center gap-3 mb-3">
-        <span
-          data-testid="partner-avatar"
-          className="text-4xl animate-float"
-        >
-          {partner.avatar}
-        </span>
-        <p className="text-xs text-slate-400 italic flex-1">
-          &ldquo;{flirtLine ?? ''}&rdquo;
-        </p>
+      <div className="text-center mb-3 relative">
+        <div className="w-16 h-16 mx-auto bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center text-3xl shadow-xl border-2 border-slate-600 animate-float mb-2 relative">
+          <span data-testid="partner-avatar">{partner.avatar}</span>
+          {showDangerBadge && (
+            <div className="absolute -right-1 -bottom-1 w-5 h-5 bg-red-500 rounded-full border-2 border-slate-900 flex items-center justify-center text-[9px]">
+              ⚠️
+            </div>
+          )}
+        </div>
+        <p className="text-xs text-slate-400 italic">{`"${flirtLine ?? ''}"`}</p>
       </div>
 
       {/* Tags */}
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap justify-center gap-1.5">
         <AnimatePresence mode="popLayout">
           {partner.tags.map((tag, idx) => {
             const isHidden = !tag.revealed
@@ -53,9 +61,11 @@ export function PartnerCard({ partner, isPanic, flirtLine }: PartnerCardProps) {
                     : `px-2.5 py-1 rounded-lg text-xs font-bold text-white ${tag.colorClass} border border-white/10`
                 }
               >
-                {displayHidden ? '❓ 隐藏信息' : (
+                {displayHidden ? (
+                  isPanic ? <span className="blur-sm">???</span> : '❓ 隐藏信息'
+                ) : (
                   <>
-                    {tag.constraint ? '🚫 ' : ''}
+                    <span className="opacity-75">{getTagIcon(tag.colorClass, tag.constraint)}</span>{' '}
                     {tag.text}
                   </>
                 )}

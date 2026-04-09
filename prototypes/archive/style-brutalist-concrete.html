@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 粗野主义</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --concrete: #e8e6e1;
+            --concrete-dark: #c4c2bc;
+            --brutalist-ink: #0a0a0a;
+            --brutalist-accent: #ff3300;
+            --weathered: #8b8680;
+        }
+        
+        * {
+            image-rendering: pixelated;
+        }
+        
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background: var(--concrete);
+            color: var(--brutalist-ink);
+        }
+        
+        .font-mono { font-family: 'Space Mono', monospace; }
+        
+        /* 粗野边框 */
+        .brutalist-border {
+            border: 3px solid var(--brutalist-ink);
+        }
+        
+        .brutalist-border-thick {
+            border: 4px solid var(--brutalist-ink);
+        }
+        
+        /* 混凝土纹理 */
+        .concrete-texture {
+            background: 
+                repeating-linear-gradient(
+                    0deg,
+                    transparent,
+                    transparent 2px,
+                    rgba(0,0,0,0.03) 2px,
+                    rgba(0,0,0,0.03) 4px
+                ),
+                var(--concrete);
+        }
+        
+        /* 粗野按钮 */
+        .brutalist-btn {
+            background: var(--brutalist-ink);
+            color: var(--concrete);
+            padding: 16px 32px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 6px 6px 0 var(--brutalist-accent);
+        }
+        
+        .brutalist-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0 var(--brutalist-accent);
+        }
+        
+        .brutalist-btn:active {
+            transform: translate(6px, 6px);
+            box-shadow: 0 0 0 var(--brutalist-accent);
+        }
+        
+        .brutalist-btn-outline {
+            background: transparent;
+            color: var(--brutalist-ink);
+            border: 3px solid var(--brutalist-ink);
+            box-shadow: 6px 6px 0 var(--brutalist-ink);
+        }
+        
+        /* 粗野卡片 */
+        .brutalist-card {
+            background: white;
+            border: 3px solid var(--brutalist-ink);
+            padding: 28px;
+        }
+        
+        /* 工业标签 */
+        .brutalist-tag {
+            display: inline-block;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 2px solid var(--brutalist-ink);
+            background: var(--concrete-dark);
+        }
+        
+        /* 粗犷进度条 */
+        .brutalist-progress {
+            height: 24px;
+            background: var(--concrete-dark);
+            border: 2px solid var(--brutalist-ink);
+            padding: 2px;
+        }
+        
+        .brutalist-progress-fill {
+            height: 100%;
+            background: var(--brutalist-accent);
+        }
+        
+        /* 铆钉装饰 */
+        .rivet {
+            width: 12px;
+            height: 12px;
+            background: var(--weathered);
+            border: 2px solid var(--brutalist-ink);
+            border-radius: 50%;
+        }
+        
+        /* 警示条纹 */
+        .hazard-stripe {
+            background: repeating-linear-gradient(
+                45deg,
+                var(--brutalist-accent),
+                var(--brutalist-accent) 10px,
+                var(--brutalist-ink) 10px,
+                var(--brutalist-ink) 20px
+            );
+            height: 8px;
+        }
+    </style>
+</head>
+<body class="min-h-screen concrete-texture">
+    <div class="container mx-auto px-4 py-8 max-w-3xl">
+        
+        <div class="hazard-stripe mb-8"></div>
+        
+        <header class="brutalist-card mb-8 relative">
+            <div class="absolute -top-3 -left-3 rivet"></div>
+            <div class="absolute -top-3 -right-3 rivet"></div>
+            <div class="absolute -bottom-3 -left-3 rivet"></div>
+            <div class="absolute -bottom-3 -right-3 rivet"></div>
+            
+            <div class="flex items-center justify-between mb-6">
+                <span class="font-mono text-xs">SYS.VER.2.0</span>
+                <div class="w-3 h-3 bg-[#ff3300]"></div>
+            </div>
+            
+            <h1 class="text-5xl font-bold uppercase tracking-tighter mb-2">OWLTREE</h1>
+            <p class="font-mono text-sm">BRUTALIST CONCRETE INTERFACE</p>
+        </header>
+        
+        <nav class="flex flex-col gap-3 mb-8">
+            <button class="brutalist-btn w-full text-left">Initialize</button>
+            <button class="brutalist-btn brutalist-btn-outline w-full text-left">Resume</button>
+            <button class="brutalist-btn brutalist-btn-outline w-full text-left">Configure</button>
+        </nav>
+        
+        <section class="brutalist-card mb-6">
+            <div class="flex items-center gap-4 mb-6 border-b-2 border-black pb-4">
+                <div class="w-4 h-4 bg-[#ff3300]"></div>
+                <span class="font-mono text-sm uppercase">System Status</span>
+            </div>
+            
+            <div class="space-y-6">
+                <div>
+                    <div class="flex justify-between font-mono text-sm mb-2">
+                        <span>HP</span>
+                        <span>75/100</span>
+                    </div>
+                    <div class="brutalist-progress">
+                        <div class="brutalist-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between font-mono text-sm mb-2">
+                        <span>STRESS</span>
+                        <span>45/100</span>
+                    </div>
+                    <div class="brutalist-progress">
+                        <div class="brutalist-progress-fill" style="width: 45%; background: #0a0a0a;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 border-t-2 border-black grid grid-cols-2 gap-4 font-mono text-sm">
+                <div>
+                    <span class="block text-xs mb-1 opacity-60">TURN</span>
+                    <span class="text-xl font-bold">03</span>
+                </div>
+                <div>
+                    <span class="block text-xs mb-1 opacity-60">ITEMS</span>
+                    <span class="text-xl font-bold">×2</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="brutalist-card" style="background: #0a0a0a; color: #e8e6e1;">
+            <p class="text-lg leading-relaxed mb-4">
+                WELCOME TO THE SIMULATION.
+            </p>
+            <p class="text-sm leading-relaxed opacity-80">
+                This is a brutalist interface. Raw, unpolished, functional. Every element serves a purpose. No decoration without meaning.
+            </p>
+        </section>
+        
+        <section class="mt-6 flex flex-wrap gap-2">
+            <span class="brutalist-tag">SAFE</span>
+            <span class="brutalist-tag" style="background: #ff3300; color: white;">ALERT</span>
+            <span class="brutalist-tag">UNKNOWN</span>
+        </section>
+        
+        <footer class="mt-8">
+            <div class="hazard-stripe mb-4"></div>
+            <div class="flex justify-between items-center font-mono text-xs">
+                <span>OWLTREE_INDUSTRIAL</span>
+                <span>OPERATIONAL</span>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

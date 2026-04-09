@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 视觉小说</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --retro-cream: #f5f1e8;
+            --retro-paper: #faf8f3;
+            --retro-ink: #1a1a1a;
+            --burnt-orange: #c75b39;
+            --mustard: #d4a574;
+            --sage-gray: #8b9a8b;
+            --copper: #b87333;
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background: var(--retro-cream);
+            color: var(--retro-ink);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        .paper-texture {
+            background: 
+                repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px),
+                var(--retro-cream);
+        }
+        
+        .crt-screen {
+            background: var(--retro-ink);
+            border: 4px solid var(--copper);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                inset 0 0 40px rgba(199, 91, 57, 0.3),
+                0 0 0 8px var(--retro-cream),
+                0 0 0 10px var(--copper),
+                0 30px 80px rgba(0,0,0,0.4);
+        }
+        
+        .crt-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(199, 91, 57, 0.03) 2px, rgba(199, 91, 57, 0.03) 4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .crt-text {
+            color: #fff;
+            text-shadow: 2px 0 rgba(255, 0, 0, 0.4), -2px 0 rgba(0, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+        }
+        
+        .heavy-title {
+            font-weight: 900;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+        
+        .magazine-btn {
+            background: var(--retro-ink);
+            color: white;
+            padding: 16px 32px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: -4px;
+            bottom: -4px;
+            background: var(--burnt-orange);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn:hover {
+            transform: translate(2px, 2px);
+        }
+        
+        .magazine-btn:hover::before {
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        .magazine-card {
+            background: var(--retro-paper);
+            border: 2px solid var(--retro-ink);
+            padding: 28px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .magazine-card::before {
+            content: '';
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: -6px;
+            bottom: -6px;
+            background: var(--mustard);
+            z-index: -1;
+            transition: all 0.4s;
+        }
+        
+        .magazine-card:hover {
+            transform: translate(-2px, -2px);
+        }
+        
+        .magazine-card:hover::before {
+            top: 8px;
+            left: 8px;
+        }
+        
+        .floating-orb {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.6;
+            filter: blur(40px);
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+        
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
+        
+        .animate-float-delayed {
+            animation: float 8s ease-in-out infinite;
+            animation-delay: -2s;
+        }
+        
+        .wave-bar {
+            display: inline-block;
+            width: 4px;
+            background: var(--burnt-orange);
+            margin: 0 2px;
+            animation: waveform 1s ease-in-out infinite;
+        }
+        
+        @keyframes waveform {
+            0%, 100% { transform: scaleY(0.5); }
+            50% { transform: scaleY(1); }
+        }
+        
+        .retro-tag {
+            display: inline-block;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            border: 1px solid var(--retro-ink);
+            background: transparent;
+        }
+        
+        .device-button {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--burnt-orange);
+            box-shadow: inset 0 -2px 4px rgba(0,0,0,0.3), 0 2px 4px rgba(0,0,0,0.3);
+            display: inline-block;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--retro-cream);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--burnt-orange);
+            border: 2px solid var(--retro-cream);
+        }
+    </style>
+</head>
+<body class="min-h-screen paper-texture relative">
+    
+    <div class="floating-orb w-96 h-96 bg-orange-300 top-20 -left-20 animate-float"></div>
+    <div class="floating-orb w-64 h-64 bg-yellow-200 top-1/2 right-0 animate-float-delayed"></div>
+    <div class="floating-orb w-80 h-80 bg-green-200 bottom-20 left-1/3 animate-float" style="animation-delay: -4s;"></div>
+    
+    <div class="container mx-auto px-6 py-12 max-w-6xl relative z-10">
+        
+        <header class="mb-16 relative">
+            <div class="absolute -top-4 -left-4 text-6xl opacity-20">◈</div>
+            <div class="flex justify-between items-start mb-8">
+                <div>
+                    <span class="inline-block px-4 py-2 bg-black text-white text-xs font-bold tracking-widest mb-4">VOL. 01 — 2024</span>
+                    <h1 class="heavy-title text-7xl md:text-8xl leading-none">
+                        视觉<br>
+                        <span class="text-[#c75b39]">小说</span>
+                    </h1>
+                </div>
+                <div class="text-right hidden md:block">
+                    <p class="text-xs tracking-[0.3em] text-gray-500 mb-2">RETRO-FUTURISM</p>
+                    <div class="w-24 h-1 bg-[#c75b39] ml-auto"></div>
+                </div>
+            </div>
+            <p class="text-lg text-gray-600 max-w-xl mt-6 leading-relaxed">
+                复古未来主义美学与数字叙事的完美结合。<br>
+                每一个界面都是一个故事，每一次交互都是一次穿越。
+            </p>
+        </header>
+        
+        <main class="grid grid-cols-12 gap-6 mb-16">
+            
+            <section class="col-span-12 lg:col-span-8 lg:col-start-3 relative">
+                <div class="absolute -top-8 -left-8 flex gap-2">
+                    <span class="device-button"></span>
+                    <span class="device-button" style="background: var(--mustard);"></span>
+                    <span class="device-button" style="background: var(--sage-gray);"></span>
+                </div>
+                <div class="absolute -top-6 left-20 right-20 flex justify-center gap-1 h-5 items-end opacity-60">
+                    <span class="wave-bar" style="height: 60%;"></span>
+                    <span class="wave-bar" style="height: 80%; animation-delay: 0.1s;"></span>
+                    <span class="wave-bar" style="height: 40%; animation-delay: 0.2s;"></span>
+                    <span class="wave-bar" style="height: 90%; animation-delay: 0.3s;"></span>
+                    <span class="wave-bar" style="height: 50%; animation-delay: 0.4s;"></span>
+                </div>
+                
+                <div class="crt-screen p-10 md:p-16">
+                    <div class="relative z-20 max-w-2xl">
+                        <p class="text-xs mb-4 tracking-[0.3em] text-[#d4a574]">SYSTEM MESSAGE</p>
+                        <h2 class="crt-text text-4xl md:text-5xl font-bold mb-8 leading-tight">
+                            欢迎来到<br>Owltree
+                        </h2>
+                        <p class="text-base leading-relaxed mb-8 text-white/80">
+                            这是一个关于选择、关于叙事、关于复古未来主义美学的数字体验。
+                            在这里，时间不是线性的，每一个决定都会打开新的分支。
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-[#c75b39] text-sm tracking-widest">▶ PRESS ANY KEY</span>
+                            <span class="flex-1 h-px bg-[#c75b39]/30"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="absolute -bottom-4 -right-4 w-32 h-32 border-2 border-[#c75b39] opacity-30"></div>
+                <div class="absolute -bottom-8 -right-8 w-24 h-24 border-2 border-[#d4a574] opacity-20"></div>
+            </section>
+            
+            <div class="col-span-12 lg:col-span-3 lg:col-start-1 lg:row-start-1 self-center">
+                <div class="magazine-card" style="transform: rotate(-2deg);">
+                    <p class="text-xs tracking-widest text-gray-500 mb-3">01</p>
+                    <h3 class="text-xl font-bold mb-2">游戏</h3>
+                    <p class="text-sm text-gray-600 mb-4">实验性互动体验，月抛模拟器等待你的选择</p>
+                    <span class="text-3xl">🎮</span>
+                </div>
+            </div>
+            
+            <div class="col-span-12 lg:col-span-3 lg:col-start-10 self-center">
+                <div class="magazine-card" style="transform: rotate(2deg);">
+                    <p class="text-xs tracking-widest text-gray-500 mb-3">02</p>
+                    <h3 class="text-xl font-bold mb-2">笔记</h3>
+                    <p class="text-sm text-gray-600 mb-4">文章与播客，记录思考的痕迹</p>
+                    <span class="text-3xl">📝</span>
+                </div>
+            </div>
+        </main>
+        
+        <nav class="flex flex-wrap justify-center gap-4 mb-20">
+            <button type="button" class="magazine-btn">开始游戏</button>
+            <button type="button" class="magazine-btn" style="background: transparent; color: #1a1a1a; border: 2px solid #1a1a1a;">继续</button>
+            <button type="button" class="magazine-btn" style="background: transparent; color: #1a1a1a; border: 2px solid #1a1a1a;">设置</button>
+        </nav>
+        
+        <section class="grid grid-cols-12 gap-6 mb-16">
+            <div class="col-span-12 md:col-span-5 md:col-start-2">
+                <div class="magazine-card" style="transform: rotate(-1deg);">
+                    <div class="flex items-center gap-3 mb-6">
+                        <span class="retro-tag">Status</span>
+                        <div class="flex-1 h-px bg-black/10"></div>
+                    </div>
+                    
+                    <div class="space-y-6">
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 font-bold">
+                                <span>HP</span>
+                                <span>75/100</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 border border-black">
+                                <div class="h-full bg-[#c75b39]" style="width: 75%;"></div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="flex justify-between text-sm mb-2 font-bold">
+                                <span>STRESS</span>
+                                <span>45/100</span>
+                            </div>
+                            <div class="h-2 bg-gray-200 border border-black">
+                                <div class="h-full bg-[#8b9a8b]" style="width: 45%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-8 mt-8 pt-6 border-t-2 border-black">
+                        <div>
+                            <span class="block text-xs text-gray-500 mb-1">TURN</span>
+                            <span class="font-bold text-2xl">03</span>
+                        </div>
+                        <div>
+                            <span class="block text-xs text-gray-500 mb-1">ITEMS</span>
+                            <span class="font-bold text-2xl">×2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-span-12 md:col-span-5">
+                <div class="magazine-card h-full flex flex-col justify-between" style="transform: rotate(1deg); background: linear-gradient(135deg, #faf8f3, #f5f1e8);">
+                    <div>
+                        <p class="text-xs tracking-widest text-gray-500 mb-4">03</p>
+                        <h3 class="text-2xl font-bold mb-4">工具</h3>
+                        <p class="text-gray-600 leading-relaxed">实用工具集，为你的创作提供便利</p>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-4xl">🛠</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section class="flex flex-wrap justify-center gap-3 mb-16">
+            <span class="retro-tag">SAFE</span>
+            <span class="retro-tag bg-[#c75b39] text-white border-[#c75b39]">ALERT</span>
+            <span class="retro-tag">UNKNOWN</span>
+            <span class="retro-tag">EXPLORE</span>
+        </section>
+        
+        <footer class="border-t-2 border-black pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <p class="font-bold text-xl">Owltree</p>
+                    <p class="text-xs text-gray-500">© 2024 All Rights Reserved</p>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-xs tracking-[0.2em] text-[#c75b39]">SYSTEM READY</p>
+                    <p class="text-xs text-gray-500">RETRO-FUTURISM EDITION</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

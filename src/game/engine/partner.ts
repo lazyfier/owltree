@@ -18,7 +18,7 @@ export function generatePartner(rng: () => number): Partner {
     const tagTemplate = ALL_TAGS[idx]
 
     // Carrier check: if carrier and first tag, skip non-red/amber colors
-    if (isCarrier && partnerTags.length === 0 && !tagTemplate.colorClass.includes('red') && !tagTemplate.colorClass.includes('amber')) continue
+    if (isCarrier && partnerTags.length === 0 && !tagTemplate.colorClass.includes('red') && !tagTemplate.colorClass.includes('purple')) continue
 
     // Constraint enforcement: if hasConstraint and no constraint tag yet, skip non-constraint tags (first 50 iterations)
     if (hasConstraint && !partnerTags.some((t) => t.constraint) && !tagTemplate.constraint && loopLimit < 50) continue

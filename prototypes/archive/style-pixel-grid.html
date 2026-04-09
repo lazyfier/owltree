@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 像素格子风</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pixel-sage: #9CAF94;
+            --pixel-sage-light: #B8C4B0;
+            --pixel-sage-dark: #7A8B72;
+            --pixel-stone: #E8E4E1;
+            --pixel-stone-dark: #D4CFC9;
+            --pixel-charcoal: #4A4A4A;
+            --pixel-charcoal-light: #6B6B6B;
+            --pixel-terra: #C4A77D;
+            --pixel-terra-light: #D9C4A0;
+            --pixel-dust: #F5F3F0;
+            --pixel-border: #C9C5C0;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: var(--pixel-dust);
+            color: var(--pixel-charcoal);
+            line-height: 1.6;
+        }
+        
+        /* 细微像素边框 */
+        .pixel-box {
+            background: white;
+            border: 2px solid var(--pixel-border);
+            box-shadow: 
+                2px 2px 0 0 var(--pixel-stone-dark),
+                inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+        }
+        
+        .pixel-box-subtle {
+            background: var(--pixel-stone);
+            border: 1px solid var(--pixel-stone-dark);
+        }
+        
+        /* 像素按钮 - 克制 */
+        .pixel-btn {
+            background: var(--pixel-sage);
+            border: 2px solid var(--pixel-sage-dark);
+            color: white;
+            padding: 10px 20px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 2px 2px 0 0 var(--pixel-sage-dark);
+        }
+        
+        .pixel-btn:hover {
+            background: var(--pixel-sage-light);
+            transform: translate(1px, 1px);
+            box-shadow: 1px 1px 0 0 var(--pixel-sage-dark);
+        }
+        
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 0 0 0 0 var(--pixel-sage-dark);
+        }
+        
+        .pixel-btn-secondary {
+            background: var(--pixel-stone);
+            border-color: var(--pixel-border);
+            color: var(--pixel-charcoal);
+            box-shadow: 2px 2px 0 0 var(--pixel-border);
+        }
+        
+        .pixel-btn-secondary:hover {
+            background: var(--pixel-dust);
+            box-shadow: 1px 1px 0 0 var(--pixel-border);
+        }
+        
+        /* 像素网格背景 - 非常细微 */
+        .pixel-grid-bg {
+            background-image: 
+                linear-gradient(var(--pixel-stone) 1px, transparent 1px),
+                linear-gradient(90deg, var(--pixel-stone) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: center center;
+        }
+        
+        /* 像素分隔线 */
+        .pixel-divider {
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--pixel-border),
+                var(--pixel-border) 4px,
+                transparent 4px,
+                transparent 6px
+            );
+        }
+        
+        /* 像素进度条 */
+        .pixel-progress {
+            height: 12px;
+            background: var(--pixel-stone);
+            border: 1px solid var(--pixel-border);
+            padding: 2px;
+        }
+        
+        .pixel-progress-fill {
+            height: 100%;
+            background: var(--pixel-sage);
+            box-shadow: inset 0 -2px 0 0 var(--pixel-sage-dark);
+        }
+        
+        /* 像素标签 */
+        .pixel-tag {
+            display: inline-block;
+            padding: 4px 10px;
+            font-size: 12px;
+            border: 1px solid;
+            background: white;
+        }
+        
+        .pixel-tag-sage {
+            border-color: var(--pixel-sage);
+            color: var(--pixel-sage-dark);
+        }
+        
+        .pixel-tag-terra {
+            border-color: var(--pixel-terra);
+            color: var(--pixel-terra);
+            background: var(--pixel-terra-light);
+        }
+        
+        /* 像素猫头鹰 - 简化版 */
+        .pixel-owl-mini {
+            width: 32px;
+            height: 32px;
+            background: transparent;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .pixel-owl-mini::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--pixel-sage-dark);
+            top: 8px;
+            left: 6px;
+            box-shadow: 
+                4px 0 0 0 var(--pixel-sage),
+                12px 0 0 0 var(--pixel-sage),
+                16px 0 0 0 var(--pixel-sage-dark),
+                0 4px 0 0 var(--pixel-sage),
+                4px 4px 0 0 var(--pixel-terra),
+                8px 4px 0 0 var(--pixel-sage),
+                12px 4px 0 0 var(--pixel-terra),
+                16px 4px 0 0 var(--pixel-sage),
+                4px 8px 0 0 var(--pixel-sage),
+                8px 8px 0 0 var(--pixel-sage),
+                12px 8px 0 0 var(--pixel-sage);
+        }
+        
+        /* 像素卡片列表 */
+        .pixel-list-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--pixel-stone);
+            position: relative;
+        }
+        
+        .pixel-list-item::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 4px;
+            background: var(--pixel-sage);
+        }
+        
+        .pixel-list-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 输入框像素风 */
+        .pixel-input {
+            border: 2px solid var(--pixel-border);
+            background: white;
+            padding: 10px 14px;
+            font-size: 14px;
+            outline: none;
+            box-shadow: inset 2px 2px 0 0 var(--pixel-stone);
+        }
+        
+        .pixel-input:focus {
+            border-color: var(--pixel-sage);
+            box-shadow: inset 2px 2px 0 0 rgba(156, 175, 148, 0.2);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--pixel-stone);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--pixel-border);
+            border: 1px solid var(--pixel-stone);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--pixel-sage);
+        }
+    </style>
+</head>
+<body class="min-h-screen pixel-grid-bg">
+    <div class="container mx-auto px-4 py-12 max-w-2xl">
+        
+        <header class="mb-10">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="pixel-owl-mini"></div>
+                <h1 class="text-2xl font-semibold tracking-tight" style="color: var(--pixel-charcoal);">
+                    Owltree
+                </h1>
+            </div>
+            <p class="text-sm" style="color: var(--pixel-charcoal-light);">
+                像素格子风格界面
+            </p>
+        </header>
+        
+        <nav class="flex flex-wrap gap-3 mb-8">
+            <button type="button" class="pixel-btn">开始</button>
+            <button type="button" class="pixel-btn pixel-btn-secondary">继续</button>
+            <button type="button" class="pixel-btn pixel-btn-secondary">设置</button>
+        </nav>
+        
+        <div class="pixel-box p-6 mb-6">
+            <h2 class="text-sm font-semibold mb-4" style="color: var(--pixel-sage-dark);">
+                状态面板
+            </h2>
+            
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs mb-2" style="color: var(--pixel-charcoal-light);">
+                        <span>生命值</span>
+                        <span>75/100</span>
+                    </div>
+                    <div class="pixel-progress">
+                        <div class="pixel-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-xs mb-2" style="color: var(--pixel-charcoal-light);">
+                        <span>焦虑值</span>
+                        <span>45/100</span>
+                    </div>
+                    <div class="pixel-progress">
+                        <div class="pixel-progress-fill" style="width: 45%; opacity: 0.7;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pixel-divider my-4"></div>
+            
+            <div class="grid grid-cols-2 gap-4 text-xs">
+                <div class="pixel-box-subtle p-3">
+                    <span style="color: var(--pixel-charcoal-light);">回合</span>
+                    <p class="font-medium mt-1">第 3 轮</p>
+                </div>
+                <div class="pixel-box-subtle p-3">
+                    <span style="color: var(--pixel-charcoal-light);">道具</span>
+                    <p class="font-medium mt-1">检测试剂 x2</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pixel-box p-6 mb-6">
+            <div class="flex items-start gap-4">
+                <div class="w-10 h-10 pixel-box-subtle flex items-center justify-center flex-shrink-0">
+                    <span class="text-lg">◆</span>
+                </div>
+                <div>
+                    <p class="text-sm leading-relaxed" style="color: var(--pixel-charcoal);">
+                        欢迎来到月抛模拟器。在这个像素格子世界中，
+                        你需要做出明智的选择。保持冷静，保护好自己。
+                    </p>
+                    <p class="text-xs mt-3" style="color: var(--pixel-charcoal-light);">
+                        — 系统提示
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="pixel-box p-4">
+            <h3 class="text-xs font-medium mb-3" style="color: var(--pixel-charcoal-light);">
+                标签
+            </h3>
+            <div class="flex flex-wrap gap-2">
+                <span class="pixel-tag pixel-tag-sage">健康</span>
+                <span class="pixel-tag pixel-tag-terra">危险</span>
+                <span class="pixel-tag pixel-tag-sage">安全</span>
+                <span class="pixel-tag">未知</span>
+            </div>
+        </div>
+        
+        <footer class="mt-10 text-center text-xs" style="color: var(--pixel-charcoal-light);">
+            <p>Owltree © 2024</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.pixel-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const originalTransform = this.style.transform;
+                this.style.transform = 'translate(2px, 2px)';
+                setTimeout(() => {
+                    this.style.transform = originalTransform;
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

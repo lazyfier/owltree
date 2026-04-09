@@ -25,6 +25,7 @@ function advanceTime(state: GameState, fCost: number, aCost: number): GameState 
   const turn = state.turn + 1
   frustration += fCost
   anxiety += aCost
+  if (anxiety > 20) anxiety += CONFIG.anxietyGainPassive
   if (frustration > 100) frustration = 100
   if (anxiety > 100) anxiety = 100
   return { ...state, turn, frustration, anxiety }
@@ -56,7 +57,9 @@ function recordHistory(partner: Partner, action: string, infectedThisTurn: boole
   }
 
   return {
-    partner: partner.avatar,
+    avatar: partner.avatar,
+    tags: partner.tags,
+    diseases: partner.diseases,
     action,
     outcomeLabel,
     outcomeClass,
@@ -124,7 +127,10 @@ export function executeAction(state: GameState, actionType: GameAction, rng: () 
   const frustrationDelta = CONFIG.passiveGain - reduction
   const anxietyGain = CONFIG.stress[actionType]
 
-  const newState = advanceTime(state, frustrationDelta, anxietyGain)
+  let newState = advanceTime(state, frustrationDelta, anxietyGain)
+
+  // Clamp frustration to 0 minimum
+  if (newState.frustration < 0) newState = { ...newState, frustration: 0 }
 
   return {
     ...newState,

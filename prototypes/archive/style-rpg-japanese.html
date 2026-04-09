@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 日式RPG像素</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;700;900&family=DotGothic16&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --rpg-sky: #87CEEB;
+            --rpg-cloud: #F0F8FF;
+            --rpg-grass: #7CB342;
+            --rpg-earth: #8D6E63;
+            --rpg-wood: #A1887F;
+            --rpg-gold: #FFD700;
+            --rpg-cream: #FFF8E1;
+            --rpg-sunset: #FF8A65;
+            --rpg-night: #2C3E50;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'M PLUS Rounded 1c', 'DotGothic16', sans-serif;
+            background: linear-gradient(180deg, 
+                var(--rpg-sky) 0%, 
+                var(--rpg-sky) 60%, 
+                var(--rpg-grass) 60%, 
+                var(--rpg-grass) 100%
+            );
+            min-height: 100vh;
+            color: #3E2723;
+            line-height: 1.8;
+        }
+        
+        /* 云朵装饰 */
+        .cloud {
+            position: absolute;
+            background: var(--rpg-cloud);
+            border-radius: 100px;
+            opacity: 0.9;
+            animation: float 20s ease-in-out infinite;
+        }
+        
+        .cloud::before {
+            content: '';
+            position: absolute;
+            background: var(--rpg-cloud);
+            border-radius: 100px;
+        }
+        
+        .cloud1 {
+            width: 100px;
+            height: 40px;
+            top: 10%;
+            left: 10%;
+        }
+        
+        .cloud1::before {
+            width: 50px;
+            height: 50px;
+            top: -25px;
+            left: 10px;
+        }
+        
+        .cloud2 {
+            width: 80px;
+            height: 35px;
+            top: 15%;
+            right: 20%;
+            animation-delay: -5s;
+        }
+        
+        .cloud2::before {
+            width: 60px;
+            height: 40px;
+            top: -20px;
+            right: 15px;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateX(0) translateY(0); }
+            25% { transform: translateX(10px) translateY(-5px); }
+            50% { transform: translateX(-5px) translateY(5px); }
+            75% { transform: translateX(5px) translateY(-3px); }
+        }
+        
+        /* 手绘风边框 */
+        .hand-drawn-border {
+            border: 3px solid var(--rpg-earth);
+            border-radius: 15px 255px 15px 255px / 255px 15px 255px 15px;
+            box-shadow: 
+                4px 4px 0 rgba(141, 110, 99, 0.3),
+                inset 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+        
+        /* RPG风格按钮 */
+        .rpg-btn {
+            background: linear-gradient(180deg, var(--rpg-wood) 0%, var(--rpg-earth) 100%);
+            border: 3px solid #5D4037;
+            border-radius: 12px;
+            padding: 12px 32px;
+            font-family: inherit;
+            font-weight: 700;
+            font-size: 16px;
+            color: var(--rpg-cream);
+            cursor: pointer;
+            position: relative;
+            box-shadow: 
+                0 4px 0 #5D4037,
+                0 6px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.1s;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.3);
+        }
+        
+        .rpg-btn:hover {
+            transform: translateY(2px);
+            box-shadow: 
+                0 2px 0 #5D4037,
+                0 4px 6px rgba(0, 0, 0, 0.2);
+            background: linear-gradient(180deg, #B89F8B 0%, #A1887F 100%);
+        }
+        
+        .rpg-btn:active {
+            transform: translateY(4px);
+            box-shadow: 
+                0 0 0 #5D4037,
+                inset 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-btn-gold {
+            background: linear-gradient(180deg, #FFD54F 0%, var(--rpg-gold) 100%);
+            border-color: #F57F17;
+            color: #5D4037;
+            box-shadow: 
+                0 4px 0 #F57F17,
+                0 6px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-btn-gold:hover {
+            background: linear-gradient(180deg, #FFE082 0%, #FFD54F 100%);
+            box-shadow: 
+                0 2px 0 #F57F17,
+                0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* RPG面板 */
+        .rpg-panel {
+            background: linear-gradient(135deg, var(--rpg-cream) 0%, #FFF3E0 100%);
+            border: 4px solid var(--rpg-wood);
+            border-radius: 20px;
+            position: relative;
+            box-shadow: 
+                6px 6px 0 rgba(161, 136, 127, 0.4),
+                inset 0 0 30px rgba(255, 255, 255, 0.5);
+        }
+        
+        .rpg-panel::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 20px;
+            right: 20px;
+            height: 16px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                var(--rpg-gold) 20%, 
+                var(--rpg-gold) 80%, 
+                transparent 100%
+            );
+            border-radius: 8px;
+        }
+        
+        /* 装饰角 */
+        .rpg-corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border: 4px solid var(--rpg-gold);
+        }
+        
+        .rpg-corner-tl {
+            top: 8px;
+            left: 8px;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 12px 0 0 0;
+        }
+        
+        .rpg-corner-tr {
+            top: 8px;
+            right: 8px;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 12px 0 0;
+        }
+        
+        .rpg-corner-bl {
+            bottom: 8px;
+            left: 8px;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 12px;
+        }
+        
+        .rpg-corner-br {
+            bottom: 8px;
+            right: 8px;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 12px 0;
+        }
+        
+        /* 生命值条 */
+        .rpg-health-bar {
+            height: 28px;
+            background: #D7CCC8;
+            border: 3px solid #5D4037;
+            border-radius: 14px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .rpg-health-fill {
+            height: 100%;
+            background: linear-gradient(180deg, #81C784 0%, #4CAF50 50%, #388E3C 100%);
+            border-radius: 11px;
+            position: relative;
+            transition: width 0.5s ease;
+        }
+        
+        .rpg-health-fill::after {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 4px;
+            right: 4px;
+            height: 40%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 100%);
+            border-radius: 8px 8px 0 0;
+        }
+        
+        .rpg-health-fill.warning {
+            background: linear-gradient(180deg, #FFB74D 0%, #FF9800 50%, #F57C00 100%);
+        }
+        
+        .rpg-health-fill.danger {
+            background: linear-gradient(180deg, #E57373 0%, #F44336 50%, #D32F2F 100%);
+            animation: pulse-red 1s ease-in-out infinite;
+        }
+        
+        @keyframes pulse-red {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+        
+        /* 对话框（经典RPG风格） */
+        .rpg-dialog {
+            background: linear-gradient(180deg, #1a237e 0%, #0d1642 100%);
+            border: 4px solid #3949AB;
+            border-radius: 8px;
+            padding: 24px;
+            color: white;
+            position: relative;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+        
+        .rpg-dialog::before {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            right: 4px;
+            bottom: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+            pointer-events: none;
+        }
+        
+        .rpg-dialog-arrow {
+            position: absolute;
+            bottom: 16px;
+            right: 24px;
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 12px solid white;
+            animation: bounce-arrow 0.8s ease-in-out infinite;
+        }
+        
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(6px); }
+        }
+        
+        /* 标签 */
+        .rpg-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 14px;
+            position: relative;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-tag::before {
+            content: '★';
+            margin-right: 6px;
+            font-size: 12px;
+        }
+        
+        .rpg-tag-green {
+            background: linear-gradient(180deg, #A5D6A7 0%, #66BB6A 100%);
+            border: 2px solid #2E7D32;
+            color: white;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-tag-red {
+            background: linear-gradient(180deg, #EF9A9A 0%, #EF5350 100%);
+            border: 2px solid #C62828;
+            color: white;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-tag-blue {
+            background: linear-gradient(180deg, #90CAF9 0%, #42A5F5 100%);
+            border: 2px solid #1565C0;
+            color: white;
+            text-shadow: 1px 1px 0 rgba(0, 0, 0, 0.2);
+        }
+        
+        .rpg-tag-gold {
+            background: linear-gradient(180deg, #FFF176 0%, #FFD54F 100%);
+            border: 2px solid #F57F17;
+            color: #5D4037;
+        }
+        
+        /* 物品图标风格 */
+        .item-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--rpg-gold) 0%, #FF8F00 100%);
+            border: 3px solid #5D4037;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 
+                0 4px 0 #5D4037,
+                0 6px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--rpg-cream);
+            border-radius: 6px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--rpg-wood);
+            border-radius: 6px;
+            border: 2px solid var(--rpg-cream);
+        }
+    </style>
+</head>
+<body class="min-h-screen relative overflow-x-hidden">
+    <!-- 背景云朵 -->
+    <div class="cloud cloud1"></div>
+    <div class="cloud cloud2"></div>
+    
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative z-10">
+        <!-- 标题区 -->
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl mb-4 font-black" style="color: #5D4037; text-shadow: 3px 3px 0 var(--rpg-gold);">
+                OWLTREE
+            </h1>
+            <p class="text-lg" style="color: var(--rpg-earth);">
+                〜 日式RPG像素风格 〜
+            </p>
+        </header>
+        
+        <!-- 主菜单 -->
+        <nav class="flex flex-wrap justify-center gap-4 mb-12">
+            <button class="rpg-btn">冒険を始める</button>
+            <button class="rpg-btn">続きから</button>
+            <button class="rpg-btn rpg-btn-gold">設定</button>
+        </nav>
+        
+        <!-- 状态面板 -->
+        <section class="rpg-panel p-6 mb-8">
+            <div class="rpg-corner rpg-corner-tl"></div>
+            <div class="rpg-corner rpg-corner-tr"></div>
+            <div class="rpg-corner rpg-corner-bl"></div>
+            <div class="rpg-corner rpg-corner-br"></div>
+            
+            <h2 class="text-xl font-bold mb-6 text-center" style="color: var(--rpg-earth);">
+                ◆ 冒険者の状態 ◆
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div class="hand-drawn-border p-4 bg-white/50">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-2xl">❤️</span>
+                        <span class="font-bold">生命值</span>
+                    </div>
+                    <div class="rpg-health-bar">
+                        <div class="rpg-health-fill" style="width: 75%;"></div>
+                    </div>
+                    <p class="text-right mt-1 text-sm font-bold">75 / 100</p>
+                </div>
+                
+                <div class="hand-drawn-border p-4 bg-white/50">
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-2xl">😰</span>
+                        <span class="font-bold">焦虑值</span>
+                    </div>
+                    <div class="rpg-health-bar">
+                        <div class="rpg-health-fill warning" style="width: 45%;"></div>
+                    </div>
+                    <p class="text-right mt-1 text-sm font-bold">45 / 100</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 grid grid-cols-3 gap-4 text-center">
+                <div class="hand-drawn-border p-3 bg-white/50">
+                    <p class="text-xs opacity-70">回合</p>
+                    <p class="text-xl font-bold" style="color: var(--rpg-earth);">第 3 轮</p>
+                </div>
+                <div class="hand-drawn-border p-3 bg-white/50">
+                    <p class="text-xs opacity-70">道具</p>
+                    <div class="flex items-center justify-center gap-2 mt-1">
+                        <div class="item-icon text-sm">🧪</div>
+                        <span class="font-bold">x2</span>
+                    </div>
+                </div>
+                <div class="hand-drawn-border p-3 bg-white/50">
+                    <p class="text-xs opacity-70">金币</p>
+                    <p class="text-xl font-bold" style="color: var(--rpg-gold);">💰 125</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- RPG对话框 -->
+        <section class="rpg-dialog mb-8">
+            <p class="text-lg leading-relaxed">
+                欢迎来到月抛模拟器！<br>
+                在这片充满冒险的大陆上，你需要做出明智的选择。<br>
+                记住：保持冷静，保护好自己！
+            </p>
+            <div class="rpg-dialog-arrow"></div>
+        </section>
+        
+        <!-- 标签展示区 -->
+        <section class="rpg-panel p-6">
+            <h3 class="text-lg font-bold mb-4 text-center" style="color: var(--rpg-earth);">
+                ◆ ステータス効果 ◆
+            </h3>
+            <div class="flex flex-wrap justify-center gap-3">
+                <span class="rpg-tag rpg-tag-green">健康</span>
+                <span class="rpg-tag rpg-tag-red">危险</span>
+                <span class="rpg-tag rpg-tag-blue">安全</span>
+                <span class="rpg-tag rpg-tag-gold">未确认</span>
+            </div>
+        </section>
+        
+        <!-- 底部 -->
+        <footer class="text-center mt-12 pb-8">
+            <p class="font-bold" style="color: var(--rpg-earth);">© 2024 OWLTREE 制作委员会</p>
+            <p class="mt-2 text-sm opacity-70">PUSH START BUTTON</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 按钮点击动画
+        document.querySelectorAll('.rpg-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'translateY(4px)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+        
+        // 云朵飘动速度变化
+        document.querySelectorAll('.cloud').forEach((cloud, index) => {
+            cloud.style.animationDuration = `${20 + index * 5}s`;
+        });
+    </script>
+</body>
+</html>

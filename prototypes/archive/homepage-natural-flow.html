@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 自然流动布局</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: #faf9f7;
+            --warm-white: #ffffff;
+            --charcoal: #2d2d2d;
+            --warm-gray: #6b6b6b;
+            --sage: #7c8f76;
+            --clay: #b8927a;
+            --mist: rgba(124, 143, 118, 0.08);
+        }
+        
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--cream);
+            color: var(--charcoal);
+            line-height: 1.6;
+        }
+        
+        .font-serif { font-family: 'Crimson Pro', serif; }
+        
+        /* 自然流动背景 */
+        .flow-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse 80% 50% at 20% 40%, rgba(124, 143, 118, 0.06) 0%, transparent 50%),
+                radial-gradient(ellipse 60% 40% at 80% 60%, rgba(184, 146, 122, 0.05) 0%, transparent 50%);
+        }
+        
+        /* 有机圆角 */
+        .organic-radius {
+            border-radius: 24px 28px 20px 32px;
+        }
+        
+        .organic-radius-sm {
+            border-radius: 16px 20px 14px 18px;
+        }
+        
+        /* 自然按钮 */
+        .nature-btn {
+            background: var(--warm-white);
+            border: 1.5px solid rgba(45, 45, 45, 0.12);
+            color: var(--charcoal);
+            padding: 14px 28px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+        
+        .nature-btn:hover {
+            border-color: var(--sage);
+            box-shadow: 0 4px 16px rgba(124, 143, 118, 0.15);
+            transform: translateY(-1px);
+        }
+        
+        .nature-btn-primary {
+            background: var(--sage);
+            border-color: var(--sage);
+            color: white;
+        }
+        
+        .nature-btn-primary:hover {
+            background: #6a7d64;
+            border-color: #6a7d64;
+        }
+        
+        /* 流动卡片 */
+        .flow-card {
+            background: var(--warm-white);
+            padding: 32px;
+            box-shadow: 
+                0 1px 3px rgba(0, 0, 0, 0.02),
+                0 4px 20px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(45, 45, 45, 0.06);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .flow-card:hover {
+            box-shadow: 
+                0 4px 12px rgba(0, 0, 0, 0.04),
+                0 16px 40px rgba(124, 143, 118, 0.08);
+            transform: translateY(-2px);
+        }
+        
+        /* 自然标签 */
+        .flow-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 12px;
+            font-weight: 500;
+            background: var(--mist);
+            color: var(--sage);
+            border-radius: 20px;
+        }
+        
+        /* 呼吸动画 */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+        }
+        
+        .animate-breathe {
+            animation: breathe 4s ease-in-out infinite;
+        }
+        
+        /* 手写分隔线 */
+        .hand-line {
+            height: 1px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(124, 143, 118, 0.3) 20%, 
+                rgba(124, 143, 118, 0.3) 80%, 
+                transparent 100%
+            );
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: rgba(124, 143, 118, 0.3);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="flow-bg"></div>
+    
+    <div class="container mx-auto px-6 py-8 max-w-6xl">
+        
+        <!-- 导航栏 - 简洁自然 -->
+        <nav class="flex items-center justify-between mb-16">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 organic-radius-sm bg-gradient-to-br from-[#7c8f76] to-[#b8927a] flex items-center justify-center text-white text-lg">
+                    🦉
+                </div>
+                <span class="font-serif text-xl font-semibold">Owltree</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <button type="button" class="nature-btn organic-radius-sm">关于</button>
+                <button type="button" class="nature-btn nature-btn-primary organic-radius-sm">开始</button>
+            </div>
+        </nav>
+        
+        <!-- Hero - 不规则布局 -->
+        <header class="mb-20 relative">
+            <div class="max-w-2xl">
+                <p class="text-sm text-[#6b6b6b] mb-3 tracking-wide">个人门户 / 数字花园</p>
+                <h1 class="font-serif text-5xl md:text-6xl leading-tight mb-6">
+                    在这里，<br>
+                    <span class="text-[#7c8f76]">思考</span>与<span class="text-[#b8927a]">创造</span>自然流动
+                </h1>
+                <p class="text-lg text-[#6b6b6b] max-w-lg leading-relaxed">
+                    不是换一层颜色，而是让整个体验像呼吸一样自然。
+                    每一个入口都有它的节奏和质感。
+                </p>
+            </div>
+            
+            <!-- 浮动装饰元素 -->
+            <div class="hidden lg:block absolute top-0 right-0 w-64 h-64 organic-radius bg-gradient-to-br from-[rgba(124,143,118,0.1)] to-[rgba(184,146,122,0.08)] animate-breathe"></div>
+        </header>
+        
+        <!-- 主要内容 - 错落网格 -->
+        <main class="grid grid-cols-12 gap-6 mb-20">
+            
+            <!-- 游戏卡片 - 大尺寸 -->
+            <a href="#games" class="col-span-12 md:col-span-7 flow-card organic-radius group cursor-pointer">
+                <div class="flex items-start justify-between mb-4">
+                    <div class="w-14 h-14 organic-radius-sm bg-gradient-to-br from-[#dc6b8d] to-[#bb7bc5] flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                        🎮
+                    </div>
+                    <span class="flow-tag">Featured</span>
+                </div>
+                <h2 class="font-serif text-2xl mb-2">游戏</h2>
+                <p class="text-[#6b6b6b] mb-4">实验性互动体验，包括月抛模拟器等决策游戏</p>
+                <div class="flex items-center gap-2 text-sm text-[#7c8f76] group-hover:gap-4 transition-all">
+                    <span>探索</span>
+                    <span>→</span>
+                </div>
+            </a>
+            
+            <!-- 笔记卡片 - 垂直 -->
+            <a href="#notes" class="col-span-12 md:col-span-5 flow-card organic-radius group cursor-pointer">
+                <div class="w-12 h-12 organic-radius-sm bg-gradient-to-br from-[#bb7bc5] to-[#836b69] flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    📝
+                </div>
+                <h2 class="font-serif text-xl mb-2">笔记</h2>
+                <p class="text-[#6b6b6b] text-sm">文章与播客，记录思考的痕迹</p>
+            </a>
+            
+            <!-- 工具卡片 -->
+            <a href="#tools" class="col-span-12 md:col-span-4 flow-card organic-radius group cursor-pointer">
+                <div class="w-12 h-12 organic-radius-sm bg-gradient-to-br from-[#d5a872] to-[#c4956a] flex items-center justify-center text-xl mb-4 group-hover:scale-110 transition-transform">
+                    🛠
+                </div>
+                <h2 class="font-serif text-xl mb-2">工具</h2>
+                <p class="text-[#6b6b6b] text-sm">实用工具集</p>
+            </a>
+            
+            <!-- 趋势卡片 - 横跨 -->
+            <a href="#trends" class="col-span-12 md:col-span-8 flow-card organic-radius group cursor-pointer">
+                <div class="flex items-center gap-4 mb-4">
+                    <div class="w-12 h-12 organic-radius-sm bg-gradient-to-br from-[#6da7c9] to-[#547999] flex items-center justify-center text-xl group-hover:scale-110 transition-transform">
+                        📈
+                    </div>
+                    <div>
+                        <h2 class="font-serif text-xl">趋势</h2>
+                        <p class="text-[#6b6b6b] text-sm">每日热点追踪</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <span class="flow-tag">AI技术</span>
+                    <span class="flow-tag">前端框架</span>
+                    <span class="flow-tag">开源</span>
+                </div>
+            </a>
+        </main>
+        
+        <!-- 引用区域 -->
+        <section class="flow-card organic-radius mb-16 relative overflow-hidden" style="background: linear-gradient(135deg, rgba(124,143,118,0.05), rgba(184,146,122,0.05));">
+            <div class="max-w-2xl relative z-10">
+                <p class="font-serif text-2xl italic leading-relaxed mb-4">
+                    "像视觉小说主菜单那样有章节感、有路线感、有界面叙事感。"
+                </p>
+                <p class="text-[#6b6b6b]">— 设计理念</p>
+            </div>
+            <div class="absolute -bottom-8 -right-8 w-48 h-48 organic-radius bg-gradient-to-br from-[rgba(124,143,118,0.1)] to-transparent"></div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="hand-line mb-8"></footer>
+        <div class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-[#6b6b6b]">
+            <p>Owltree © 2024</p>
+            <p>Built with intention</p>
+        </div>
+    </div>
+</body>
+</html>

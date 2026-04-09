@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 视觉小说便利版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --retro-cream: #f5f1e8;
+            --retro-paper: #faf8f3;
+            --retro-ink: #1a1a1a;
+            --burnt-orange: #c75b39;
+            --mustard: #d4a574;
+            --sage-gray: #8b9a8b;
+            --copper: #b87333;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background: var(--retro-cream);
+            color: var(--retro-ink);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        .paper-texture {
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px), var(--retro-cream);
+        }
+        
+        .crt-screen {
+            background: var(--retro-ink);
+            border: 4px solid var(--copper);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(199, 91, 57, 0.3), 0 0 0 8px var(--retro-cream), 0 0 0 10px var(--copper), 0 30px 80px rgba(0,0,0,0.4);
+        }
+        
+        .crt-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(199, 91, 57, 0.03) 2px, rgba(199, 91, 57, 0.03) 4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .crt-text {
+            color: #fff;
+            text-shadow: 2px 0 rgba(255, 0, 0, 0.4), -2px 0 rgba(0, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+        }
+        
+        .heavy-title { font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+        
+        .magazine-btn {
+            background: var(--retro-ink);
+            color: white;
+            padding: 14px 28px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: -4px; bottom: -4px;
+            background: var(--burnt-orange);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn:hover { transform: translate(2px, 2px); }
+        .magazine-btn:hover::before { top: 0; left: 0; right: 0; bottom: 0; }
+        
+        .magazine-card {
+            background: var(--retro-paper);
+            border: 2px solid var(--retro-ink);
+            padding: 24px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .magazine-card::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: -6px; bottom: -6px;
+            background: var(--mustard);
+            z-index: -1;
+            transition: all 0.4s;
+        }
+        
+        .magazine-card:hover { transform: translate(-2px, -2px); }
+        .magazine-card:hover::before { top: 8px; left: 8px; }
+        
+        .search-box {
+            background: var(--retro-paper);
+            border: 2px solid var(--retro-ink);
+            padding: 12px 20px;
+            font-size: 14px;
+            width: 100%;
+            transition: all 0.3s;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--burnt-orange);
+            box-shadow: 4px 4px 0 var(--burnt-orange);
+        }
+        
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-link:hover {
+            background: var(--burnt-orange);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .quick-link svg { width: 16px; height: 16px; }
+        
+        .retro-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            border: 1px solid var(--retro-ink);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .retro-tag:hover { background: var(--retro-ink); color: white; }
+        .retro-tag.active { background: var(--burnt-orange); color: white; border-color: var(--burnt-orange); }
+        
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recent-item:hover {
+            border-color: var(--burnt-orange);
+            transform: translateX(4px);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--retro-ink);
+            color: white;
+            padding: 16px 24px;
+            border-left: 4px solid var(--burnt-orange);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        
+        .toast.show { transform: translateX(0); }
+        
+        .kbd {
+            display: inline-block;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            font-size: 11px;
+            font-family: monospace;
+            box-shadow: 0 2px 0 var(--retro-ink);
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            padding: 8px 12px;
+            background: var(--retro-ink);
+            color: white;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+        }
+        
+        .tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+        
+        .bookmark-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        
+        .bookmark-btn:hover { background: var(--burnt-orange); color: white; }
+        .bookmark-btn.active { background: var(--burnt-orange); color: white; }
+        
+        .shortcut-hint {
+            position: fixed;
+            bottom: 24px;
+            left: 24px;
+            background: rgba(26, 26, 26, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            max-width: 280px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s;
+            z-index: 999;
+        }
+        
+        .shortcut-hint.show { opacity: 1; transform: translateY(0); }
+        
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--sage-gray);
+        }
+        
+        .breadcrumb a:hover { color: var(--burnt-orange); }
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--retro-cream); }
+        ::-webkit-scrollbar-thumb { background: var(--burnt-orange); border: 2px solid var(--retro-cream); }
+    </style>
+</head>
+<body class="min-h-screen paper-texture">
+    
+    <div class="container mx-auto px-6 py-6 max-w-6xl">
+        
+        <div class="flex flex-col md:flex-row gap-4 mb-8">
+            <div class="flex-1 relative">
+                <input type="text" class="search-box pr-12" placeholder="搜索内容... (Press /)" id="searchInput">
+                <span class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">⌘K</span>
+            </div>
+            <div class="flex gap-2 flex-wrap">
+                <button type="button" class="quick-link" onclick="showToast('已添加到收藏')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                    收藏
+                </button>
+                <button type="button" class="quick-link" onclick="showToast('历史记录已清空')" title="查看历史记录">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    历史
+                </button>
+                <button type="button" class="quick-link" onclick="toggleShortcuts()">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    帮助
+                </button>
+                <button type="button" class="quick-link tooltip" data-tip="设置按钮" onclick="showToast('设置面板开发中')">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                </button>
+            </div>
+        </div>
+        
+        <nav class="breadcrumb mb-6">
+            <a href="#" class="hover:text-orange-600">首页</a>
+            <span>›</span>
+            <a href="#" class="hover:text-orange-600">游戏</a>
+            <span>›</span>
+            <span class="text-orange-600">月抛模拟器</span>
+        </nav>
+        
+        <div class="flex flex-wrap gap-2 mb-8">
+            <button type="button" class="retro-tag active" onclick="filterTag(this)">全部</button>
+            <button type="button" class="retro-tag" onclick="filterTag(this)">游戏</button>
+            <button type="button" class="retro-tag" onclick="filterTag(this)">笔记</button>
+            <button type="button" class="retro-tag" onclick="filterTag(this)">工具</button>
+            <button type="button" class="retro-tag" onclick="filterTag(this)">收藏</button>
+            <button type="button" class="retro-tag" onclick="filterTag(this)">最近</button>
+        </div>
+        
+        <header class="mb-12">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <span class="inline-block px-4 py-2 bg-black text-white text-xs font-bold tracking-widest mb-4">VOL. 01 — 2024</span>
+                    <h1 class="heavy-title text-6xl md:text-7xl leading-none">视觉<span class="text-[#c75b39]">小说</span></h1>
+                </div>
+                <div class="hidden md:block text-right">
+                    <p class="text-xs tracking-[0.3em] text-gray-500 mb-2">RETRO-FUTURISM</p>
+                    <div class="w-24 h-1 bg-[#c75b39] ml-auto"></div>
+                </div>
+            </div>
+            <p class="text-lg text-gray-600 max-w-xl mt-6 leading-relaxed">
+                复古未来主义美学与数字叙事的完美结合。
+            </p>
+        </header>
+        
+        <main class="grid grid-cols-12 gap-6 mb-12">
+            
+            <aside class="col-span-12 lg:col-span-3 lg:row-span-2">
+                <div class="magazine-card mb-4" style="transform: rotate(-1deg);">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        最近访问
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="recent-item" onclick="showToast('正在打开：月抛模拟器')">
+                            <span class="text-lg">🎮</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">月抛模拟器</p>
+                                <p class="text-xs text-gray-500">2分钟前</p>
+                            </div>
+                        </div>
+                        <div class="recent-item" onclick="showToast('正在打开：AI趋势分析')">
+                            <span class="text-lg">📈</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">AI趋势分析</p>
+                                <p class="text-xs text-gray-500">昨天</p>
+                            </div>
+                        </div>
+                        <div class="recent-item" onclick="showToast('正在打开：设计笔记')">
+                            <span class="text-lg">📝</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">设计笔记</p>
+                                <p class="text-xs text-gray-500">3天前</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="magazine-card" style="transform: rotate(1deg);">
+                    <h3 class="font-bold mb-4">快捷键</h3>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">搜索</span>
+                            <span class="kbd">/</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">帮助</span>
+                            <span class="kbd">?</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">返回</span>
+                            <span class="kbd">Esc</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-600">收藏</span>
+                            <span class="kbd">F</span>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+            
+            <section class="col-span-12 lg:col-span-6 relative">
+                <div class="crt-screen p-8 md:p-12">
+                    <div class="relative z-20">
+                        <p class="text-xs mb-4 tracking-[0.3em] text-[#d4a574]">SYSTEM MESSAGE</p>
+                        <h2 class="crt-text text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                            欢迎来到<br>Owltree
+                        </h2>
+                        <p class="text-sm leading-relaxed mb-6 text-white/80">
+                            这是一个关于选择、关于叙事、关于复古未来主义美学的数字体验。
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-[#c75b39] text-sm tracking-widest">▶ PRESS ANY KEY</span>
+                            <span class="flex-1 h-px bg-[#c75b39]/30"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 mt-6 justify-center">
+                    <button type="button" class="magazine-btn" onclick="showToast('游戏启动中...')">开始游戏</button>
+                    <button type="button" class="magazine-btn" style="background: transparent; color: #1a1a1a; border: 2px solid #1a1a1a;" onclick="showToast('继续上次进度')">继续</button>
+                    <button type="button" class="magazine-btn" style="background: transparent; color: #1a1a1a; border: 2px solid #1a1a1a;" onclick="showToast('设置面板')">设置</button>
+                </div>
+            </section>
+            
+            <aside class="col-span-12 lg:col-span-3">
+                <div class="magazine-card" style="transform: rotate(1deg);">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                        我的收藏
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="p-3 bg-white border border-gray-200 cursor-pointer hover:border-orange-500 transition-colors" onclick="showToast('打开收藏：视觉设计指南')">
+                            <p class="font-medium text-sm">视觉设计指南</p>
+                            <p class="text-xs text-gray-500 mt-1">笔记 · 昨天</p>
+                        </div>
+                        <div class="p-3 bg-white border border-gray-200 cursor-pointer hover:border-orange-500 transition-colors" onclick="showToast('打开收藏：2024前端趋势')">
+                            <p class="font-medium text-sm">2024前端趋势</p>
+                            <p class="text-xs text-gray-500 mt-1">趋势 · 上周</p>
+                        </div>
+                        <div class="p-3 bg-white border border-gray-200 cursor-pointer hover:border-orange-500 transition-colors" onclick="showToast('打开收藏：配色工具')">
+                            <p class="font-medium text-sm">配色工具</p>
+                            <p class="text-xs text-gray-500 mt-1">工具 · 上月</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </main>
+        
+        <section class="grid grid-cols-12 gap-6 mb-12">
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击进入游戏模块" onclick="showToast('进入游戏模块')">
+                    <span class="text-4xl mb-4 block">🎮</span>
+                    <h3 class="text-xl font-bold mb-2">游戏</h3>
+                    <p class="text-sm text-gray-600 mb-4">实验性互动体验</p>
+                    <div class="flex gap-2">
+                        <span class="retro-tag text-xs">HOT</span>
+                        <span class="text-xs text-gray-400 mt-1">3个游戏</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击查看笔记" onclick="showToast('进入笔记模块')">
+                    <span class="text-4xl mb-4 block">📝</span>
+                    <h3 class="text-xl font-bold mb-2">笔记</h3>
+                    <p class="text-sm text-gray-600 mb-4">文章与播客</p>
+                    <div class="flex gap-2">
+                        <span class="text-xs text-gray-400 mt-1">12篇文章</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击查看工具" onclick="showToast('进入工具模块')">
+                    <span class="text-4xl mb-4 block">🛠</span>
+                    <h3 class="text-xl font-bold mb-2">工具</h3>
+                    <p class="text-sm text-gray-600 mb-4">实用工具集</p>
+                    <div class="flex gap-2">
+                        <span class="text-xs text-gray-400 mt-1">5个工具</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="border-t-2 border-black pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <p class="font-bold text-xl">Owltree</p>
+                    <p class="text-xs text-gray-500">© 2024 All Rights Reserved</p>
+                </div>
+                <div class="flex gap-4 text-sm">
+                    <a href="#" class="hover:text-orange-600">关于</a>
+                    <a href="#" class="hover:text-orange-600">隐私</a>
+                    <a href="#" class="hover:text-orange-600">联系</a>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-xs tracking-[0.2em] text-[#c75b39]">SYSTEM READY</p>
+                    <p class="text-xs text-gray-500">按 ? 查看快捷键</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="toast" id="toast">操作成功</div>
+    
+    <div class="shortcut-hint" id="shortcutHint">
+        <h4 class="font-bold mb-3 text-orange-400">键盘快捷键</h4>
+        <div class="space-y-2">
+            <div class="flex justify-between"><span>/</span> <span>搜索</span></div>
+            <div class="flex justify-between"><span>?</span> <span>显示/隐藏帮助</span></div>
+            <div class="flex justify-between"><span>Esc</span> <span>返回/关闭</span></div>
+            <div class="flex justify-between"><span>F</span> <span>收藏当前页</span></div>
+            <div class="flex justify-between"><span>1-4</span> <span>快速导航</span></div>
+            <div class="flex justify-between"><span>H</span> <span>返回首页</span></div>
+        </div>
+        <p class="text-xs text-gray-400 mt-4">按 ? 或 Esc 关闭</p>
+    </div>
+    
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        function toggleBookmark(btn) {
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            showToast(isActive ? '已添加到收藏' : '已取消收藏');
+        }
+        
+        function filterTag(btn) {
+            document.querySelectorAll('.retro-tag').forEach(function(tag) {
+                tag.classList.remove('active');
+            });
+            btn.classList.add('active');
+            showToast('筛选: ' + btn.textContent);
+        }
+        
+        function toggleShortcuts() {
+            const hint = document.getElementById('shortcutHint');
+            hint.classList.toggle('show');
+        }
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== document.getElementById('searchInput')) {
+                e.preventDefault();
+                document.getElementById('searchInput').focus();
+            }
+            
+            if (e.key === '?') {
+                e.preventDefault();
+                toggleShortcuts();
+            }
+            
+            if (e.key === 'Escape') {
+                document.getElementById('shortcutHint').classList.remove('show');
+                document.getElementById('searchInput').blur();
+            }
+            
+            if (e.key === 'f' || e.key === 'F') {
+                showToast('按 F 收藏功能');
+            }
+            
+            if (e.key === 'h' || e.key === 'H') {
+                showToast('返回首页');
+            }
+        });
+        
+        document.getElementById('searchInput').addEventListener('focus', () => {
+            showToast('输入关键词搜索...');
+        });
+    </script>
+</body>
+</html>

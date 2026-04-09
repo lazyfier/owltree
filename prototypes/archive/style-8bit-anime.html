@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 二次元8-bit</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --2b-pink: #FF6B9D;
+            --2b-pink-light: #FFB8D0;
+            --2b-pink-dark: #C44569;
+            --2b-purple: #C084FC;
+            --2b-purple-light: #E9D5FF;
+            --2b-cyan: #22D3EE;
+            --2b-cyan-light: #A5F3FC;
+            --2b-yellow: #FDE047;
+            --2b-yellow-light: #FEF08A;
+            --2b-bg-dark: #1e1b4b;
+            --2b-bg-darker: #0f0a1a;
+            --2b-navy: #312e81;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: -moz-crisp-edges;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'Press Start 2P', 'ZCOOL KuaiLe', cursive;
+            background: linear-gradient(180deg, var(--2b-bg-darker) 0%, var(--2b-bg-dark) 50%, var(--2b-navy) 100%);
+            color: var(--2b-cyan-light);
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+            min-height: 100vh;
+        }
+        
+        /* CRT扫描线 */
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: linear-gradient(
+                rgba(18, 16, 16, 0) 50%,
+                rgba(0, 0, 0, 0.15) 50%
+            );
+            background-size: 100% 4px;
+            z-index: 9999;
+        }
+        
+        .crt-flicker {
+            animation: flicker 0.15s infinite;
+        }
+        
+        @keyframes flicker {
+            0% { opacity: 0.97; }
+            50% { opacity: 1; }
+            100% { opacity: 0.98; }
+        }
+        
+        /* 像素边框 - 多彩版本 */
+        .pixel-border {
+            box-shadow: 
+                -4px 0 0 0 var(--2b-purple),
+                4px 0 0 0 var(--2b-purple),
+                0 -4px 0 0 var(--2b-purple),
+                0 4px 0 0 var(--2b-purple),
+                -4px -4px 0 0 var(--2b-pink),
+                4px -4px 0 0 var(--2b-pink),
+                -4px 4px 0 0 var(--2b-pink),
+                4px 4px 0 0 var(--2b-pink);
+            margin: 8px;
+        }
+        
+        .pixel-border-cyan {
+            box-shadow: 
+                -4px 0 0 0 var(--2b-cyan),
+                4px 0 0 0 var(--2b-cyan),
+                0 -4px 0 0 var(--2b-cyan),
+                0 4px 0 0 var(--2b-cyan),
+                -4px -4px 0 0 var(--2b-cyan-light),
+                4px -4px 0 0 var(--2b-cyan-light),
+                -4px 4px 0 0 var(--2b-cyan-light),
+                4px 4px 0 0 var(--2b-cyan-light);
+            margin: 8px;
+        }
+        
+        /* 像素按钮 - 多彩 */
+        .pixel-btn {
+            background: var(--2b-pink);
+            border: none;
+            padding: 16px 28px;
+            font-family: inherit;
+            font-size: 12px;
+            color: white;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.1s;
+            box-shadow: 
+                inset -4px -4px 0 0 var(--2b-pink-dark),
+                inset 4px 4px 0 0 var(--2b-pink-light),
+                4px 4px 0 0 var(--2b-pink-dark);
+        }
+        
+        .pixel-btn:hover {
+            background: var(--2b-pink-light);
+            color: var(--2b-pink-dark);
+            transform: translate(-2px, -2px);
+            box-shadow: 
+                inset -4px -4px 0 0 var(--2b-pink),
+                inset 4px 4px 0 0 white,
+                6px 6px 0 0 var(--2b-pink-dark);
+        }
+        
+        .pixel-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 
+                inset -4px -4px 0 0 var(--2b-pink-light),
+                inset 4px 4px 0 0 var(--2b-pink-dark),
+                0 0 0 0 var(--2b-pink-dark);
+        }
+        
+        .pixel-btn-cyan {
+            background: var(--2b-cyan);
+            color: var(--2b-bg-darker);
+            box-shadow: 
+                inset -4px -4px 0 0 #0891b2,
+                inset 4px 4px 0 0 var(--2b-cyan-light),
+                4px 4px 0 0 #0891b2;
+        }
+        
+        .pixel-btn-cyan:hover {
+            background: var(--2b-cyan-light);
+            box-shadow: 
+                inset -4px -4px 0 0 var(--2b-cyan),
+                inset 4px 4px 0 0 white,
+                6px 6px 0 0 #0891b2;
+        }
+        
+        .pixel-btn-purple {
+            background: var(--2b-purple);
+            box-shadow: 
+                inset -4px -4px 0 0 #7c3aed,
+                inset 4px 4px 0 0 var(--2b-purple-light),
+                4px 4px 0 0 #7c3aed;
+        }
+        
+        .pixel-btn-purple:hover {
+            background: var(--2b-purple-light);
+            color: #7c3aed;
+            box-shadow: 
+                inset -4px -4px 0 0 var(--2b-purple),
+                inset 4px 4px 0 0 white,
+                6px 6px 0 0 #7c3aed;
+        }
+        
+        .pixel-btn-gold {
+            background: var(--2b-yellow);
+            color: var(--2b-bg-darker);
+            box-shadow: 
+                inset -4px -4px 0 0 #ca8a04,
+                inset 4px 4px 0 0 var(--2b-yellow-light),
+                4px 4px 0 0 #ca8a04;
+        }
+        
+        /* 像素卡片 - 渐变背景 */
+        .pixel-card {
+            background: linear-gradient(135deg, rgba(192, 132, 252, 0.15) 0%, rgba(34, 211, 238, 0.1) 100%);
+            padding: 24px;
+            position: relative;
+            border: 2px solid var(--2b-purple);
+            backdrop-filter: blur(8px);
+        }
+        
+        .pixel-card::before {
+            content: '';
+            position: absolute;
+            top: -6px;
+            left: -6px;
+            right: -6px;
+            bottom: -6px;
+            background: linear-gradient(45deg, var(--2b-pink), var(--2b-purple), var(--2b-cyan));
+            z-index: -1;
+            opacity: 0.5;
+        }
+        
+        /* 二次元猫头鹰 - 像素艺术 */
+        .pixel-owl {
+            width: 80px;
+            height: 80px;
+            background: transparent;
+            position: relative;
+            display: inline-block;
+            image-rendering: pixelated;
+        }
+        
+        .pixel-owl::before {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: var(--2b-pink);
+            top: 20px;
+            left: 16px;
+            box-shadow: 
+                /* 左眼 */
+                12px 0 0 0 var(--2b-pink-dark),
+                24px 0 0 0 var(--2b-pink),
+                /* 右眼 */
+                44px 0 0 0 var(--2b-pink),
+                56px 0 0 0 var(--2b-pink-dark),
+                68px 0 0 0 var(--2b-pink),
+                /* 眼睛高光 */
+                12px 4px 0 0 white,
+                56px 4px 0 0 white,
+                /* 脸部 */
+                0 12px 0 0 var(--2b-pink-light),
+                12px 12px 0 0 var(--2b-pink),
+                24px 12px 0 0 var(--2b-purple),
+                36px 12px 0 0 var(--2b-cyan),
+                44px 12px 0 0 var(--2b-purple),
+                56px 12px 0 0 var(--2b-pink),
+                68px 12px 0 0 var(--2b-pink-light),
+                /* 身体 */
+                12px 24px 0 0 var(--2b-purple),
+                24px 24px 0 0 var(--2b-cyan),
+                36px 24px 0 0 var(--2b-yellow),
+                44px 24px 0 0 var(--2b-cyan),
+                56px 24px 0 0 var(--2b-purple),
+                /* 翅膀 */
+                0 24px 0 0 var(--2b-pink-dark),
+                68px 24px 0 0 var(--2b-pink-dark),
+                0 36px 0 0 var(--2b-pink),
+                68px 36px 0 0 var(--2b-pink),
+                /* 肚子 */
+                24px 36px 0 0 var(--2b-cyan-light),
+                36px 36px 0 0 var(--2b-yellow-light),
+                44px 36px 0 0 var(--2b-cyan-light),
+                /* 脚 */
+                24px 56px 0 0 var(--2b-yellow),
+                44px 56px 0 0 var(--2b-yellow),
+                20px 60px 0 0 var(--2b-yellow),
+                28px 60px 0 0 var(--2b-yellow),
+                40px 60px 0 0 var(--2b-yellow),
+                48px 60px 0 0 var(--2b-yellow);
+        }
+        
+        /* 打字机光标 */
+        .cursor-blink {
+            animation: blink 1s step-end infinite;
+            color: var(--2b-pink);
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        /* 像素网格背景 - 星空感 */
+        .pixel-grid {
+            background-image: 
+                radial-gradient(circle at 20% 30%, var(--2b-pink) 1px, transparent 1px),
+                radial-gradient(circle at 60% 20%, var(--2b-cyan) 1px, transparent 1px),
+                radial-gradient(circle at 80% 60%, var(--2b-yellow) 1px, transparent 1px),
+                radial-gradient(circle at 40% 70%, var(--2b-purple) 1px, transparent 1px),
+                radial-gradient(circle at 10% 80%, white 1px, transparent 1px);
+            background-size: 100px 100px, 150px 150px, 120px 120px, 180px 180px, 200px 200px;
+        }
+        
+        /* 对话框 - 二次元风格 */
+        .pixel-dialog {
+            background: linear-gradient(135deg, var(--2b-pink) 0%, var(--2b-purple) 100%);
+            color: white;
+            padding: 24px;
+            position: relative;
+            border: 4px solid var(--2b-pink-light);
+            border-radius: 20px 20px 20px 0;
+            box-shadow: 
+                6px 6px 0 var(--2b-pink-dark),
+                inset 0 0 20px rgba(255, 255, 255, 0.2);
+        }
+        
+        .pixel-dialog::after {
+            content: '♥';
+            position: absolute;
+            bottom: 8px;
+            right: 16px;
+            color: var(--2b-yellow);
+            animation: heartbeat 1s ease-in-out infinite;
+            font-size: 20px;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.3); }
+        }
+        
+        /* 生命值条 - 多彩 */
+        .health-bar {
+            width: 200px;
+            height: 20px;
+            background: var(--2b-bg-darker);
+            border: 3px solid var(--2b-pink);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .health-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--2b-pink), var(--2b-cyan));
+            width: 75%;
+            position: relative;
+            box-shadow: inset 0 2px 0 0 rgba(255, 255, 255, 0.3);
+        }
+        
+        .health-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 8px,
+                rgba(255, 255, 255, 0.2) 8px,
+                rgba(255, 255, 255, 0.2) 10px
+            );
+        }
+        
+        /* 标签 - 萌系 */
+        .pixel-tag {
+            display: inline-block;
+            padding: 8px 16px;
+            font-size: 11px;
+            position: relative;
+            margin: 4px;
+        }
+        
+        .pixel-tag-pink {
+            background: var(--2b-pink);
+            color: white;
+            box-shadow: 
+                -3px 0 0 0 var(--2b-pink-dark),
+                3px 0 0 0 var(--2b-pink-dark),
+                0 -3px 0 0 var(--2b-pink-dark),
+                0 3px 0 0 var(--2b-pink-dark);
+        }
+        
+        .pixel-tag-cyan {
+            background: var(--2b-cyan);
+            color: var(--2b-bg-darker);
+            box-shadow: 
+                -3px 0 0 0 #0891b2,
+                3px 0 0 0 #0891b2,
+                0 -3px 0 0 #0891b2,
+                0 3px 0 0 #0891b2;
+        }
+        
+        .pixel-tag-purple {
+            background: var(--2b-purple);
+            color: white;
+            box-shadow: 
+                -3px 0 0 0 #7c3aed,
+                3px 0 0 0 #7c3aed,
+                0 -3px 0 0 #7c3aed,
+                0 3px 0 0 #7c3aed;
+        }
+        
+        .pixel-tag-gold {
+            background: var(--2b-yellow);
+            color: var(--2b-bg-darker);
+            box-shadow: 
+                -3px 0 0 0 #ca8a04,
+                3px 0 0 0 #ca8a04,
+                0 -3px 0 0 #ca8a04,
+                0 3px 0 0 #ca8a04;
+        }
+        
+        /* 浮动动画 */
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 旋转动画 */
+        .spin-slow {
+            animation: spin 8s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        /* 星星装饰 */
+        .star-decoration {
+            position: absolute;
+            color: var(--2b-yellow);
+            font-size: 20px;
+            animation: twinkle 2s ease-in-out infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(0.8); }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 16px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--2b-bg-darker);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(var(--2b-pink), var(--2b-purple));
+            border: 2px solid var(--2b-bg-darker);
+        }
+    </style>
+</head>
+<body class="min-h-screen pixel-grid crt-flicker">
+    <div class="crt-overlay"></div>
+    
+    <div class="container mx-auto px-4 py-8 max-w-4xl relative">
+        <div class="star-decoration" style="top: 20px; left: 10%;">✦</div>
+        <div class="star-decoration" style="top: 100px; right: 15%; animation-delay: 0.5s;">✧</div>
+        <div class="star-decoration" style="top: 300px; left: 5%; animation-delay: 1s;">✦</div>
+        <div class="star-decoration" style="bottom: 200px; right: 10%; animation-delay: 1.5s;">✧</div>
+        
+        <header class="text-center mb-12">
+            <div class="pixel-owl mb-6 mx-auto float-animation"></div>
+            <h1 class="text-2xl md:text-4xl mb-4" style="color: var(--2b-pink); text-shadow: 4px 4px 0 var(--2b-purple), 8px 8px 0 rgba(0,0,0,0.3);">
+                OWLTREE
+            </h1>
+            <p class="text-xs md:text-sm" style="color: var(--2b-cyan);">
+                二次元8-BIT风格<span class="cursor-blink">_</span>
+            </p>
+        </header>
+        
+        <nav class="flex flex-wrap justify-center gap-6 mb-12">
+            <button type="button" class="pixel-btn">♥ 开始游戏</button>
+            <button type="button" class="pixel-btn pixel-btn-cyan">▶ 继续</button>
+            <button type="button" class="pixel-btn pixel-btn-purple">⚙ 设置</button>
+        </nav>
+        
+        <section class="pixel-card pixel-border mb-8">
+            <h2 class="text-sm mb-6" style="color: var(--2b-yellow); border-bottom: 2px dashed var(--2b-purple); padding-bottom: 8px;">
+                ♦ 玩家状态 ♦
+            </h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <p class="text-xs mb-2" style="color: var(--2b-pink);">生命值 HP ♥</p>
+                    <div class="health-bar">
+                        <div class="health-fill"></div>
+                    </div>
+                    <p class="text-xs mt-1" style="color: var(--2b-cyan);">75/100</p>
+                </div>
+                
+                <div>
+                    <p class="text-xs mb-2" style="color: var(--2b-purple);">焦虑值 STRESS ⚡</p>
+                    <div class="health-bar" style="border-color: var(--2b-purple);">
+                        <div class="health-fill" style="width: 45%; background: linear-gradient(90deg, var(--2b-purple), var(--2b-cyan));"></div>
+                    </div>
+                    <p class="text-xs mt-1" style="color: var(--2b-cyan);">45/100</p>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4" style="border-top: 2px solid var(--2b-purple);">
+                <p class="text-xs">回合: <span style="color: var(--2b-yellow);">第 3 轮</span></p>
+                <p class="text-xs mt-2">道具: <span style="color: var(--2b-cyan);">检测试剂 x2</span></p>
+            </div>
+        </section>
+        
+        <section class="pixel-dialog mb-8">
+            <p class="text-xs leading-loose">
+                欢迎来到月抛模拟器！<br><br>
+                在这个二次元像素世界中，<br>
+                你需要谨慎选择每一次行动。<br>
+                记住：安全第一，健康最重要！<br>
+                让我们一起冒险吧～♪
+            </p>
+        </section>
+        
+        <section class="pixel-card pixel-border-cyan">
+            <h3 class="text-xs mb-4" style="color: var(--2b-cyan);">♦ 可选标签 ♦</h3>
+            <div class="flex flex-wrap gap-3">
+                <span class="pixel-tag pixel-tag-pink">♥ 健康</span>
+                <span class="pixel-tag pixel-tag-cyan">⚠ 危险</span>
+                <span class="pixel-tag pixel-tag-purple">✓ 安全</span>
+                <span class="pixel-tag pixel-tag-gold">? 未知</span>
+            </div>
+        </section>
+        
+        <footer class="text-center mt-12 text-xs" style="opacity: 0.7;">
+            <p style="color: var(--2b-pink);">♥ © 2024 OWLTREE ♥</p>
+            <p class="mt-2" style="color: var(--2b-cyan);">PRESS START TO CONTINUE ♪</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.pixel-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'translate(2px, 2px)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -18,26 +18,29 @@ export function IntroModal({ onStart, onHelp }: IntroModalProps) {
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
       >
-        <span className="text-5xl block mb-4">🌙</span>
+        <span className="text-5xl block mb-4">💘</span>
         <h1 className="font-pixel text-teal-accent text-lg mb-2 tracking-wider">月抛模拟器</h1>
-        <p className="text-sm text-slate-400 mb-1">Moon-Throw Simulator</p>
-        <div className="pixel-divider my-4" />
-        <p className="text-sm text-slate-300 mb-6">
-          一个关于选择与后果的实验性互动叙事。
-          每一次选择都可能改变你的命运。
-        </p>
+        <p className="text-xs font-bold text-slate-500 tracking-widest uppercase mb-6">Panic Edition</p>
+
+        <div className="text-left text-xs text-slate-300 space-y-3 mb-6 bg-slate-800/50 p-5 rounded-xl border border-white/5">
+          <p>1. <b>延迟判决</b>：高危行为后，你<b>不会</b>立即知道是否感染。</p>
+          <p>2. <b>心理压力</b>：无套或高危行为会累积心理压力。压力过高会导致<b>视线模糊</b>。</p>
+          <p>3. <b>去医院</b>：确认自己是否安全的唯一方法，但代价高昂。</p>
+          <p>4. <b>目标</b>：将压抑值降至 0，且身体健康。</p>
+        </div>
+
         <div className="flex flex-col gap-3">
           <button
             onClick={onStart}
             className="glass-button px-6 py-3 text-sm font-bold"
           >
-            开始游戏
+            开始月抛
           </button>
           <button
             onClick={onHelp}
             className="glass-button px-6 py-2 text-xs text-slate-400"
           >
-            游戏规则
+            📖 游戏帮助
           </button>
         </div>
       </motion.div>

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 像素极简</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pixel-bg: #fafafa;
+            --pixel-fg: #1a1a1a;
+            --pixel-accent: #ff6b6b;
+            --pixel-grid: rgba(0, 0, 0, 0.04);
+            --pixel-subtle: #e5e5e5;
+        }
+        
+        * {
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', 'Noto Sans SC', monospace;
+            background-color: var(--pixel-bg);
+            color: var(--pixel-fg);
+            line-height: 1.6;
+            letter-spacing: -0.02em;
+        }
+        
+        /* 极简像素网格 */
+        .pixel-grid {
+            background-image: 
+                linear-gradient(var(--pixel-grid) 1px, transparent 1px),
+                linear-gradient(90deg, var(--pixel-grid) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        /* 像素点装饰 */
+        .dot-1x1 {
+            width: 4px;
+            height: 4px;
+            background: var(--pixel-accent);
+        }
+        
+        .dot-2x2 {
+            width: 8px;
+            height: 8px;
+            background: var(--pixel-fg);
+        }
+        
+        .dot-outline {
+            width: 6px;
+            height: 6px;
+            border: 2px solid var(--pixel-fg);
+        }
+        
+        /* 像素分隔线 */
+        .pixel-hr {
+            height: 2px;
+            background: repeating-linear-gradient(
+                90deg,
+                var(--pixel-fg) 0px,
+                var(--pixel-fg) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            opacity: 0.2;
+        }
+        
+        .pixel-vr {
+            width: 2px;
+            background: repeating-linear-gradient(
+                0deg,
+                var(--pixel-fg) 0px,
+                var(--pixel-fg) 4px,
+                transparent 4px,
+                transparent 8px
+            );
+            opacity: 0.2;
+        }
+        
+        /* 极简像素按钮 */
+        .pix-btn {
+            background: white;
+            border: 2px solid var(--pixel-fg);
+            padding: 12px 28px;
+            font-family: inherit;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.1s;
+            box-shadow: 4px 4px 0 var(--pixel-fg);
+        }
+        
+        .pix-btn:hover {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0 var(--pixel-fg);
+        }
+        
+        .pix-btn:active {
+            transform: translate(4px, 4px);
+            box-shadow: 0 0 0 var(--pixel-fg);
+        }
+        
+        .pix-btn-accent {
+            background: var(--pixel-accent);
+            border-color: var(--pixel-accent);
+            color: white;
+        }
+        
+        /* 像素卡片 */
+        .pix-card {
+            background: white;
+            border: 2px solid var(--pixel-fg);
+            padding: 24px;
+            position: relative;
+        }
+        
+        .pix-card-accent {
+            border-color: var(--pixel-accent);
+            box-shadow: 6px 6px 0 rgba(255, 107, 107, 0.1);
+        }
+        
+        /* 像素进度条 */
+        .pix-progress {
+            height: 8px;
+            border: 2px solid var(--pixel-fg);
+            padding: 1px;
+            background: white;
+        }
+        
+        .pix-progress-fill {
+            height: 100%;
+            background: var(--pixel-fg);
+            position: relative;
+        }
+        
+        .pix-progress-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: white;
+        }
+        
+        /* 闪烁光标 */
+        .blink {
+            animation: blink 1s step-end infinite;
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        /* 像素猫头鹰 */
+        .mini-owl {
+            display: inline-block;
+            width: 24px;
+            height: 24px;
+            position: relative;
+        }
+        
+        .mini-owl::before {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--pixel-fg);
+            top: 6px;
+            left: 4px;
+            box-shadow:
+                8px 0 0 0 var(--pixel-fg),
+                0 4px 0 0 var(--pixel-fg),
+                4px 4px 0 0 var(--pixel-accent),
+                8px 4px 0 0 var(--pixel-fg),
+                4px 8px 0 0 var(--pixel-fg);
+        }
+        
+        /* 标签 */
+        .pix-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            font-size: 11px;
+            border: 1px solid var(--pixel-subtle);
+            background: white;
+        }
+        
+        .pix-tag::before {
+            content: '';
+            width: 4px;
+            height: 4px;
+            background: var(--pixel-fg);
+        }
+        
+        .pix-tag-accent {
+            border-color: var(--pixel-accent);
+            color: var(--pixel-accent);
+        }
+        
+        .pix-tag-accent::before {
+            background: var(--pixel-accent);
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--pixel-bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--pixel-subtle);
+            border: 2px solid var(--pixel-bg);
+        }
+    </style>
+</head>
+<body class="min-h-screen pixel-grid">
+    <div class="container mx-auto px-6 py-16 max-w-2xl">
+        
+        <header class="mb-16">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="mini-owl"></div>
+                <div class="pixel-hr flex-1"></div>
+                <div class="dot-1x1"></div>
+            </div>
+            <h1 class="text-3xl font-medium mb-2">
+                OWLTREE<span class="blink">_</span>
+            </h1>
+            <p class="text-xs" style="color: #737373;">
+                PIXEL_MINIMAL v1.0
+            </p>
+        </header>
+        
+        <nav class="flex flex-wrap gap-3 mb-12">
+            <button type="button" class="pix-btn pix-btn-accent">START</button>
+            <button type="button" class="pix-btn">LOAD</button>
+            <button type="button" class="pix-btn">OPTS</button>
+        </nav>
+        
+        <section class="pix-card pix-card-accent mb-6">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <div class="dot-2x2"></div>
+                    <span class="text-xs" style="color: #737373;">STATUS</span>
+                </div>
+                <div class="dot-outline"></div>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <span>HP</span>
+                        <span>75/100</span>
+                    </div>
+                    <div class="pix-progress">
+                        <div class="pix-progress-fill" style="width: 75%;"></div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="flex justify-between text-xs mb-2">
+                        <span>MP</span>
+                        <span>45/100</span>
+                    </div>
+                    <div class="pix-progress">
+                        <div class="pix-progress-fill" style="width: 45%; opacity: 0.5;"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-6 pt-4 flex gap-6 text-xs" style="border-top: 2px solid #f0f0f0;">
+                <div>
+                    <span class="block" style="color: #737373;">TURN</span>
+                    <span>03</span>
+                </div>
+                <div class="pixel-vr"></div>
+                <div>
+                    <span class="block" style="color: #737373;">ITEM</span>
+                    <span>x2</span>
+                </div>
+            </div>
+        </section>
+        
+        <section class="pix-card mb-6">
+            <div class="flex gap-3">
+                <div class="dot-1x1 mt-1 flex-shrink-0"></div>
+                <div>
+                    <p class="text-sm leading-relaxed mb-3">
+                        欢迎来到月抛模拟器。<br>
+                        在这个像素极简世界中，<br>
+                        保持冷静，做出选择。
+                    </p>
+                    <p class="text-xs blink" style="color: #737373;">
+                        PRESS ANY KEY
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <section class="flex flex-wrap gap-2">
+            <span class="pix-tag">SAFE</span>
+            <span class="pix-tag pix-tag-accent">WARN</span>
+            <span class="pix-tag">UNKN</span>
+        </section>
+        
+        <footer class="mt-16 pt-6 flex items-center justify-between text-xs" style="color: #737373; border-top: 2px dashed #e5e5e5;">
+            <div class="flex items-center gap-2">
+                <div class="dot-1x1" style="background: #737373;"></div>
+                <span>OWLTREE</span>
+            </div>
+            <span>READY</span>
+        </footer>
+    </div>
+    
+    <script>
+        document.querySelectorAll('.pix-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.style.transform = 'translate(4px, 4px)';
+                this.style.boxShadow = 'none';
+                setTimeout(() => {
+                    this.style.transform = '';
+                    this.style.boxShadow = '';
+                }, 100);
+            });
+        });
+    </script>
+</body>
+</html>

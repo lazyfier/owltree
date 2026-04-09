@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useGameState } from '@/hooks/useGameState'
 import { GameHeader } from './GameHeader'
 import { StatsPanel } from './StatsPanel'
@@ -27,7 +28,10 @@ export function GameContainer() {
     flirtLine,
   } = useGameState()
 
+  const [partnerTestedPositive, setPartnerTestedPositive] = useState(false)
+
   const handleRestart = () => {
+    setPartnerTestedPositive(false)
     startGame()
   }
 
@@ -39,8 +43,15 @@ export function GameContainer() {
     }
   }
 
+  const handleUseTestkit = () => {
+    if (partner && partner.diseases.length > 0) {
+      setPartnerTestedPositive(true)
+    }
+    useTestkit()
+  }
+
   return (
-    <div className={`w-full max-w-md mx-auto ${isPanic ? 'animate-pulse' : ''}`}>
+    <div className="w-full max-w-md mx-auto">
       <GameHeader turn={state.turn} />
 
       {phase === 'playing' && partner && (
@@ -50,8 +61,14 @@ export function GameContainer() {
             anxiety={state.anxiety}
             isPanic={isPanic}
             testkitCount={state.items.testkit}
+            onUseTestkit={handleUseTestkit}
           />
-          <PartnerCard partner={partner} isPanic={isPanic} flirtLine={flirtLine} />
+          <PartnerCard
+            partner={partner}
+            isPanic={isPanic}
+            flirtLine={flirtLine}
+            showDangerBadge={partnerTestedPositive}
+          />
           <ActionButtons
             onAction={takeAction}
             onChat={chatWithPartner}
@@ -61,19 +78,11 @@ export function GameContainer() {
             hiddenCount={hiddenCount}
             isPanic={isPanic}
           />
-          {state.items.testkit > 0 && (
-            <button
-              onClick={useTestkit}
-              className="glass-button w-full mt-2 text-xs"
-            >
-              🧪 使用检测试剂 (剩余 x{state.items.testkit})
-            </button>
-          )}
         </>
       )}
 
       {/* Modals */}
-      {phase === 'intro' && <IntroModal onStart={startGame} onHelp={showHelp} />}
+      {phase === 'intro' && <IntroModal onStart={handleRestart} onHelp={showHelp} />}
 
       <FeedbackModal
         show={phase === 'feedback' || phase === 'gameover'}
@@ -82,6 +91,7 @@ export function GameContainer() {
         icon={feedback?.icon ?? ''}
         onClose={handleCloseFeedback}
         isGameOver={feedback?.isGameOver}
+        history={feedback?.history}
       />
 
       <HelpModal show={phase === 'help'} onClose={closeHelp} />

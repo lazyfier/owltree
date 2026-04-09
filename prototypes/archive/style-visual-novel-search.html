@@ -1,0 +1,962 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owltree - 视觉小说导航</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --retro-cream: #f5f1e8;
+            --retro-paper: #faf8f3;
+            --retro-ink: #1a1a1a;
+            --burnt-orange: #c75b39;
+            --mustard: #d4a574;
+            --sage-gray: #8b9a8b;
+            --copper: #b87333;
+        }
+        
+        * { box-sizing: border-box; }
+        
+        body {
+            font-family: 'Noto Sans SC', 'Space Grotesk', sans-serif;
+            background: var(--retro-cream);
+            color: var(--retro-ink);
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
+        
+        .paper-texture {
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.01) 2px, rgba(0,0,0,0.01) 4px), var(--retro-cream);
+        }
+        
+        .grid-retro {
+            background-image: linear-gradient(rgba(139, 154, 139, 0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(139, 154, 139, 0.15) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+        
+        .crt-screen {
+            background: var(--retro-ink);
+            border: 4px solid var(--copper);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 0 40px rgba(199, 91, 57, 0.3), 0 0 0 8px var(--retro-cream), 0 0 0 10px var(--copper), 0 30px 80px rgba(0,0,0,0.4);
+        }
+        
+        .crt-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(199, 91, 57, 0.03) 2px, rgba(199, 91, 57, 0.03) 4px);
+            pointer-events: none;
+            z-index: 10;
+        }
+        
+        .crt-text {
+            color: #fff;
+            text-shadow: 2px 0 rgba(255, 0, 0, 0.4), -2px 0 rgba(0, 255, 255, 0.4);
+            letter-spacing: 0.1em;
+        }
+        
+        .heavy-title { font-weight: 900; letter-spacing: -0.02em; line-height: 1; }
+        
+        .magazine-btn {
+            background: var(--retro-ink);
+            color: white;
+            padding: 14px 28px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: -4px; bottom: -4px;
+            background: var(--burnt-orange);
+            z-index: -1;
+            transition: all 0.3s;
+        }
+        
+        .magazine-btn:hover { transform: translate(2px, 2px); }
+        .magazine-btn:hover::before { top: 0; left: 0; right: 0; bottom: 0; }
+        
+        .magazine-card {
+            background: var(--retro-paper);
+            border: 2px solid var(--retro-ink);
+            padding: 24px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .magazine-card::before {
+            content: '';
+            position: absolute;
+            top: 6px; left: 6px; right: -6px; bottom: -6px;
+            background: var(--mustard);
+            z-index: -1;
+            transition: all 0.4s;
+        }
+        
+        .magazine-card:hover { transform: translate(-2px, -2px); }
+        .magazine-card:hover::before { top: 8px; left: 8px; }
+        
+        .search-box {
+            background: var(--retro-paper);
+            border: 3px solid var(--retro-ink);
+            padding: 16px 24px;
+            font-size: 16px;
+            width: 100%;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: var(--burnt-orange);
+            box-shadow: 6px 6px 0 var(--burnt-orange);
+        }
+        
+        .search-container {
+            position: relative;
+        }
+
+        .nav-search {
+            width: 100%;
+            max-width: 360px;
+            margin-left: auto;
+        }
+
+        .search-cluster {
+            display: flex;
+            align-items: stretch;
+            gap: 10px;
+        }
+        
+        .search-hint {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--retro-ink);
+            color: white;
+            padding: 4px 10px;
+            font-size: 12px;
+            font-family: monospace;
+        }
+        
+        .quick-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .quick-link:hover {
+            background: var(--burnt-orange);
+            color: white;
+            transform: translateY(-2px);
+        }
+        
+        .quick-link svg { width: 16px; height: 16px; }
+        
+        .retro-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            border: 1px solid var(--retro-ink);
+            background: transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .retro-tag:hover { background: var(--retro-ink); color: white; }
+        .retro-tag.active { background: var(--burnt-orange); color: white; border-color: var(--burnt-orange); }
+        
+        .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .recent-item:hover {
+            border-color: var(--burnt-orange);
+            transform: translateX(4px);
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: var(--retro-ink);
+            color: white;
+            padding: 16px 24px;
+            border-left: 4px solid var(--burnt-orange);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            transform: translateX(150%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+        }
+        
+        .toast.show { transform: translateX(0); }
+        
+        .kbd {
+            display: inline-block;
+            padding: 4px 8px;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            font-size: 11px;
+            font-family: monospace;
+            box-shadow: 0 2px 0 var(--retro-ink);
+        }
+        
+        .tooltip {
+            position: relative;
+        }
+        
+        .tooltip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            padding: 8px 12px;
+            background: var(--retro-ink);
+            color: white;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.2s;
+        }
+        
+        .tooltip:hover::after { opacity: 1; transform: translateX(-50%) translateY(-4px); }
+        
+        .bookmark-btn {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 1px solid var(--retro-ink);
+            cursor: pointer;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+        
+        .bookmark-btn:hover { background: var(--burnt-orange); color: white; }
+        .bookmark-btn.active { background: var(--burnt-orange); color: white; }
+        
+        .shortcut-drawer {
+            display: none;
+            position: absolute;
+            top: calc(100% + 12px);
+            right: 0;
+            width: 280px;
+            padding: 16px;
+            background: rgba(250, 248, 243, 0.98);
+            border: 2px solid var(--retro-ink);
+            box-shadow: 10px 10px 0 rgba(199, 91, 57, 0.22);
+            z-index: 140;
+        }
+
+        .shortcut-drawer.show {
+            display: block;
+        }
+
+        .floating-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .shortcut-toggle {
+            flex: 0 0 auto;
+            min-width: 96px;
+            padding: 0 16px;
+            border: 2px solid var(--retro-ink);
+            background: var(--retro-paper);
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            transition: all 0.2s;
+        }
+
+        .shortcut-toggle:hover,
+        .shortcut-toggle.active {
+            background: var(--retro-ink);
+            color: white;
+        }
+
+        .side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            height: 100%;
+        }
+
+        .side-card {
+            flex: 1 1 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .side-card .magazine-card {
+            flex: 1 1 0;
+            height: 100%;
+        }
+
+        .progress-track {
+            height: 8px;
+            background: rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--retro-ink);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--burnt-orange), var(--mustard));
+        }
+
+        .center-support-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+
+        .center-support-card {
+            background: rgba(250, 248, 243, 0.92);
+            border: 2px solid var(--retro-ink);
+            padding: 18px;
+            position: relative;
+        }
+
+        .center-support-card::before {
+            content: '';
+            position: absolute;
+            inset: 8px auto auto 8px;
+            width: 26px;
+            height: 2px;
+            background: var(--burnt-orange);
+        }
+
+        .progress-list-item {
+            padding: 12px 0;
+            border-top: 1px dashed rgba(0,0,0,0.18);
+        }
+
+        .progress-list-item:first-child {
+            padding-top: 0;
+            border-top: none;
+        }
+
+        .project-meta {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .nav-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--burnt-orange);
+            display: inline-block;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .search-results {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 2px solid var(--retro-ink);
+            border-top: none;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+        }
+        
+        .search-results.show { display: block; }
+        
+        .search-result-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: var(--retro-cream);
+        }
+        
+        .search-result-item:last-child { border-bottom: none; }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: rgba(199, 91, 57, 0.1);
+            border: 1px solid var(--burnt-orange);
+            font-size: 11px;
+            color: var(--burnt-orange);
+        }
+
+        .utility-stat {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.14);
+        }
+
+        .utility-stat strong {
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .utility-action {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 12px 14px;
+            background: transparent;
+            border: 1px solid var(--retro-ink);
+            transition: all 0.2s;
+            cursor: pointer;
+            text-align: left;
+        }
+
+        .utility-action:hover {
+            background: var(--retro-ink);
+            color: white;
+            transform: translateX(4px);
+        }
+
+        .utility-action small {
+            display: block;
+            opacity: 0.7;
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 767px) {
+            .nav-search {
+                max-width: none;
+                margin-left: 0;
+            }
+
+            .center-support-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-cluster {
+                flex-direction: column;
+            }
+
+            .search-box {
+                padding: 14px 48px 14px 18px;
+                font-size: 15px;
+            }
+        }
+        
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: var(--retro-cream); }
+        ::-webkit-scrollbar-thumb { background: var(--burnt-orange); border: 2px solid var(--retro-cream); }
+    </style>
+</head>
+<body class="min-h-screen paper-texture grid-retro">
+    
+    <div class="container mx-auto px-6 py-8 max-w-6xl">
+        
+        <header class="mb-8">
+            <div class="flex justify-between items-start mb-6">
+                <div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <span class="inline-block px-4 py-2 bg-black text-white text-xs font-bold tracking-widest">VOL. 01 — 2024</span>
+                        <span class="status-indicator">
+                            <span class="nav-dot"></span>
+                            SYSTEM ONLINE
+                        </span>
+                    </div>
+                    <h1 class="heavy-title text-6xl md:text-7xl leading-none">
+                        视觉<span class="text-[#c75b39]">小说</span>
+                    </h1>
+                    <p class="text-lg tracking-wide mt-4" style="color: var(--sage-gray);">
+                        Visual Novel Navigation System
+                    </p>
+                </div>
+                <div class="hidden md:block text-right">
+                    <p class="text-xs tracking-[0.3em] text-gray-500 mb-2">RETRO-FUTURISM</p>
+                    <div class="w-24 h-1 bg-[#c75b39] ml-auto mb-4"></div>
+                    <div class="flex gap-2 justify-end">
+                        <button type="button" class="quick-link" id="headerShortcutButton" onclick="toggleShortcuts()" title="快捷键帮助">
+                            <svg aria-hidden="true" focusable="false" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </button>
+                        <button type="button" class="quick-link" onclick="showToast('设置面板')" title="系统设置">
+                            <svg aria-hidden="true" focusable="false" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <nav class="flex flex-col gap-4 mb-8 lg:flex-row lg:items-center lg:justify-between">
+            <div class="flex flex-wrap gap-2">
+                <button type="button" class="retro-tag active" onclick="filterTag(this)">全部</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">游戏</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">笔记</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">工具</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">趋势</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">收藏</button>
+                <button type="button" class="retro-tag" onclick="filterTag(this)">最近</button>
+            </div>
+            <div class="search-container nav-search">
+                <div class="search-cluster">
+                    <div class="search-container flex-1">
+                        <input type="text" class="search-box" placeholder="搜索游戏、笔记、工具..." id="searchInput" autocomplete="off">
+                        <span class="search-hint">/</span>
+                        <div class="search-results" id="searchResults">
+                            <div class="search-result-item" onclick="showToast('打开：月抛模拟器')">
+                                <div class="flex items-center gap-3">
+                                    <span>🎮</span>
+                                    <div>
+                                        <p class="font-bold">月抛模拟器</p>
+                                        <p class="text-xs text-gray-500">游戏 · 决策模拟</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="search-result-item" onclick="showToast('打开：设计笔记')">
+                                <div class="flex items-center gap-3">
+                                    <span>📝</span>
+                                    <div>
+                                        <p class="font-bold">设计笔记</p>
+                                        <p class="text-xs text-gray-500">笔记 · 视觉设计</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="search-result-item" onclick="showToast('打开：配色工具')">
+                                <div class="flex items-center gap-3">
+                                    <span>🛠</span>
+                                    <div>
+                                        <p class="font-bold">配色工具</p>
+                                        <p class="text-xs text-gray-500">工具 · 设计辅助</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="shortcut-drawer" id="shortcutDrawer">
+                    <div class="floating-meta">
+                        <h3 class="font-bold tracking-[0.2em] text-xs uppercase">快捷键面板</h3>
+                        <span class="text-xs text-gray-500">可隐藏</span>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        <div class="flex justify-between"><span class="text-gray-600">搜索</span><span class="kbd">/</span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">显示帮助</span><span class="kbd">?</span></div>
+                        <div class="flex justify-between"><span class="text-gray-600">关闭面板</span><span class="kbd">Esc</span></div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <main class="grid grid-cols-12 gap-6 mb-12">
+            
+            <aside class="col-span-12 lg:col-span-3">
+                <div class="side-column">
+                <div class="side-card">
+                <div class="magazine-card">
+                    <h3 class="font-bold mb-4">今日工作台</h3>
+                    <div class="space-y-4">
+                        <div class="utility-stat">
+                            <div>
+                                <p class="text-xs tracking-[0.16em] text-gray-500 uppercase">Portal UI</p>
+                                <strong>82%</strong>
+                            </div>
+                            <span class="text-xs px-2 py-1 border border-black">视觉层完成</span>
+                        </div>
+                        <div class="utility-stat">
+                            <div>
+                                <p class="text-xs tracking-[0.16em] text-gray-500 uppercase">MoonThrow</p>
+                                <strong>Prototype</strong>
+                            </div>
+                            <span class="text-xs px-2 py-1 border border-black">原型保留中</span>
+                        </div>
+                        <div class="progress-list-item">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="font-bold">门户首页改造</span>
+                                <span>4 / 5 模块</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-fill" style="width: 80%;"></div>
+                            </div>
+                        </div>
+                        <div class="progress-list-item">
+                            <div class="flex items-center justify-between text-sm mb-2">
+                                <span class="font-bold">部署准备</span>
+                                <span>GitHub Pages Ready</span>
+                            </div>
+                            <div class="project-meta text-xs text-gray-600">
+                                <span class="border border-black px-2 py-2 bg-white">React 18 + TS</span>
+                                <span class="border border-black px-2 py-2 bg-white">Vite + Tailwind</span>
+                                <span class="border border-black px-2 py-2 bg-white">Vitest</span>
+                                <span class="border border-black px-2 py-2 bg-white">Playwright</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mt-6 pt-4 border-t border-black">
+                        <button type="button" class="utility-action" onclick="showToast('打开首页改造清单')">
+                            <span>
+                                当前里程碑
+                                <small>导航、搜索、工作台、模块入口已串联</small>
+                            </span>
+                            <span>→</span>
+                        </button>
+                        <button type="button" class="utility-action" onclick="showToast('查看项目信息')">
+                            <span>
+                                项目信息
+                                <small>游戏原型、门户首页、测试与部署状态</small>
+                            </span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+                </div>
+                <div class="side-card">
+                <div class="magazine-card">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <svg aria-hidden="true" focusable="false" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        最近访问
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="recent-item" onclick="showToast('正在打开：月抛模拟器')">
+                            <span class="text-lg">🎮</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">月抛模拟器</p>
+                                <p class="text-xs text-gray-500">2分钟前</p>
+                            </div>
+                        </div>
+                        <div class="recent-item" onclick="showToast('正在打开：AI趋势分析')">
+                            <span class="text-lg">📈</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">AI趋势分析</p>
+                                <p class="text-xs text-gray-500">昨天</p>
+                            </div>
+                        </div>
+                        <div class="recent-item" onclick="showToast('正在打开：设计笔记')">
+                            <span class="text-lg">📝</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">设计笔记</p>
+                                <p class="text-xs text-gray-500">3天前</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </aside>
+            
+            <section class="col-span-12 lg:col-span-6">
+                <div class="crt-screen p-8 md:p-12 mb-6">
+                    <div class="relative z-20">
+                        <p class="text-xs mb-4 tracking-[0.3em] text-[#d4a574]">SYSTEM MESSAGE</p>
+                        <h2 class="crt-text text-3xl md:text-4xl font-bold mb-6 leading-tight">
+                            欢迎来到<br>Owltree
+                        </h2>
+                        <p class="text-sm leading-relaxed mb-6 text-white/80">
+                            这是一个关于选择、关于叙事、关于复古未来主义美学的数字体验。
+                            每一个界面都是一个故事，每一次交互都是一次穿越。
+                        </p>
+                        <div class="flex items-center gap-4">
+                            <span class="text-[#c75b39] text-sm tracking-widest">▶ READY</span>
+                            <span class="flex-1 h-px bg-[#c75b39]/30"></span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flex flex-wrap gap-3 justify-center">
+                    <button type="button" class="magazine-btn" onclick="showToast('游戏启动中...')">开始游戏</button>
+                    <button type="button" class="magazine-btn" style="background: transparent; color: #1a1a1a; border: 2px solid #1a1a1a;" onclick="showToast('继续上次进度')">继续</button>
+                </div>
+
+                <div class="center-support-grid">
+                    <div class="center-support-card">
+                        <p class="text-xs tracking-[0.18em] text-gray-500 uppercase mb-3">Current Chapter</p>
+                        <h3 class="font-bold text-lg mb-2">Chapter 01 · 门户重构</h3>
+                        <p class="text-sm text-gray-600 leading-relaxed">当前重点在首页叙事感、搜索交互和模块组织，让入口像杂志目录而不是普通导航页。</p>
+                    </div>
+                    <div class="center-support-card">
+                        <p class="text-xs tracking-[0.18em] text-gray-500 uppercase mb-3">Live Notes</p>
+                        <div class="space-y-3 text-sm text-gray-700">
+                            <div class="flex items-center justify-between border-b border-black/10 pb-2">
+                                <span>视觉小说主界面</span>
+                                <span class="font-bold">Ready</span>
+                            </div>
+                            <div class="flex items-center justify-between border-b border-black/10 pb-2">
+                                <span>搜索结果展示</span>
+                                <span class="font-bold">Rollback</span>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span>布局密度优化</span>
+                                <span class="font-bold">Active</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <aside class="col-span-12 lg:col-span-3">
+                <div class="side-column">
+                <div class="side-card">
+                <div class="magazine-card">
+                    <h3 class="font-bold mb-4 flex items-center gap-2">
+                        <svg aria-hidden="true" focusable="false" class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                        我的收藏
+                    </h3>
+                    <div class="space-y-2">
+                        <div class="recent-item" onclick="showToast('打开收藏：视觉设计指南')">
+                            <span class="text-sm">📄</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">视觉设计指南</p>
+                                <p class="text-xs text-gray-500">笔记</p>
+                            </div>
+                        </div>
+                        <div class="recent-item" onclick="showToast('打开收藏：2024前端趋势')">
+                            <span class="text-sm">📊</span>
+                            <div class="flex-1">
+                                <p class="font-medium text-sm">2024前端趋势</p>
+                                <p class="text-xs text-gray-500">趋势</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="side-card">
+                <div class="magazine-card">
+                    <h3 class="font-bold mb-4">项目索引</h3>
+                    <div class="space-y-3 text-sm">
+                        <div class="flex items-center justify-between border-b border-black/10 pb-3">
+                            <span class="text-gray-600">Portal</span>
+                            <span class="font-bold">React / Vite</span>
+                        </div>
+                        <div class="flex items-center justify-between border-b border-black/10 pb-3">
+                            <span class="text-gray-600">Game Prototype</span>
+                            <span class="font-bold">HTML / JS</span>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Deploy</span>
+                            <span class="font-bold">GitHub Pages</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2 mt-6 pt-4 border-t border-black">
+                        <button type="button" class="utility-action" onclick="showToast('查看代码结构')">
+                            <span>
+                                代码结构
+                                <small>portal / moon-throw / other prototypes</small>
+                            </span>
+                            <span>→</span>
+                        </button>
+                    </div>
+                </div>
+                </div>
+                </div>
+            </aside>
+        </main>
+        
+        <section class="grid grid-cols-12 gap-6 mb-12">
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg aria-hidden="true" focusable="false" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击进入游戏模块" onclick="showToast('进入游戏模块')">
+                    <span class="text-4xl mb-4 block">🎮</span>
+                    <h3 class="text-xl font-bold mb-2">游戏</h3>
+                    <p class="text-sm text-gray-600 mb-4">实验性互动体验</p>
+                    <div class="flex gap-2">
+                        <span class="retro-tag text-xs">HOT</span>
+                        <span class="text-xs text-gray-400 mt-1">3个游戏</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg aria-hidden="true" focusable="false" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击查看笔记" onclick="showToast('进入笔记模块')">
+                    <span class="text-4xl mb-4 block">📝</span>
+                    <h3 class="text-xl font-bold mb-2">笔记</h3>
+                    <p class="text-sm text-gray-600 mb-4">文章与播客</p>
+                    <div class="flex gap-2">
+                        <span class="text-xs text-gray-400 mt-1">12篇文章</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-span-12 md:col-span-4 relative">
+                <button type="button" class="bookmark-btn" onclick="toggleBookmark(this)" title="收藏">
+                    <svg aria-hidden="true" focusable="false" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                </button>
+                <div class="magazine-card h-full tooltip" data-tip="点击查看工具" onclick="showToast('进入工具模块')">
+                    <span class="text-4xl mb-4 block">🛠</span>
+                    <h3 class="text-xl font-bold mb-2">工具</h3>
+                    <p class="text-sm text-gray-600 mb-4">实用工具集</p>
+                    <div class="flex gap-2">
+                        <span class="text-xs text-gray-400 mt-1">5个工具</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <footer class="border-t-2 border-black pt-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div>
+                    <p class="font-bold text-xl">Owltree</p>
+                    <p class="text-xs text-gray-500">© 2024 All Rights Reserved</p>
+                </div>
+                <div class="flex gap-4 text-sm">
+                    <a href="#" class="hover:text-orange-600">关于</a>
+                    <a href="#" class="hover:text-orange-600">隐私</a>
+                    <a href="#" class="hover:text-orange-600">联系</a>
+                </div>
+                <div class="text-center md:text-right">
+                    <p class="text-xs tracking-[0.2em] text-[#c75b39]">SYSTEM READY</p>
+                    <p class="text-xs text-gray-500">按 ? 查看快捷键</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <div class="toast" id="toast">操作成功</div>
+    
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+        
+        window.toggleBookmark = function toggleBookmark(btn) {
+            btn.classList.toggle('active');
+            const isActive = btn.classList.contains('active');
+            showToast(isActive ? '已添加到收藏' : '已取消收藏');
+        };
+        
+        window.filterTag = function filterTag(btn) {
+            document.querySelectorAll('.retro-tag').forEach((tag) => {
+                tag.classList.remove('active');
+            });
+            btn.classList.add('active');
+            showToast(`筛选: ${btn.textContent}`);
+        };
+        
+        function toggleShortcuts() {
+            toggleShortcutDrawer();
+        }
+
+        function toggleShortcutDrawer(forceState) {
+            const drawer = document.getElementById('shortcutDrawer');
+            const shouldShow = typeof forceState === 'boolean' ? forceState : !drawer.classList.contains('show');
+            drawer.classList.toggle('show', shouldShow);
+        }
+        
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const headerShortcutButton = document.getElementById('headerShortcutButton');
+        const shortcutDrawer = document.getElementById('shortcutDrawer');
+
+        function closeSearchPanel() {
+            searchResults.classList.remove('show');
+        }
+        
+        searchInput.addEventListener('focus', () => {
+            searchResults.classList.add('show');
+        });
+        
+        searchInput.addEventListener('blur', () => {
+            setTimeout(() => {
+                closeSearchPanel();
+            }, 200);
+        });
+        
+        searchInput.addEventListener('input', () => {
+            searchResults.classList.add('show');
+        });
+        
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            
+            if (e.key === '?') {
+                e.preventDefault();
+                toggleShortcuts();
+            }
+            
+            if (e.key === 'Escape') {
+                closeSearchPanel();
+                toggleShortcutDrawer(false);
+                searchInput.blur();
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            const target = e.target;
+
+            if (!shortcutDrawer.contains(target) && !headerShortcutButton.contains(target)) {
+                toggleShortcutDrawer(false);
+            }
+
+            if (!searchResults.contains(target) && target !== searchInput) {
+                closeSearchPanel();
+            }
+        });
+    </script>
+</body>
+</html>

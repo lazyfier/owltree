@@ -13,23 +13,28 @@ export function Footer() {
   }, [])
 
   return (
-    <footer className="w-full py-4 md:py-6 px-4">
-      <PixelDivider className="mb-4" />
-      <div className="flex flex-col md:flex-row items-center gap-3">
-        <div className="flex gap-4">
-          <a href="#" className="text-slate-500 hover:text-teal-accent transition-colors" aria-label="GitHub">
+    <footer className="w-full px-4 py-5 md:py-7">
+      <div className="vn-window mx-auto max-w-5xl px-5 py-5">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <div className="vn-titlebar">system / footer</div>
+        </div>
+        <PixelDivider className="mb-4" />
+        <div className="flex flex-col items-center gap-3 md:flex-row md:justify-between">
+          <div className="flex gap-4">
+            <a href="https://github.com" className="text-[rgb(128,99,128)] transition-colors hover:text-coral" aria-label="GitHub">
             <Github size={18} />
           </a>
-          <a href="#" className="text-slate-500 hover:text-teal-accent transition-colors" aria-label="Twitter">
+            <a href="https://x.com" className="text-[rgb(128,99,128)] transition-colors hover:text-coral" aria-label="Twitter">
             <Twitter size={18} />
           </a>
-          <a href="#" className="text-slate-500 hover:text-teal-accent transition-colors" aria-label="Email">
+            <a href="mailto:hello@example.com" className="text-[rgb(128,99,128)] transition-colors hover:text-coral" aria-label="Email">
             <Mail size={18} />
           </a>
+          </div>
+          <p className="text-center text-xs leading-6 text-[rgb(128,99,128)] md:text-right">
+            {t(locale, 'copyright')}
+          </p>
         </div>
-        <p className="text-xs text-slate-500">
-          {t(locale, 'copyright')}
-        </p>
       </div>
     </footer>
   )
