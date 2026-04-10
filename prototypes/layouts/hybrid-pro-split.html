@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWLTREE — HYBRID SPLIT</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&family=Noto+Serif+JP:wght@300;500;700&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-void: #050508;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --neon-pink: #ff2d95;
+            --neon-cyan: #00f0ff;
+            --neon-purple: #b829dd;
+            --neon-gold: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.5);
+            --swiss-red: #ff1a1a;
+            --grid-color: rgba(255, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-snap-type: y mandatory;
+        }
+
+        body {
+            background: var(--bg-void);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s, width 0.3s, height 0.3s, border-color 0.3s;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: difference;
+        }
+
+        .cursor-follower {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            transition: transform 0.3s ease-out;
+        }
+
+        .cursor.hover {
+            width: 60px;
+            height: 60px;
+            border-color: var(--neon-pink);
+            background: rgba(255, 45, 149, 0.05);
+        }
+
+        /* Animated Grid Background */
+        .grid-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                linear-gradient(var(--grid-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-color) 1px, transparent 1px);
+            background-size: calc(100% / 12) 100px;
+            animation: gridPulse 4s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes gridPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        /* Floating Particles Canvas */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Screen Sections */
+        .screen {
+            min-height: 100vh;
+            scroll-snap-align: start;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 60px;
+            z-index: 10;
+        }
+
+        /* === SCREEN 1: OVERVIEW === */
+        .screen-overview {
+            justify-content: center;
+            gap: 0;
+        }
+
+        .overview-title-row {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto 32px auto;
+            flex-shrink: 0;
+        }
+
+        .project-rail-zone {
+            position: relative;
+            min-height: 0;
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 440px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .brand-mark {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--swiss-red);
+            position: relative;
+            padding-left: 60px;
+        }
+
+        .brand-mark::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 40px;
+            height: 1px;
+            background: var(--swiss-red);
+            animation: lineExtend 2s ease-out infinite;
+        }
+
+        @keyframes lineExtend {
+            0% { width: 0; opacity: 0; }
+            50% { width: 40px; opacity: 1; }
+            100% { width: 40px; opacity: 0.5; }
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--neon-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+            box-shadow: 0 0 20px var(--neon-cyan);
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Glitch Title */
+        h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 0.9;
+            letter-spacing: -0.03em;
+            text-transform: uppercase;
+            position: relative;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .title-glitch {
+            position: relative;
+            display: inline-block;
+        }
+
+        .title-glitch::before,
+        .title-glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-void);
+        }
+
+        .title-glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 var(--neon-pink);
+            clip: rect(24px, 550px, 90px, 0);
+            animation: glitch-anim-2 3s infinite linear alternate-reverse;
+        }
+
+        .title-glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 var(--neon-cyan);
+            clip: rect(85px, 550px, 140px, 0);
+            animation: glitch-anim 2.5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-anim {
+            0% { clip: rect(10px, 9999px, 85px, 0); }
+            20% { clip: rect(65px, 9999px, 99px, 0); }
+            40% { clip: rect(15px, 9999px, 135px, 0); }
+            60% { clip: rect(80px, 9999px, 5px, 0); }
+            80% { clip: rect(40px, 9999px, 110px, 0); }
+            100% { clip: rect(95px, 9999px, 60px, 0); }
+        }
+
+        @keyframes glitch-anim-2 {
+            0% { clip: rect(65px, 9999px, 99px, 0); }
+            20% { clip: rect(15px, 9999px, 135px, 0); }
+            40% { clip: rect(80px, 9999px, 5px, 0); }
+            60% { clip: rect(40px, 9999px, 110px, 0); }
+            80% { clip: rect(95px, 9999px, 60px, 0); }
+            100% { clip: rect(10px, 9999px, 85px, 0); }
+        }
+
+        .subtitle {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.2em;
+            margin-bottom: 0;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 50px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+            flex: 1 1 auto;
+            min-height: 0;
+            align-items: start;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: linear-gradient(
+                135deg,
+                rgba(255, 255, 255, 0.05) 0%,
+                rgba(255, 255, 255, 0.02) 100%
+            );
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            box-shadow:
+                0 25px 50px -12px rgba(0, 0, 0, 0.5),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            height: fit-content;
+        }
+
+        .profile-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.1),
+                transparent
+            );
+            transition: left 0.7s;
+        }
+
+        .profile-card:hover::before {
+            left: 100%;
+        }
+
+        .avatar-container {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            margin-bottom: 20px;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+            position: relative;
+            overflow: hidden;
+            animation: morph 8s ease-in-out infinite;
+        }
+
+        @keyframes morph {
+            0%, 100% { border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; }
+            25% { border-radius: 58% 42% 75% 25% / 76% 46% 54% 24%; }
+            50% { border-radius: 50% 50% 33% 67% / 55% 27% 73% 45%; }
+            75% { border-radius: 33% 67% 58% 42% / 63% 68% 32% 37%; }
+        }
+
+        .avatar-ring {
+            position: absolute;
+            top: -10px;
+            left: -10px;
+            right: -10px;
+            bottom: -10px;
+            border: 2px solid transparent;
+            border-top-color: var(--neon-cyan);
+            border-radius: 50%;
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .profile-name {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .profile-role {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+        }
+
+        .profile-stats {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .profile-skills {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .skills-label {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .skill-tag {
+            font-size: 0.7rem;
+            padding: 5px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-secondary);
+            transition: all 0.3s;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 240, 255, 0.1);
+            border-color: rgba(0, 240, 255, 0.3);
+            color: var(--neon-cyan);
+        }
+
+        .profile-social {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .social-label {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 10px;
+        }
+
+        .social-link {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: rgba(255, 45, 149, 0.1);
+            border-color: rgba(255, 45, 149, 0.3);
+            color: var(--neon-pink);
+            transform: translateY(-2px);
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 0.85rem;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            font-family: 'Space Grotesk', monospace;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .stat-value.highlight {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 20px rgba(0, 240, 255, 0.5);
+        }
+
+        /* System Identity Panel */
+        .identity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 28px;
+        }
+
+        .identity-core {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .identity-core .avatar-container {
+            width: 52px;
+            height: 52px;
+            margin-bottom: 0;
+            flex-shrink: 0;
+        }
+
+        .identity-text {
+            min-width: 0;
+        }
+
+        .identity-text .profile-name {
+            font-size: 1.5rem;
+            margin-bottom: 4px;
+            line-height: 1.1;
+        }
+
+        .identity-text .profile-role {
+            font-size: 0.65rem;
+            letter-spacing: 0.18em;
+        }
+
+        .identity-manifesto {
+            font-size: 0.78rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin: 0 0 24px 0;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            font-style: italic;
+        }
+
+        .identity-signals {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .signal-block {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .signal-label {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.6rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        .signal-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.8rem;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .signal-value.signal-open {
+            color: var(--neon-cyan);
+            text-shadow: 0 0 12px rgba(0, 240, 255, 0.25);
+        }
+
+        /* Project Module — fixed-height with internal scroll */
+        .project-rail-module {
+            position: relative;
+            min-width: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            max-height: 440px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            flex-shrink: 0;
+        }
+
+        .module-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.7rem;
+            letter-spacing: 0.3em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+        }
+
+        .module-count {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.65rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .module-count .count-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--neon-cyan);
+            box-shadow: 0 0 6px rgba(0, 240, 255, 0.4);
+            display: inline-block;
+        }
+
+        /* Scrollable body with bottom fade */
+        .module-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 14px 16px;
+            position: relative;
+            -ms-overflow-style: none;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 240, 255, 0.3) transparent;
+        }
+
+        .module-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .module-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .module-body::-webkit-scrollbar-thumb {
+            background: rgba(0, 240, 255, 0.25);
+            border-radius: 4px;
+        }
+
+        .module-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 240, 255, 0.45);
+        }
+
+        /* Bottom overflow fade affordance */
+        .project-rail-module::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, var(--bg-void));
+            pointer-events: none;
+            z-index: 2;
+            opacity: 1;
+            transition: opacity 0.3s;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .project-rail-module.scrolled-bottom::after {
+            opacity: 0;
+        }
+
+        /* Project Cards — vertical stack */
+        .project-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 16px 18px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .project-card + .project-card {
+            margin-top: 10px;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--neon-pink), var(--neon-purple));
+            transform: scaleY(0);
+            transform-origin: top;
+            transition: transform 0.35s;
+        }
+
+        .project-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateX(4px);
+        }
+
+        .project-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.2;
+            flex: 1;
+            margin-right: 8px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            min-width: 0;
+        }
+
+        .card-recency {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            margin-top: 2px;
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .project-tag {
+            padding: 2px 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .card-progress {
+            margin-top: auto;
+        }
+
+        .progress-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .progress-label {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.6rem;
+            color: var(--text-secondary);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .progress-value {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-gold));
+            border-radius: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+            animation: shimmer 2s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Scroll Indicator */
+        .scroll-ind {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.65rem;
+            letter-spacing: 0.2em;
+            text-decoration: none;
+            animation: float 2s ease-in-out infinite;
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        .scroll-arrow {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* === SCREEN 2: MODULES === */
+        .screen-modules {
+            background: linear-gradient(180deg, var(--bg-void), #0a0a12);
+            justify-content: center;
+        }
+
+        .modules-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .modules-label {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            letter-spacing: 0.4em;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .modules-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        /* Irregular Grid */
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(3, 160px);
+            gap: 16px;
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        .module {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .module::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 255, 255, 0.1), transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .module:hover::before {
+            opacity: 1;
+        }
+
+        .module:hover {
+            transform: translateY(-8px);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Grid Layout */
+        .m-games {
+            grid-column: span 6;
+            grid-row: span 2;
+            background: linear-gradient(135deg, rgba(255, 45, 149, 0.08), var(--glass-bg));
+        }
+
+        .m-notes {
+            grid-column: span 3;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.08), var(--glass-bg));
+        }
+
+        .m-tools {
+            grid-column: span 3;
+            background: linear-gradient(135deg, rgba(184, 41, 221, 0.08), var(--glass-bg));
+        }
+
+        .m-trends {
+            grid-column: span 4;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.08), var(--glass-bg));
+        }
+
+        .m-archive {
+            grid-column: span 4;
+        }
+
+        .m-connect {
+            grid-column: span 4;
+        }
+
+        .module-num {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            position: relative;
+            z-index: 1;
+            letter-spacing: 0.2em;
+        }
+
+        .module-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .module-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            transition: color 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .m-games .module-title { color: var(--neon-pink); }
+        .m-notes .module-title { color: var(--neon-cyan); }
+        .m-tools .module-title { color: var(--neon-purple); }
+        .m-trends .module-title { color: var(--neon-gold); }
+
+        .module:hover .module-title {
+            color: var(--text-primary);
+        }
+
+        .module-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+
+        .m-games .module-desc {
+            max-width: 280px;
+        }
+
+        /* Back Button */
+        .back-btn {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-primary);
+            text-decoration: none;
+            font-size: 1.2rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s;
+            z-index: 100;
+            font-family: 'Space Grotesk', monospace;
+        }
+
+        .back-btn.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .back-btn:hover {
+            border-color: var(--neon-cyan);
+            color: var(--neon-cyan);
+        }
+
+        /* Corner Decorations */
+        .corner {
+            position: fixed;
+            width: 60px;
+            height: 60px;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .corner-tl {
+            top: 30px;
+            left: 30px;
+            border-top: 1px solid var(--swiss-red);
+            border-left: 1px solid var(--swiss-red);
+        }
+
+        .corner-br {
+            bottom: 30px;
+            right: 30px;
+            border-bottom: 1px solid var(--swiss-red);
+            border-right: 1px solid var(--swiss-red);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .screen { padding: 40px 30px; }
+            .overview-title-row { margin-bottom: 24px; }
+            .title-glitch { font-size: clamp(2rem, 6vw, 3.2rem); }
+            .content-grid { grid-template-columns: 1fr; gap: 24px; }
+            .identity-panel { padding: 24px; }
+            .identity-core { gap: 14px; }
+            .identity-signals { gap: 10px; }
+            .project-rail-zone { max-height: 400px; }
+            .project-rail-module { max-height: 400px; }
+            .modules-grid { grid-template-columns: repeat(2, 1fr); grid-template-rows: auto; }
+            .m-games, .m-notes, .m-tools, .m-trends, .m-archive, .m-connect {
+                grid-column: span 1;
+                grid-row: auto;
+                min-height: 140px;
+            }
+            .m-games { grid-column: span 2; min-height: 200px; }
+            body { cursor: auto; }
+            .cursor, .cursor-follower { display: none; }
+        }
+
+        @media (max-width: 600px) {
+            .screen { padding: 24px 16px; }
+            .overview-title-row { margin-bottom: 16px; }
+            .subtitle { font-size: 0.7rem; }
+            .identity-panel { padding: 18px; border-radius: 20px; }
+            .profile-name { font-size: 1.3rem; }
+            .profile-role { font-size: 0.7rem; }
+            .identity-core { gap: 10px; }
+            .avatar-container { width: 44px; height: 44px; }
+            .signal-block { padding: 8px 10px; }
+            .signal-label { font-size: 0.55rem; }
+            .signal-value { font-size: 0.7rem; }
+            .modules-grid { grid-template-columns: 1fr; }
+            .m-games { grid-column: span 1; }
+            .module { padding: 18px; min-height: 120px; }
+            .corner { display: none; }
+            .project-rail-zone { max-height: 340px; }
+            .project-rail-module { max-height: 340px; }
+            .module-body { padding: 10px 12px; }
+            .card-title { font-size: 0.85rem; }
+            .back-btn { bottom: 20px; right: 20px; width: 42px; height: 42px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-follower" id="cursor-follower"></div>
+    <canvas id="particles"></canvas>
+    <div class="grid-bg"></div>
+    <div class="corner corner-tl"></div>
+    <div class="corner corner-br"></div>
+
+    <!-- SCREEN 1: OVERVIEW -->
+    <section class="screen screen-overview" id="s1">
+        <!-- Title Row — spans full width above the two-column split -->
+        <div class="overview-title-row">
+            <h1 class="title-glitch" data-text="OWLTREE">OWLTREE</h1>
+            <p class="subtitle">デジタル創作のための個人システム</p>
+        </div>
+
+        <div class="content-grid">
+            <!-- LEFT ZONE: System Identity Panel -->
+            <aside class="profile-card identity-panel">
+                <!-- Identity Mark / Status -->
+                <div class="identity-header">
+                    <div class="brand-mark">System</div>
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span>Online</span>
+                    </div>
+                </div>
+
+                <!-- Avatar + Name + Role -->
+                <div class="identity-core">
+                    <div class="avatar-container">
+                        <div class="avatar"></div>
+                        <div class="avatar-ring"></div>
+                    </div>
+                    <div class="identity-text">
+                        <div class="profile-name">OWL</div>
+                        <div class="profile-role">Creator / Developer</div>
+                    </div>
+                </div>
+
+                <!-- Manifesto -->
+                <p class="identity-manifesto">Building systems at the edge of narrative and code.</p>
+
+                <!-- Signal Blocks -->
+                <div class="identity-signals">
+                    <div class="signal-block">
+                        <span class="signal-label">Current Focus</span>
+                        <span class="signal-value">Portal UX + experimental game mechanics</span>
+                    </div>
+                    <div class="signal-block">
+                        <span class="signal-label">Now Building</span>
+                        <span class="signal-value">Owltree v2 — personal system redesign</span>
+                    </div>
+                    <div class="signal-block">
+                        <span class="signal-label">Availability</span>
+                        <span class="signal-value signal-open">Open to collaborations</span>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- RIGHT ZONE: Project Module -->
+            <div class="project-rail-zone">
+                <div class="project-rail-module" id="projectModule">
+                    <div class="module-header">
+                        <span class="module-title">Active Projects</span>
+                        <div class="module-count">
+                            <span class="count-dot"></span>
+                            <span id="projectCount">6 projects</span>
+                        </div>
+                    </div>
+
+                    <div class="module-body" id="moduleBody">
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">月抛模拟器</h3>
+                                <span class="card-recency">2h ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">React</span>
+                                <span class="project-tag">TypeScript</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">87%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 87%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Owltree Portal</h3>
+                                <span class="card-recency">5h ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">Design</span>
+                                <span class="project-tag">UI/UX</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">62%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 62%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Secret Project</h3>
+                                <span class="card-recency">1d ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">WIP</span>
+                                <span class="project-tag">Private</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">23%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 23%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">API Gateway</h3>
+                                <span class="card-recency">3d ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">Go</span>
+                                <span class="project-tag">Backend</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">45%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 45%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Data Pipeline</h3>
+                                <span class="card-recency">5d ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">Python</span>
+                                <span class="project-tag">ETL</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">71%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 71%"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="project-card">
+                            <div class="card-header">
+                                <h3 class="card-title">Design System</h3>
+                                <span class="card-recency">1w ago</span>
+                            </div>
+                            <div class="card-tags">
+                                <span class="project-tag">Figma</span>
+                                <span class="project-tag">Tokens</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-row">
+                                    <span class="progress-label">Progress</span>
+                                    <span class="progress-value">34%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 34%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <a href="#s2" class="scroll-ind">
+            <span>EXPLORE</span>
+            <div class="scroll-arrow">↓</div>
+        </a>
+    </section>
+
+    <!-- SCREEN 2: MODULES -->
+    <section class="screen screen-modules" id="s2">
+        <div class="modules-header">
+            <div class="modules-label">Navigation</div>
+            <h2 class="modules-title">MODULES</h2>
+        </div>
+
+        <div class="modules-grid">
+            <div class="module m-games" onclick="location.href='#'">
+                <div class="module-num">01</div>
+                <div class="module-content">
+                    <div class="module-title">Games</div>
+                    <div class="module-desc">Interactive experiences and narrative simulations</div>
+                </div>
+            </div>
+
+            <div class="module m-notes" onclick="location.href='#'">
+                <div class="module-num">02</div>
+                <div class="module-content">
+                    <div class="module-title">Notes</div>
+                    <div class="module-desc">Documentation and knowledge base</div>
+                </div>
+            </div>
+
+            <div class="module m-tools" onclick="location.href='#'">
+                <div class="module-num">03</div>
+                <div class="module-content">
+                    <div class="module-title">Tools</div>
+                    <div class="module-desc">Utilities and productivity apps</div>
+                </div>
+            </div>
+
+            <div class="module m-trends" onclick="location.href='#'">
+                <div class="module-num">04</div>
+                <div class="module-content">
+                    <div class="module-title">Trends</div>
+                    <div class="module-desc">Data analytics and insights</div>
+                </div>
+            </div>
+
+            <div class="module m-archive" onclick="location.href='#'">
+                <div class="module-num">05</div>
+                <div class="module-content">
+                    <div class="module-title">Archive</div>
+                    <div class="module-desc">Past projects and history</div>
+                </div>
+            </div>
+
+            <div class="module m-connect" onclick="location.href='#'">
+                <div class="module-num">06</div>
+                <div class="module-content">
+                    <div class="module-title">Connect</div>
+                    <div class="module-desc">Links and contacts</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <a href="#s1" class="back-btn" id="backBtn">↑</a>
+
+    <script>
+        // Custom Cursor
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let followerX = 0, followerY = 0;
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+        });
+
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.2;
+            cursorY += (mouseY - cursorY) * 0.2;
+            followerX += (mouseX - followerX) * 0.1;
+            followerY += (mouseY - followerY) * 0.1;
+
+            cursor.style.left = cursorX + 'px';
+            cursor.style.top = cursorY + 'px';
+            follower.style.left = followerX + 'px';
+            follower.style.top = followerY + 'px';
+
+            requestAnimationFrame(animateCursor);
+        }
+        animateCursor();
+
+        // Hover effect for cursor
+        document.querySelectorAll('a, button, .module, .project-card').forEach(el => {
+            el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+            el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
+        });
+
+        // Particle System
+        const canvas = document.getElementById('particles');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedX = (Math.random() - 0.5) * 0.3;
+                this.speedY = (Math.random() - 0.5) * 0.3;
+                this.opacity = Math.random() * 0.5 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0) this.x = canvas.width;
+                if (this.x > canvas.width) this.x = 0;
+                if (this.y < 0) this.y = canvas.height;
+                if (this.y > canvas.height) this.y = 0;
+            }
+
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 30; i++) {
+            particles.push(new Particle());
+        }
+
+        function drawConnections() {
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.strokeStyle = `rgba(255, 255, 255, ${0.1 * (1 - distance / 150)})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+
+                const dx = mouseX - particles[i].x;
+                const dy = mouseY - particles[i].y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < 200) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = `rgba(0, 240, 255, ${0.2 * (1 - distance / 200)})`;
+                    ctx.lineWidth = 0.5;
+                    ctx.moveTo(particles[i].x, particles[i].y);
+                    ctx.lineTo(mouseX, mouseY);
+                    ctx.stroke();
+                }
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            drawConnections();
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Mouse tracking for module glow
+        document.querySelectorAll('.module').forEach(module => {
+            module.addEventListener('mousemove', (e) => {
+                const rect = module.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                module.style.setProperty('--mouse-x', x + '%');
+                module.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+
+        // Back button visibility
+        const backBtn = document.getElementById('backBtn');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    backBtn.classList.add('visible');
+                } else {
+                    backBtn.classList.remove('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        observer.observe(document.getElementById('s1'));
+
+        // Module body scroll — fade affordance
+        const projectModule = document.getElementById('projectModule');
+        const moduleBody = document.getElementById('moduleBody');
+        const projectCount = document.getElementById('projectCount');
+        if (projectModule && moduleBody) {
+            const cards = moduleBody.querySelectorAll('.project-card');
+            if (projectCount) {
+                projectCount.textContent = cards.length + ' projects';
+            }
+            const updateScrollFade = () => {
+                const atBottom = moduleBody.scrollTop + moduleBody.clientHeight >= moduleBody.scrollHeight - 5;
+                if (atBottom) {
+                    projectModule.classList.add('scrolled-bottom');
+                } else {
+                    projectModule.classList.remove('scrolled-bottom');
+                }
+            };
+            moduleBody.addEventListener('scroll', updateScrollFade, { passive: true });
+            updateScrollFade();
+        }
+    </script>
+</body>
+</html>
