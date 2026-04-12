@@ -5,8 +5,8 @@ import { CONFIG } from '@/game/data/config'
 interface ActionButtonsProps {
   onAction: (action: GameAction) => void
   onChat: () => void
-  onHospital: () => void
   onRefuse: () => void
+  turn: number
   blockedActions: ActionType[]
   hiddenCount: number
   isPanic: boolean
@@ -29,8 +29,8 @@ const VARIANT_CLASSES: Record<string, string> = {
 export function ActionButtons({
   onAction,
   onChat,
-  onHospital,
   onRefuse,
+  turn,
   blockedActions,
   hiddenCount,
   isPanic,
@@ -41,12 +41,13 @@ export function ActionButtons({
     <div className="space-y-2">
       {/* Chat button */}
       <button
+        type="button"
         onClick={onChat}
         disabled={chatDisabled}
         className={`w-full py-3 bg-indigo-900/40 hover:bg-indigo-800/60 text-indigo-200 rounded-xl font-bold border border-indigo-500/20 transition-all flex items-center justify-center gap-2 text-sm ${chatDisabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <span>💬</span> 试探 / 聊天{' '}
-        <span className="opacity-50 text-[10px] font-normal ml-1">(压抑值+{CONFIG.chatCost})</span>
+        <span className="opacity-50 text-[10px] font-normal ml-1">(压抑值+{CONFIG.chatCost(turn)})</span>
       </button>
 
       <div className="h-px bg-white/5 my-2" />
@@ -55,11 +56,11 @@ export function ActionButtons({
       <div className="grid grid-cols-2 gap-2">
         {MAIN_ACTIONS.map(({ key, emoji, label, desc, variant }) => {
           const isBlocked = blockedActions.includes(key)
-          const cost = CONFIG.stress[key]
 
           return (
             <div key={key} className="relative">
               <button
+                type="button"
                 onClick={() => onAction(key)}
                 disabled={isBlocked}
                 className={`py-3 rounded-xl font-semibold text-xs border transition-all w-full ${isBlocked ? 'opacity-50 cursor-not-allowed grayscale' : VARIANT_CLASSES[variant]}`}
@@ -79,6 +80,7 @@ export function ActionButtons({
 
       {/* Refuse button */}
       <button
+        type="button"
         onClick={onRefuse}
         className="w-full py-3 mt-2 bg-transparent hover:bg-white/5 text-slate-400 hover:text-white rounded-xl font-bold border border-white/10 transition-all text-xs flex items-center justify-center gap-1"
       >

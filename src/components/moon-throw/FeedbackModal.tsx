@@ -38,7 +38,7 @@ export function FeedbackModal({
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="glass-card max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden"
+            className="max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden rounded-xl bg-slate-900/95 border border-white/10 shadow-2xl"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}

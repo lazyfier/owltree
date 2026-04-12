@@ -1,106 +1,83 @@
-import type { ReactNode } from 'react'
-import { Gamepad2, BookOpen, Wrench, TrendingUp, ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
 
-interface Category {
-  id: string
-  name: string
-  nameEn: string
-  description: string
-  icon: ReactNode
-  href: string
-  iconClass: string
-  accentClass: string
-  featured?: boolean
-}
-
-const categories: Category[] = [
+const entries = [
   {
     id: 'games',
-    name: '游戏',
-    nameEn: 'Games',
-    description: '实验性互动体验',
-    icon: <Gamepad2 className="h-8 w-8" />,
-    href: '/games',
-    iconClass: 'bg-[rgba(220,107,141,0.14)] text-coral border-[rgba(220,107,141,0.16)]',
-    accentClass: 'text-coral',
-    featured: true,
+    category: '游戏',
+    number: '01',
+    title: '月抛模拟器',
+    subtitle: '关于选择与后果的叙事游戏',
   },
   {
     id: 'notes',
-    name: '笔记',
-    nameEn: 'Notes',
-    description: '文章与播客',
-    icon: <BookOpen className="h-8 w-8" />,
-    href: '/notes',
-    iconClass: 'bg-[rgba(187,123,197,0.14)] text-[rgb(131,59,105)] border-[rgba(187,123,197,0.16)]',
-    accentClass: 'text-[rgb(131,59,105)]',
+    category: '笔记',
+    number: '02',
+    title: '笔记',
+    subtitle: '文章、随想与阅读记录',
   },
   {
     id: 'tools',
-    name: '工具',
-    nameEn: 'Tools',
-    description: '实用工具集',
-    icon: <Wrench className="h-8 w-8" />,
-    href: '/tools',
-    iconClass: 'bg-[rgba(213,168,114,0.18)] text-[rgb(135,92,47)] border-[rgba(213,168,114,0.24)]',
-    accentClass: 'text-[rgb(135,92,47)]',
+    category: '工具',
+    number: '03',
+    title: '工具',
+    subtitle: '格式化、转换与设计辅助',
   },
   {
     id: 'trends',
-    name: '趋势',
-    nameEn: 'Trends',
-    description: '每日热点追踪',
-    icon: <TrendingUp className="h-8 w-8" />,
-    href: '/trends',
-    iconClass: 'bg-[rgba(109,167,201,0.16)] text-[rgb(84,121,153)] border-[rgba(109,167,201,0.22)]',
-    accentClass: 'text-[rgb(84,121,153)]',
+    category: '趋势',
+    number: '04',
+    title: '趋势',
+    subtitle: '每日热点与技术资讯',
   },
 ]
 
 export function CategoryGrid() {
   return (
-    <section className="mb-8">
-      <div className="mb-5 flex items-end justify-between gap-4">
-        <div>
-          <p className="vn-meta">Route Select</p>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[rgb(71,48,88)]">选择你今天要进入的线路</h2>
-        </div>
-        <p className="hidden max-w-sm text-right text-sm leading-6 text-[rgb(128,99,128)] md:block">像 galgame 的选线菜单一样，每一个入口都应该有自己的情绪和质感。</p>
+    <section className="pt-8">
+      <div className="mb-16">
+        <span className="label-sans">Index</span>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        {categories.map((category) => (
-          <a
-            key={category.id}
-            href={`#${category.href}`}
-            className="vn-window group p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_24px_60px_rgba(196,154,182,0.22)]"
+      <div className="space-y-12">
+        {entries.map((entry, index) => (
+          <motion.a
+            key={entry.id}
+            href={`#/${entry.id}`}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: index * 0.1 }}
+            className="group block"
           >
-            <div className="absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-white to-transparent opacity-90" />
-
-            <div className="relative mb-4 flex items-center justify-between gap-4">
-              <div className="vn-titlebar">route / {category.nameEn}</div>
-              {category.featured && (
-                <span className="vn-chip">heroine route</span>
-              )}
+            <div className="flex items-baseline gap-4 mb-3">
+              <span className="label-sans opacity-30">{entry.number}</span>
+              <span className="text-xs font-sans tracking-widest uppercase opacity-40" style={{ color: 'var(--text-muted)' }}>
+                {entry.category}
+              </span>
             </div>
 
-            <div className="relative flex items-start justify-between gap-4">
-              <div className="flex items-start gap-4">
-                <div className={`flex h-14 w-14 items-center justify-center rounded-[1rem] border shadow-[inset_0_1px_0_rgba(255,255,255,0.6)] ${category.iconClass}`}>
-                  {category.icon}
-                </div>
-                <div className="vn-rail min-w-0 pl-5">
-                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-                    <h3 className="text-xl font-semibold text-[rgb(71,48,88)]">{category.name}</h3>
-                  </div>
-                  <p className="mt-2 text-sm leading-6 vn-menu-text">{category.description}</p>
-                </div>
-              </div>
+            <div className="flex items-baseline justify-between py-2 border-b border-transparent group-hover:border-[rgba(247,245,240,0.08)] transition-colors duration-500">
+              <h3 className="text-3xl md:text-5xl font-serif transition-all duration-500 group-hover:translate-x-6" style={{ color: 'var(--text-primary)' }}>
+                {entry.title}
+              </h3>
 
-              <ArrowRight className={`mt-1 h-5 w-5 transition-all group-hover:translate-x-1 ${category.accentClass}`} />
+              <span className="text-sm opacity-0 group-hover:opacity-30 transition-opacity duration-300">
+                →
+              </span>
             </div>
-          </a>
+
+            <p className="mt-3 text-sm" style={{ color: 'var(--text-muted)' }}>
+              {entry.subtitle}
+            </p>
+          </motion.a>
         ))}
+      </div>
+
+      <div className="mt-24 pt-8" style={{ borderTop: '1px solid rgba(247, 245, 240, 0.06)' }}>
+        <p className="text-sm max-w-xl" style={{ color: 'var(--text-muted)' }}>
+          四个入口，四种内容类型。
+          <br />
+          游戏为实验性叙事，笔记为思考痕迹，工具为实用辅助，趋势为信息聚合。
+        </p>
       </div>
     </section>
   )

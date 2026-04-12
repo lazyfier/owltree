@@ -1,17 +1,18 @@
-# 🦉 Owltree
+# 🦉 owltree
 
 > 数字神殿 // 代码与创造
 
-一个视觉小说游戏风格的个人门户主页，包含实验性互动叙事游戏「月抛模拟器」。
+终端风格的个人门户主页
 
-![Theme Preview](https://img.shields.io/badge/Theme-Visual%20Novel-ff6b6b)
+![Theme Preview](https://img.shields.io/badge/Theme-Terminal-00ff00)
 ![React](https://img.shields.io/badge/React-18-61dafb)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-3178c6)
 
 ## ✨ 特性
 
-- 🎨 **三主题切换** — 视觉小说 / 赛博朋克 / 极简风格一键切换
-- 🎮 **视觉小说 UI** — Glitch 故障艺术 + 角色状态面板 + 像素风格
+- 🎨 **四主题切换** — 终端 / 视觉小说 / 赛博朋克 / 极简风格一键切换
+- 💻 **终端 UI** — CRT 扫描线 + 霓虹光标 + 命令行美学
+- 🎮 **视觉小说主题** — Glitch 故障艺术 + 角色状态面板 + 像素风格
 - 🎲 **月抛模拟器** — 关于选择与后果的实验性互动叙事游戏
 - 🌐 **自动 i18n** — 根据浏览器语言自动切换中英文
 - 🎯 **HashRouter** — 支持 GitHub Pages 部署的单页应用
@@ -63,9 +64,9 @@ owltree/
 │   │   └── data/       # 配置数据
 │   ├── styles/         # 全局样式
 │   └── lib/            # 工具函数
-├── prototypes/         # HTML 原型
-│   ├── archive/        # 废弃样式归档
-│   ├── themes/         # 主题原型
+├── theme/            # HTML 原型（主题参考）
+│   ├── archive/      # 废弃样式归档
+│   ├── themes/       # 主题原型
 │   └── moon-throw.html # 原始游戏原型
 ├── e2e/                # Playwright E2E 测试
 ├── dist/               # 构建输出
@@ -74,13 +75,14 @@ owltree/
 
 ## 🎨 主题系统
 
-支持三种主题风格，点击右上角按钮切换：
+支持四种主题风格，点击右上角按钮切换：
 
 | 主题 | 风格 | 预览 |
 |------|------|------|
-| 🎮 Galgame | 视觉小说 - 故障艺术 + 角色面板 | 默认 |
-| ⚡ Cyber | 赛博朋克 - 霓虹光效 + 科技感 | 待完善 |
-| ◐ Minimal | 极简主义 - 清爽留白 | 待完善 |
+| 💻 Terminal | 终端 - CRT 扫描线 + 霓虹光标 | 默认 |
+| 🎮 Galgame | 视觉小说 - 故障艺术 + 角色面板 | 可用 |
+| ⚡ Cyber | 赛博朋克 - 霓虹光效 + 科技感 | 可用 |
+| ◐ Minimal | 极简主义 - 清爽留白 | 可用 |
 
 ### 技术实现
 
@@ -117,11 +119,11 @@ owltree/
 
 ## 📜 原型文件
 
-`prototypes/` 目录包含原始 HTML/JS 原型：
+`theme/` 目录包含原始 HTML/JS 原型（参考实现）：
 
-- `prototypes/moon-throw.html` — 原始游戏原型
-- `prototypes/themes/style-visual-novel-personal.html` — 视觉小说主题原型
-- `prototypes/archive/` — 废弃样式归档
+- `theme/moon-throw.html` — 原始游戏原型
+- `theme/themes/style-visual-novel-personal.html` — 视觉小说主题原型
+- `theme/archive/` — 废弃样式归档
 
 ## 📝 License
 

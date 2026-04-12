@@ -13,7 +13,7 @@ export function StatsPanel({ frustration, anxiety, isPanic, testkitCount, onUseT
   const [hoveringTestkit, setHoveringTestkit] = useState(false)
 
   return (
-    <div className="glass-card p-4 mb-4 space-y-3">
+    <div className="p-4 mb-4 space-y-3 rounded-xl bg-slate-900/95 border border-white/10">
       {/* Frustration bar */}
       <div>
         <div className="flex justify-between text-xs font-bold mb-1 uppercase tracking-wider">

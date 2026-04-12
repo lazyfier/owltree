@@ -1,4 +1,5 @@
 import { ALL_TAGS } from '@/game/data/tags'
+import { DISEASES } from '@/game/data/diseases'
 import type { Constraint, DiseaseKey, Partner } from '@/game/types'
 
 import { createRng } from '../rng'
@@ -53,7 +54,7 @@ describe('partner generation characterization (red phase)', () => {
   it('only assigns diseases from known keys and without duplicates', async () => {
     const { generatePartner } = await loadPartnerEngine()
     const rng = createRng(314159)
-    const knownDiseases = new Set<DiseaseKey>(['HIV', 'SYPHILIS', 'HERPES', 'HPV', 'GONORRHEA', 'CRABS'])
+    const knownDiseases = new Set<DiseaseKey>(Object.keys(DISEASES) as DiseaseKey[])
 
     for (let index = 0; index < 120; index += 1) {
       const partner = generatePartner(rng)

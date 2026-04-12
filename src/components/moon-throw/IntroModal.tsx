@@ -13,7 +13,7 @@ export function IntroModal({ onStart, onHelp }: IntroModalProps) {
       animate={{ opacity: 1 }}
     >
       <motion.div
-        className="glass-card max-w-sm w-full p-8 text-center"
+        className="max-w-sm w-full p-8 text-center rounded-xl bg-slate-900/95 border border-white/10 shadow-2xl"
         initial={{ scale: 0.8, opacity: 0, y: 20 }}
         animate={{ scale: 1, opacity: 1, y: 0 }}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
@@ -32,12 +32,14 @@ export function IntroModal({ onStart, onHelp }: IntroModalProps) {
         <div className="flex flex-col gap-3">
           <button
             onClick={onStart}
+            type="button"
             className="glass-button px-6 py-3 text-sm font-bold"
           >
             开始月抛
           </button>
           <button
             onClick={onHelp}
+            type="button"
             className="glass-button px-6 py-2 text-xs text-slate-400"
           >
             📖 游戏帮助

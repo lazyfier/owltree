@@ -1,5 +1,6 @@
 import { CONFIG } from '../data/config'
 import { DISEASES } from '../data/diseases'
+import { calculateDifficulty } from './state'
 import type { ActionType, Constraint, GameState, Partner } from '../types'
 
 export type GameAction = ActionType | 'chat' | 'refuse'
@@ -23,12 +24,24 @@ export function getBlockedActions(constraints: Constraint[]): ActionType[] {
 function advanceTime(state: GameState, fCost: number, aCost: number): GameState {
   let { frustration, anxiety } = state
   const turn = state.turn + 1
+  const difficulty = calculateDifficulty(turn)
   frustration += fCost
   anxiety += aCost
   if (anxiety > 20) anxiety += CONFIG.anxietyGainPassive
   if (frustration > 100) frustration = 100
   if (anxiety > 100) anxiety = 100
-  return { ...state, turn, frustration, anxiety }
+  return { ...state, turn, difficulty, frustration, anxiety }
+}
+
+export function rewardHospitalNegativeTestkit(state: GameState): GameState {
+  const reward = CONFIG.testkitRewardConditions.hospitalNegative.amount
+  return {
+    ...state,
+    items: {
+      ...state.items,
+      testkit: state.items.testkit + reward,
+    },
+  }
 }
 
 function recordHistory(partner: Partner, action: string, infectedThisTurn: boolean, isDiseased: boolean): GameState['history'][number] {
@@ -81,7 +94,7 @@ export function executeAction(state: GameState, actionType: GameAction, rng: () 
         tags: partner.tags.map((t, i) => (i === idx ? { ...t, revealed: true } : t)),
       }
     }
-    const newState = advanceTime(state, CONFIG.chatCost, 0)
+    const newState = advanceTime(state, CONFIG.chatCost(state.turn), 0)
     return { ...newState, currentPartner: updatedPartner }
   }
 
@@ -90,7 +103,19 @@ export function executeAction(state: GameState, actionType: GameAction, rng: () 
     const isDiseased = partner.diseases.length > 0
     const historyEntry = recordHistory(partner, 'refuse', false, isDiseased)
     const newState = advanceTime(state, CONFIG.passiveGain + CONFIG.refuseCost, 0)
-    return { ...newState, history: [...newState.history, historyEntry] }
+    const refuseReward = CONFIG.testkitRewardConditions.refuse
+    const rewardTestkit = state.turn >= (refuseReward.minTurn ?? 1) && rng() < (refuseReward.chance ?? 1)
+
+    return {
+      ...newState,
+      items: rewardTestkit
+        ? {
+            ...newState.items,
+            testkit: newState.items.testkit + refuseReward.amount,
+          }
+        : newState.items,
+      history: [...newState.history, historyEntry],
+    }
   }
 
   // Action types: oral_condom, oral_raw, sex_condom, sex_raw

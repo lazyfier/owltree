@@ -11,7 +11,13 @@ function createState(overrides: Partial<GameState> = {}): GameState {
     frustration: 50,
     anxiety: 0,
     turn: 1,
+    difficulty: 1,
     items: { testkit: 1 },
+    achievements: {
+      unlocked: [],
+      endingsSeen: [],
+      stats: {},
+    },
     currentPartner: null,
     isInfected: false,
     infectionData: null,
@@ -35,7 +41,7 @@ describe('game over threshold characterization (red phase)', () => {
   it('ends the game when frustration reaches 100', async () => {
     const { checkGameOver } = await loadGameOverEngine()
 
-    expect(checkGameOver(createState({ frustration: 100, anxiety: 20 }))).toEqual({
+    expect(checkGameOver(createState({ frustration: 100, anxiety: 20 }))).toMatchObject({
       isOver: true,
       reason: 'frustration',
     })
@@ -44,7 +50,7 @@ describe('game over threshold characterization (red phase)', () => {
   it('ends the game when anxiety reaches 100', async () => {
     const { checkGameOver } = await loadGameOverEngine()
 
-    expect(checkGameOver(createState({ frustration: 20, anxiety: 100 }))).toEqual({
+    expect(checkGameOver(createState({ frustration: 20, anxiety: 100 }))).toMatchObject({
       isOver: true,
       reason: 'anxiety',
     })

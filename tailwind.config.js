@@ -14,6 +14,7 @@ export default {
         sans: ['Inter', 'Noto Sans SC', 'sans-serif'],
         display: ['Space Grotesk', 'Noto Sans SC', 'sans-serif'],
         pixel: ['Press Start 2P', 'Noto Sans SC', 'cursive'],
+        mono: ['Monaco', 'Courier New', 'monospace'],
       },
       keyframes: {
         float: {

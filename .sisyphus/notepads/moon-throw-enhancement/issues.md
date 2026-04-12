@@ -1,0 +1,1 @@
+- 2026-04-12: 验证构建时暴露了两个现存类型问题：`ActionButtons` 把函数型 `CONFIG.chatCost` 当作 ReactNode 渲染，以及 `pickFlirtLine()` 返回了 `FlirtLine` 对象而不是字符串；已在本次任务内顺手修正以保证 build 通过。

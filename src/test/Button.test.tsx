@@ -35,7 +35,6 @@ describe('Button', () => {
     render(<Button variant="pixel">Pixel Button</Button>)
     expect(screen.getByRole('button', { name: /pixel button/i })).toBeInTheDocument()
     expect(screen.getByRole('button')).not.toHaveClass('glass-button')
-    expect(screen.getByRole('button')).toHaveClass('pixel-card')
   })
 
   it('renders with small size', () => {

@@ -24,7 +24,13 @@ function createState(): GameState {
     frustration: 50,
     anxiety: 0,
     turn: 1,
+    difficulty: 1,
     items: { testkit: 1 },
+    achievements: {
+      unlocked: [],
+      endingsSeen: [],
+      stats: {},
+    },
     currentPartner: createPartner(),
     isInfected: false,
     infectionData: null,

@@ -1,9 +1,12 @@
+import { checkEnding } from './achievements'
 import type { DiseaseKey, GameState } from '../types'
+import type { GameEnding } from '../types'
 
 export interface GameOverResult {
   isOver: true
   reason: 'frustration' | 'anxiety'
   revealedInfection?: DiseaseKey | null
+  ending?: GameEnding | null
 }
 
 export function checkGameOver(state: GameState): GameOverResult | null {
@@ -11,6 +14,7 @@ export function checkGameOver(state: GameState): GameOverResult | null {
     return {
       isOver: true,
       reason: 'frustration',
+      ending: checkEnding(state),
       ...(state.isInfected && state.infectionData ? { revealedInfection: state.infectionData.disease } : {}),
     }
   }
@@ -18,6 +22,7 @@ export function checkGameOver(state: GameState): GameOverResult | null {
     return {
       isOver: true,
       reason: 'anxiety',
+      ending: checkEnding(state),
       ...(state.isInfected && state.infectionData ? { revealedInfection: state.infectionData.disease } : {}),
     }
   }

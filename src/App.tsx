@@ -1,6 +1,5 @@
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ThemeProvider } from '@/contexts/ThemeContext'
-import { ThemeToggle } from '@/components/ui/ThemeToggle'
 import { Home } from '@/pages/Home'
 import { Games } from '@/pages/Games'
 import { Notes } from '@/pages/Notes'
@@ -12,7 +11,6 @@ export default function App() {
   return (
     <ThemeProvider>
       <HashRouter future={{ v7_relativeSplatPath: true, v7_startTransition: true }}>
-        <ThemeToggle />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/games" element={<Games />} />

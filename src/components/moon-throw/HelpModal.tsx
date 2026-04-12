@@ -16,14 +16,14 @@ export function HelpModal({ show, onClose }: HelpModalProps) {
           exit={{ opacity: 0 }}
         >
           <motion.div
-            className="glass-card max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden"
+            className="max-w-md w-full max-h-[85vh] flex flex-col overflow-hidden rounded-xl bg-slate-900/95 border border-white/10 shadow-2xl"
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
           >
             <div className="p-6 border-b border-white/5 bg-slate-800/50 flex justify-between items-center flex-shrink-0">
               <h2 className="font-pixel text-teal-accent text-sm">游戏指南手册</h2>
-              <button onClick={onClose} className="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
+              <button type="button" onClick={onClose} className="text-slate-400 hover:text-white text-2xl leading-none">&times;</button>
             </div>
 
             <div className="p-6 overflow-y-auto text-sm text-slate-300 space-y-6 flex-1">
@@ -81,6 +81,7 @@ export function HelpModal({ show, onClose }: HelpModalProps) {
             <div className="p-4 border-t border-white/5 text-center flex-shrink-0">
               <button
                 onClick={onClose}
+                type="button"
                 className="glass-button px-6 py-2 text-sm w-full"
               >
                 知道了

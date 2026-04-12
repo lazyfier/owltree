@@ -1,0 +1,3 @@
+- 2026-04-12: 月抛模拟器的成就进度适合放在 `GameState.achievements` 中，并通过 `useReducer` 初始化 + `useEffect` 持久化到 localStorage，这样既保留纯 TS 引擎接口，又不会把 React 依赖带进引擎层。
+- 2026-04-12: 当前 `FLIRT_LINES` 数据是对象数组，UI hook 如果只需要展示文案，必须取 `.text`，不能直接把整条 `FlirtLine` 赋给字符串状态。
+- 2026-04-12: 随机事件引擎可以直接复用 `EventTemplate.triggerCondition` 作为统一门槛校验，并在运行时兼容 choice 上额外的 `condition` 字段，这样无需扩展核心 `EventChoice` 类型也能支持分支选项过滤。

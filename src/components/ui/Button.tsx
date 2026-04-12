@@ -6,7 +6,7 @@ const buttonVariants = {
   secondary: 'glass-button bg-ink-blue/50 text-slate-100 hover:bg-ink-blue/70',
   ghost: 'bg-transparent text-slate-100 hover:bg-ink-blue/30 hover:shadow-[0_0_10px_rgba(45,212,191,0.1)]',
   danger: 'glass-button border-2 border-coral text-coral hover:bg-coral/10',
-  pixel: 'pixel-card border-2 border-teal-accent text-teal-accent font-pixel hover:shadow-pixel',
+  pixel: 'border-2 border-teal-accent text-teal-accent font-pixel hover:shadow-[0_0_8px_rgba(45,212,191,0.3)]',
 } as const
 
 const buttonSizes = {

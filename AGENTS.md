@@ -4,183 +4,248 @@ Guidelines for AI agents working in this repository.
 
 ## Project Overview
 
-Owltree is an early-stage project containing interactive HTML prototypes. The main artifact is `other/moon-throw.html` — a Chinese-language moon-throw simulator (月抛模拟器) with glassmorphism UI, canvas-based physics, and Tailwind CSS styling.
+Owltree is a personal portal homepage built with React, Vite, and TypeScript. Features a terminal-first UI with four theme options (terminal, galgame, cyber, minimal) and an experimental narrative game "月抛模拟器" (moon-throw simulator).
 
-**Stack**: Pure HTML/CSS/JavaScript, no build system, no package manager.
+**Stack**: React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion.
 
 ---
 
 ## Development Commands
 
-No build step required. Files are served statically:
-
 ```bash
-# Quick local server
-python3 -m http.server 8080
+# Install dependencies
+npm install
 
-# Or with Node.js
-npx serve .
+# Start dev server
+npm run dev
 
-# Or with PHP
-php -S localhost:8080
+# Build for production
+npm run build
+
+# Run unit tests
+npm run test:unit
+
+# Run E2E tests
+npm run test:e2e
+
+# Preview production build
+npm run preview
 ```
-
-Open `http://localhost:8080/other/moon-throw.html` in browser.
-
-### No Tests, No Lint
-
-This project has no test framework, no linting, and no CI. Quality assurance is manual.
 
 ---
 
 ## Code Style Guidelines
 
-### HTML
+### TypeScript/React
 
-- Use semantic HTML5 elements (`<header>`, `<main>`, `<section>`, etc.)
-- Include `lang="zh-CN"` for Chinese content pages
-- Always specify `<meta charset="UTF-8">` and viewport meta
-- Load Tailwind via CDN: `https://cdn.tailwindcss.com`
-- Structure: Single-file prototypes with inline styles and scripts
-
-### CSS
-
-- **Primary**: Tailwind CSS utility classes
-- **Custom**: Inline `<style>` blocks for:
-  - Glassmorphism effects (`backdrop-filter`, `rgba()` backgrounds)
-  - Complex animations (`@keyframes`)
-  - Custom scrollbars
-  - Component-specific styles too verbose for utilities
-- Color palette: Dark theme with slate/blues (`#020617`, `#0f172a`, `#cbd5e1`)
-- Use CSS custom properties sparingly (project preference is inline styles)
-
-### JavaScript
-
-- Vanilla JS only — no frameworks, no build step
-- Organize code in logical sections:
-  1. Configuration/constants
-  2. State management
-  3. DOM element references
-  4. Event listeners
-  5. Helper functions
-  6. Main logic
-- Use `const` and `let` (no `var`)
-- Prefer `document.getElementById()` over `querySelector` for ID lookups
-- Event delegation for dynamic elements
-- Canvas operations: batch draws, use `requestAnimationFrame` for loops
-
-### Naming Conventions
-
-- **Variables**: camelCase (`gameState`, `currentRound`)
-- **Constants**: UPPER_SNAKE_CASE for true constants (`MAX_ROUNDS`)
-- **DOM IDs**: kebab-case (`game-container`, `start-btn`)
-- **CSS Classes**: kebab-case, semantic (`glass-panel`, `tag-badge`)
-- **Files**: kebab-case for multi-word files (`moon-throw.html`)
+- **Framework**: React 18 with functional components and hooks
+- **Types**: Strict TypeScript with explicit return types on exported functions
+- **Components**: One component per file, PascalCase naming (`Hero.tsx`, `CategoryGrid.tsx`)
+- **Hooks**: Custom hooks in `src/hooks/`, camelCase with `use` prefix (`useGameState.ts`)
+- **Imports**: Use path aliases (`@/components`, `@/hooks`, `@/contexts`)
 
 ### File Organization
 
 ```
 owltree/
-├── index.html          # Root placeholder (currently empty)
-├── other/              # Prototypes and experiments
-│   └── moon-throw.html # Main prototype (1000+ lines)
-├── CLAUDE.md           # Project context for Claude Code
-└── README.md           # Minimal description
+├── src/
+│   ├── components/     # React components
+│   │   ├── portal/     # Portal homepage components (Hero, TerminalHome, CategoryGrid)
+│   │   ├── moon-throw/ # Game UI components (VNDialogueBox, VNPortrait, etc.)
+│   │   ├── layout/     # Layout components (Footer, ThemeSwitcher)
+│   │   └── ui/         # Base UI components (Button, Card, Badge)
+│   ├── contexts/       # React Context (ThemeContext)
+│   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends, MoonThrow)
+│   ├── hooks/          # Custom React hooks
+│   ├── game/           # Game engine (pure TypeScript)
+│   │   ├── engine/     # Core game logic
+│   │   ├── data/       # Game data (tags, diseases, partners, events, etc.)
+│   │   └── types.ts    # Game type definitions
+│   ├── styles/         # Global CSS + page-specific styles
+│   │   ├── game.css    # Visual novel game theme
+│   │   └── pages/      # Per-page CSS
+│   └── lib/            # Utility functions
+├── theme/              # HTML prototypes (reference only)
+│   ├── moon-throw.html # Original game prototype
+│   └── themes/         # Theme prototypes
+├── e2e/                # Playwright E2E tests
+├── dist/               # Build output
+├── docs/               # Design documentation
+├── archive/            # Archived/legacy files
+└── .sisyphus/          # AI planning files and evidence
 ```
 
-- New prototypes go in `other/`
-- Root `index.html` reserved for future landing page
+### CSS/Styling
+
+- **Primary**: Tailwind CSS utility classes
+- **Custom**: CSS variables for theme switching (defined in `globals.css`)
+- **Themes**: Four themes controlled by `data-theme` attribute (`terminal`, `galgame`, `cyber`, `minimal`)
+- **Game Theme**: Independent CSS variable system in `game.css` (cyberpunk neon aesthetic)
+- **Pattern**: Use CSS variables for theme-dependent colors: `var(--bg-primary)`, `var(--text-primary)`
+
+### Naming Conventions
+
+- **Components**: PascalCase (`TerminalHome.tsx`)
+- **Hooks**: camelCase with `use` prefix (`useTheme`)
+- **Constants**: UPPER_SNAKE_CASE for true constants
+- **Files**: PascalCase for components, camelCase for utilities
+- **CSS Classes**: kebab-case for custom classes
 
 ---
 
 ## UI/UX Patterns
 
-### Glassmorphism
+### Theme System
 
-Standard panel styling used throughout:
+Four themes available, switched via `ThemeContext`:
 
-```css
-.glass-panel {
-    background: rgba(15, 23, 42, 0.95);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
-}
+| Theme | Description |
+|-------|-------------|
+| `terminal` | Default. CRT scanlines, neon cursor, command-line aesthetic |
+| `galgame` | Visual novel style with glitch effects and character panels |
+| `cyber` | Cyberpunk with neon glows and tech aesthetic |
+| `minimal` | Clean, whitespace-focused design |
+
+Theme switching:
+- Uses CSS custom properties (variables)
+- `data-theme` attribute on root element
+- Persists to localStorage
+- Smooth transitions between themes
+
+### Common Components
+
+- **Button**: `Button.tsx` with variants (primary, secondary, ghost)
+- **Card**: `Card.tsx` for content containers
+- **Badge**: `Badge.tsx` for tags and labels
+- **ParticleBackground**: Animated particle effect background
+
+---
+
+## Game Engine (月抛模拟器)
+
+The "月抛模拟器" game uses a pure TypeScript engine in `src/game/`:
+
+### Architecture
+
+- **Engine**: Deterministic game logic with RNG
+- **State**: Managed via `useGameState` hook
+- **UI**: Visual novel style with dialogue boxes, ASCII portraits, and choice buttons
+- **Tests**: Full unit test coverage with Vitest (94 tests)
+
+### Key Components
+
+| Component | Description |
+|-----------|-------------|
+| `VNDialogueBox.tsx` | Typewriter effect dialogue display |
+| `VNPortrait.tsx` | ASCII art character portraits |
+| `VNChoices.tsx` | Action selection buttons |
+| `GameContainer.tsx` | Main game layout (split-screen design) |
+
+### Game Systems
+
+- **Dialogue System**: Multi-turn conversations with partner characters
+- **Event System**: Random events that trigger during gameplay
+- **Achievement System**: Tracks unlocked achievements and endings
+- **Difficulty Progression**: Disease probability increases with turns
+- **Panic Mode**: Special visual effects when anxiety is high
+
+### Game Data Files
+
+- `tags.ts` — Partner attribute tags (30+ tags)
+- `diseases.ts` — Disease definitions (7 types)
+- `partners.ts` — Partner templates (10+ characters with ASCII portraits)
+- `events.ts` — Random event templates (15 events)
+- `achievements.ts` — Achievement definitions
+- `endings.ts` — Game ending definitions
+- `dialogues.ts` — Preset dialogue trees
+- `flirtLines.ts` — Partner dialogue lines (60+ lines)
+
+---
+
+## Testing
+
+- **Unit**: Vitest for game logic and utilities (`npm run test:unit`)
+- **E2E**: Playwright for UI flows (`npm run test:e2e`)
+- **Coverage**: 94 tests covering game engine, actions, and conditions
+
+---
+
+## Theme Directory
+
+`theme/` contains HTML/CSS prototypes used as visual references:
+
+- Not part of the build
+- Reference implementations for UI design
+- `theme/moon-throw.html` — original game prototype
+
+---
+
+## Archive Directory
+
+`archive/` contains unused/legacy files for reference:
+
+```
+archive/
+├── docs/               # Old documentation
+├── screenshots/        # Old screenshot files
+├── prototypes/         # Moved from prototypes/ directory
+├── sisyphus-plans/     # Old AI planning files
+└── legacy-components/  # Deleted React components
 ```
 
-### Typography
+---
 
-- Primary: `'Noto Sans SC', sans-serif` (Chinese support)
-- Import from Google Fonts
-- Font weights: 400 (normal), 500 (medium), 700 (bold), 900 (black)
+## Terminal Theme Implementation
 
-### Animations
+The terminal theme uses **completely different layouts** per page:
 
-Use cubic-bezier for pop effects:
+| Page | Terminal Layout | Command Style |
+|------|----------------|---------------|
+| Notes | `ls -la` file listing | Permissions, dates, type icons, tags |
+| Games | `ps aux` process table | PID, STATUS, progress bars, tags |
+| Tools | `neofetch` system info | ASCII header, system stats, categorized list |
+| Trends | `top` monitor | PID, %CPU indicator, topic, source, status |
 
-```css
-transition: all 0.3s ease;
-animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+---
+
+## Game UI Layout
+
+The visual novel game uses a **split-screen desktop layout**:
+
+```
+┌─────────────────────┬─────────────────────┐
+│                     │                     │
+│  Header + Stats     │  Action Buttons     │
+│                     │                     │
+├─────────────────────┼─────────────────────┤
+│                     │                     │
+│                     │                     │
+│   ASCII Portrait    │   Dialogue Box      │
+│   + Tags            │   / Choice Buttons  │
+│                     │                     │
+│                     │                     │
+└─────────────────────┴─────────────────────┘
 ```
 
-Common animations:
-- `popIn`: Scale + fade entrance
-- `flipIn`: 3D card flip reveal
-- `pulse-stress`: Subtle glow pulse
-- `panic-shake`: Screen shake for tension
+- **Fixed 50/50 split** — CSS Grid ensures stable layout
+- **Full viewport** — Uses `h-screen w-screen`, no scrolling
+- **Cyberpunk theme** — Cyan (#00f0ff) + Pink (#ff006e) neon colors
 
 ---
 
 ## Anti-Patterns to Avoid
 
-1. **Don't add npm/node_modules** — Keep it zero-dependency
-2. **Don't split into separate CSS/JS files** — Single-file prototypes preferred
-3. **Don't use external images without fallbacks** — Use Unsplash URLs with fallbacks
-4. **Don't use modern ES modules** — Plain script tags only
-5. **Don't introduce TypeScript** — Vanilla JS only
-6. **Don't add frameworks** — No React, Vue, etc.
+1. **Don't import from barrel files** — Import directly from source
+2. **Don't use `any`** — Strict typing required
+3. **Don't mix theme logic** — Keep theme-specific styles in CSS variables
+4. **Don't modify game engine** — Keep pure TypeScript, no React dependencies
 
 ---
 
-## Canvas/Physics Guidelines
+## Deployment
 
-When working with the canvas physics simulation:
-
-- Use `requestAnimationFrame` for animation loops
-- Batch canvas operations (minimize state changes)
-- Clear canvas with `clearRect` or fill before redraw
-- Use devicePixelRatio for sharp rendering on high-DPI displays
-- Physics: Simple Euler integration is sufficient
+GitHub Actions auto-deploys to GitHub Pages on push to `main`.
 
 ---
 
-## Chinese Language Support
-
-- Set `lang="zh-CN"` on `<html>`
-- Use Noto Sans SC font family
-- Test with Chinese text: "月抛模拟器", "开始游戏"
-- Ensure proper encoding (UTF-8)
-
----
-
-## Version Control
-
-- Commit messages: English, present tense ("Add", "Fix", "Update")
-- Keep commits atomic (one logical change per commit)
-- No pre-commit hooks or conventional commits enforced
-
----
-
-## Testing Approach
-
-Manual testing only:
-
-1. Open file in browser
-2. Test interactions (clicks, drags, animations)
-3. Verify canvas rendering at different sizes
-4. Check mobile responsiveness (dev tools)
-5. Test Chinese text rendering
-
----
-
-*Last updated: Based on CLAUDE.md and moon-throw.html analysis*
+*Last updated: Visual novel game enhancement complete — 94 tests passing*

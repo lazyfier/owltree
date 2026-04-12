@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OWLTREE — lazyfier</title>
+    <style>
+        :root {
+            --void: #0a0a0f;
+            --glass: rgba(16, 16, 28, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-highlight: rgba(255, 255, 255, 0.04);
+            --green: #4ade80;
+            --cyan: #22d3ee;
+            --yellow: #facc15;
+            --red: #fb7185;
+            --mauve: #c084fc;
+            --blue: #60a5fa;
+            --teal: #2dd4bf;
+            --peach: #fb923c;
+            --pink: #f472b6;
+            --text: #e2e8f0;
+            --text-dim: rgba(226, 232, 240, 0.55);
+            --text-subtle: rgba(226, 232, 240, 0.25);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow: hidden; height: 100%; }
+        body {
+            background: var(--void);
+            color: var(--text);
+            font-family: Monaco, 'Courier New', monospace;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .bg-glow {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .bg-glow .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+        }
+
+        .bg-glow .orb-1 {
+            width: 500px; height: 500px;
+            background: rgba(74, 222, 128, 0.07);
+            top: -10%; left: -5%;
+        }
+
+        .bg-glow .orb-2 {
+            width: 400px; height: 400px;
+            background: rgba(192, 132, 252, 0.06);
+            top: 40%; right: -5%;
+        }
+
+        .bg-glow .orb-3 {
+            width: 350px; height: 350px;
+            background: rgba(34, 211, 238, 0.05);
+            bottom: -10%; left: 30%;
+        }
+
+        .bg-glow .orb-4 {
+            width: 300px; height: 300px;
+            background: rgba(250, 204, 21, 0.04);
+            top: 20%; left: 50%;
+        }
+
+        .crt-lines {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 255, 255, 0.015) 2px,
+                rgba(255, 255, 255, 0.015) 4px
+            );
+            pointer-events: none;
+            z-index: 998;
+        }
+
+        .screen {
+            height: 100vh; width: 100vw;
+            position: relative;
+            z-index: 10;
+            padding: 40px 50px;
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            gap: 16px;
+        }
+
+        .mega-title {
+            grid-column: 1 / -1;
+            grid-row: 1 / 2;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1;
+            letter-spacing: 0.1em;
+            z-index: 10;
+        }
+        .mega-title .line-1 { display: block; color: var(--mauve); text-shadow: 0 0 30px rgba(192, 132, 252, 0.3); }
+        .mega-title .line-2 { display: block; color: var(--green); margin-top: 0.2em; text-shadow: 0 0 30px rgba(74, 222, 128, 0.3); }
+        .mega-title .line-3 {
+            display: block;
+            font-size: 0.5em;
+            letter-spacing: 0.2em;
+            color: var(--text-dim);
+            margin-top: 0.5em;
+        }
+
+        .glass {
+            background: var(--glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 var(--glass-highlight);
+        }
+
+        .identity-deconstructed {
+            grid-column: 2 / 6;
+            grid-row: 3 / 7;
+            position: relative;
+            z-index: 20;
+        }
+
+        .terminal-window {
+            padding: 20px;
+            position: relative;
+            border-radius: 4px;
+        }
+
+        .terminal-window::before {
+            content: '➜  ~ whoami';
+            display: block;
+            color: var(--green);
+            margin-bottom: 16px;
+            font-size: 0.8rem;
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+        }
+
+        .id-line {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+        }
+
+        .id-key {
+            color: var(--blue);
+            min-width: 80px;
+        }
+
+        .id-value {
+            color: var(--text);
+        }
+
+        .id-value.highlight {
+            color: var(--green);
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+        }
+
+        .id-divider {
+            border: none;
+            border-top: 1px solid var(--text-subtle);
+            margin: 12px 0;
+        }
+
+        .id-manifesto {
+            color: var(--text);
+            font-style: italic;
+            margin: 12px 0;
+            padding-left: 16px;
+            border-left: 2px solid var(--blue);
+        }
+
+        .right-area {
+            grid-column: 7 / 12;
+            grid-row: 2 / 8;
+            position: relative;
+            z-index: 15;
+            padding: 20px;
+            overflow: hidden;
+            border-radius: 4px;
+        }
+
+        .terminal-header {
+            color: var(--cyan);
+            font-size: 0.75rem;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--text-subtle);
+            text-shadow: 0 0 8px rgba(34, 211, 238, 0.4);
+        }
+
+        .terminal-content {
+            height: calc(100% - 40px);
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(74, 222, 128, 0.3) transparent;
+        }
+
+        .terminal-content::-webkit-scrollbar { width: 5px; }
+        .terminal-content::-webkit-scrollbar-track { background: transparent; }
+        .terminal-content::-webkit-scrollbar-thumb { background: rgba(74, 222, 128, 0.25); border-radius: 3px; }
+        .terminal-content::-webkit-scrollbar-thumb:hover { background: rgba(74, 222, 128, 0.4); }
+
+        .projects-output {
+            max-height: 280px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(74, 222, 128, 0.2) transparent;
+            padding-right: 4px;
+        }
+
+        .projects-output::-webkit-scrollbar { width: 3px; }
+        .projects-output::-webkit-scrollbar-thumb { background: rgba(74, 222, 128, 0.2); border-radius: 2px; }
+
+        .cmd-line { margin-bottom: 16px; }
+
+        .cmd-prompt {
+            color: var(--green);
+            text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+        }
+
+        .cmd-input { color: var(--text); }
+
+        .cmd-output {
+            margin-top: 4px;
+            padding-left: 16px;
+        }
+
+        .project-entry {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--text-subtle);
+            transition: background 0.2s;
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .project-entry:hover {
+            background: var(--glass-highlight);
+        }
+
+        .hover-card {
+            position: fixed;
+            width: 240px;
+            background: rgba(10, 10, 18, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            padding: 16px;
+            z-index: 500;
+            opacity: 0;
+            pointer-events: none;
+            transform: translateX(8px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .hover-card.visible {
+            opacity: 1;
+            pointer-events: all;
+            transform: translateX(0);
+        }
+
+        .hc-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--text-subtle);
+        }
+
+        .hc-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--yellow);
+        }
+
+        .hc-status {
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        .hc-status.active {
+            color: var(--green);
+            background: rgba(74, 222, 128, 0.15);
+        }
+
+        .hc-status.wip {
+            color: var(--yellow);
+            background: rgba(250, 204, 21, 0.15);
+        }
+
+        .hc-status.planning {
+            color: var(--cyan);
+            background: rgba(34, 211, 238, 0.15);
+        }
+
+        .hc-desc {
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+
+        .hc-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .hc-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.6rem;
+        }
+
+        .hc-label {
+            color: var(--text-subtle);
+        }
+
+        .hc-val {
+            color: var(--text-dim);
+        }
+
+        .hc-tags {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--text-subtle);
+        }
+
+        .hc-tag {
+            font-size: 0.55rem;
+            padding: 2px 6px;
+            border-radius: 2px;
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-dim);
+        }
+
+        .project-name {
+            min-width: 140px;
+            color: var(--yellow);
+            text-shadow: 0 0 8px rgba(250, 204, 21, 0.3);
+        }
+
+        .project-bar {
+            flex: 1;
+            height: 8px;
+            background: rgba(74, 222, 128, 0.1);
+            border-radius: 4px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--green), var(--teal));
+            border-radius: 4px;
+            position: relative;
+            box-shadow: 0 0 10px rgba(74, 222, 128, 0.4);
+        }
+
+        .project-bar-fill::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #fff;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        .project-percent {
+            min-width: 40px;
+            text-align: right;
+            color: var(--green);
+            text-shadow: 0 0 6px rgba(74, 222, 128, 0.4);
+        }
+
+        .module-list {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .module-item {
+            padding: 4px 12px;
+            border: 1px solid var(--text-subtle);
+            border-radius: 2px;
+            cursor: pointer;
+            transition: all 0.25s;
+            background: transparent;
+        }
+
+        .module-item:hover {
+            background: var(--glass-highlight);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .module-item.m-green { color: var(--green); border-color: rgba(74, 222, 128, 0.3); }
+        .module-item.m-green:hover { border-color: var(--green); box-shadow: 0 0 15px rgba(74, 222, 128, 0.2); }
+        .module-item.m-cyan { color: var(--cyan); border-color: rgba(34, 211, 238, 0.3); }
+        .module-item.m-cyan:hover { border-color: var(--cyan); box-shadow: 0 0 15px rgba(34, 211, 238, 0.2); }
+        .module-item.m-yellow { color: var(--yellow); border-color: rgba(250, 204, 21, 0.3); }
+        .module-item.m-yellow:hover { border-color: var(--yellow); box-shadow: 0 0 15px rgba(250, 204, 21, 0.2); }
+        .module-item.m-teal { color: var(--teal); border-color: rgba(45, 212, 191, 0.3); }
+        .module-item.m-teal:hover { border-color: var(--teal); box-shadow: 0 0 15px rgba(45, 212, 191, 0.2); }
+        .module-item.m-peach { color: var(--peach); border-color: rgba(251, 146, 60, 0.3); }
+        .module-item.m-peach:hover { border-color: var(--peach); box-shadow: 0 0 15px rgba(251, 146, 60, 0.2); }
+        .module-item.m-blue { color: var(--blue); border-color: rgba(96, 165, 250, 0.3); }
+        .module-item.m-blue:hover { border-color: var(--blue); box-shadow: 0 0 15px rgba(96, 165, 250, 0.2); }
+
+        .cursor {
+            display: inline-block;
+            width: 8px;
+            height: 16px;
+            background: var(--green);
+            border-radius: 1px;
+            animation: blink 1s infinite;
+            vertical-align: middle;
+            margin-left: 4px;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.6);
+        }
+
+        @media (max-width: 1024px) {
+            .screen { grid-template-columns: 1fr; padding: 30px; }
+            .mega-title { font-size: clamp(1.5rem, 6vw, 3rem); }
+            .identity-deconstructed { grid-column: 1; grid-row: 3 / 5; }
+            .right-area { grid-column: 1; grid-row: 5 / 9; }
+            .project-entry { flex-wrap: wrap; gap: 8px; }
+            .project-bar { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-glow">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+        <div class="orb orb-4"></div>
+    </div>
+    <div class="crt-lines"></div>
+
+    <section class="screen">
+        <h1 class="mega-title">
+            <span class="line-1">[owltree]</span>
+            <span class="line-2">SYSTEM ONLINE</span>
+            <span class="line-3">// TERMINAL INTERFACE</span>
+        </h1>
+
+        <div class="identity-deconstructed">
+            <div class="terminal-window glass">
+                <div class="id-manifesto">
+                    Building systems at the edge of narrative and code.
+                </div>
+                <hr class="id-divider">
+                <div class="id-line">
+                    <span class="id-key">STACK:</span>
+                </div>
+                <div class="id-line" style="padding-left:24px;">
+                    <span class="id-value" style="color:var(--cyan);">React</span>
+                    <span class="id-value" style="color:var(--text-subtle);">·</span>
+                    <span class="id-value" style="color:var(--blue);">TypeScript</span>
+                    <span class="id-value" style="color:var(--text-subtle);">·</span>
+                    <span class="id-value" style="color:var(--teal);">Go</span>
+                    <span class="id-value" style="color:var(--text-subtle);">·</span>
+                    <span class="id-value" style="color:var(--yellow);">Python</span>
+                </div>
+                <div class="id-line" style="padding-left:24px;">
+                    <span class="id-value" style="color:var(--mauve);">Node.js</span>
+                    <span class="id-value" style="color:var(--text-subtle);">·</span>
+                    <span class="id-value" style="color:var(--peach);">Rust</span>
+                    <span class="id-value" style="color:var(--text-subtle);">·</span>
+                    <span class="id-value" style="color:var(--pink);">Figma</span>
+                </div>
+                <hr class="id-divider">
+                <div class="id-line">
+                    <span class="id-key">FOCUS:</span>
+                    <span class="id-value">Portal UX + Game</span>
+                </div>
+                <div class="id-line">
+                    <span class="id-key">NOW:</span>
+                    <span class="id-value highlight">Building Owltree Portal</span>
+                </div>
+                <hr class="id-divider">
+                <div class="id-line">
+                    <span class="id-key">GITHUB:</span>
+                    <span class="id-value" style="color:var(--text-dim);">github.com/lazyfier</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="right-area glass">
+            <div class="terminal-header">➜  ~/projects git:(main) ls -la</div>
+            <div class="terminal-content">
+                <div class="cmd-line">
+                    <span class="cmd-prompt">➜  </span>
+                    <span class="cmd-input">./show_projects.sh</span>
+                    <span class="cursor"></span>
+                </div>
+
+                <div class="cmd-output">
+                        <div class="projects-output">
+                        <div class="project-entry">
+                            <span class="project-name">月抛模拟器</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 87%;"></div>
+                            </div>
+                            <span class="project-percent">87%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">月抛模拟器</span>
+                                    <span class="hc-status active">ACTIVE</span>
+                                </div>
+                                <div class="hc-desc">关于选择与后果的实验性互动叙事游戏，融合视觉小说引擎与概率系统。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">React + TypeScript</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">3 days ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">STARS</span><span class="hc-val">★ 42</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">React</span>
+                                    <span class="hc-tag">TypeScript</span>
+                                    <span class="hc-tag">Framer Motion</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name">Owltree Portal</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 62%;"></div>
+                            </div>
+                            <span class="project-percent">62%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">Owltree Portal</span>
+                                    <span class="hc-status active">ACTIVE</span>
+                                </div>
+                                <div class="hc-desc">个人门户主页，支持三主题切换、游戏入口、模块系统。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">React + Vite</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">today</span></div>
+                                    <div class="hc-row"><span class="hc-label">STARS</span><span class="hc-val">★ 28</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">React</span>
+                                    <span class="hc-tag">Tailwind</span>
+                                    <span class="hc-tag">Design</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name" style="color:var(--red); text-shadow:0 0 8px rgba(251,113,133,0.4);">Secret Project</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 23%; background:linear-gradient(90deg, var(--red), var(--peach));"></div>
+                            </div>
+                            <span class="project-percent" style="color:var(--red);">23%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title" style="color:var(--red);">Secret Project</span>
+                                    <span class="hc-status wip">WIP</span>
+                                </div>
+                                <div class="hc-desc">神秘项目，详情暂不公开。属于个人实验性探索方向。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">TBD</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">1 week ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">VIS</span><span class="hc-val">Private</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Private</span>
+                                    <span class="hc-tag">Experiment</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name">API Gateway</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 45%;"></div>
+                            </div>
+                            <span class="project-percent">45%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">API Gateway</span>
+                                    <span class="hc-status active">ACTIVE</span>
+                                </div>
+                                <div class="hc-desc">统一API网关，处理鉴权、限流、路由与日志聚合。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">Go + gRPC</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">2 days ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">DEPS</span><span class="hc-val">4 services</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Go</span>
+                                    <span class="hc-tag">gRPC</span>
+                                    <span class="hc-tag">Redis</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name">Data Pipeline</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 71%;"></div>
+                            </div>
+                            <span class="project-percent">71%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">Data Pipeline</span>
+                                    <span class="hc-status active">ACTIVE</span>
+                                </div>
+                                <div class="hc-desc">数据采集与ETL管道，支持多源接入和实时流处理。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">Python</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">yesterday</span></div>
+                                    <div class="hc-row"><span class="hc-label">SOURCES</span><span class="hc-val">3 active</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Python</span>
+                                    <span class="hc-tag">Airflow</span>
+                                    <span class="hc-tag">Kafka</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name">Design System</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 34%;"></div>
+                            </div>
+                            <span class="project-percent">34%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">Design System</span>
+                                    <span class="hc-status wip">WIP</span>
+                                </div>
+                                <div class="hc-desc">统一设计语言，包含Token、组件库和文档站点。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">Figma</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">5 days ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">TOKENS</span><span class="hc-val">24 defined</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Figma</span>
+                                    <span class="hc-tag">Storybook</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name" style="color:var(--pink); text-shadow:0 0 8px rgba(244,114,182,0.4);">NeoBrutal UI</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 56%; background:linear-gradient(90deg, var(--pink), var(--mauve));"></div>
+                            </div>
+                            <span class="project-percent" style="color:var(--pink);">56%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title" style="color:var(--pink);">NeoBrutal UI</span>
+                                    <span class="hc-status active">ACTIVE</span>
+                                </div>
+                                <div class="hc-desc">新野兽主义UI组件库，粗边框 + 高对比 + 强排版。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">React + CSS</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">today</span></div>
+                                    <div class="hc-row"><span class="hc-label">COMPS</span><span class="hc-val">18 shipped</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">React</span>
+                                    <span class="hc-tag">CSS</span>
+                                    <span class="hc-tag">A11y</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name">CLI Toolkit</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 12%;"></div>
+                            </div>
+                            <span class="project-percent">12%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title">CLI Toolkit</span>
+                                    <span class="hc-status planning">PLANNING</span>
+                                </div>
+                                <div class="hc-desc">开发者命令行工具集，代码生成、部署自动化等。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">Rust</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">2 weeks ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">CMDS</span><span class="hc-val">3 planned</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Rust</span>
+                                    <span class="hc-tag">CLI</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="project-entry">
+                            <span class="project-name" style="color:var(--cyan); text-shadow:0 0 8px rgba(34,211,238,0.4);">AI Agent</span>
+                            <div class="project-bar">
+                                <div class="project-bar-fill" style="width: 8%; background:linear-gradient(90deg, var(--cyan), var(--blue));"></div>
+                            </div>
+                            <span class="project-percent" style="color:var(--cyan);">8%</span>
+                            <div class="hover-card">
+                                <div class="hc-header">
+                                    <span class="hc-title" style="color:var(--cyan);">AI Agent</span>
+                                    <span class="hc-status planning">PLANNING</span>
+                                </div>
+                                <div class="hc-desc">自主AI代理框架，支持工具调用与多Agent协作。</div>
+                                <div class="hc-meta">
+                                    <div class="hc-row"><span class="hc-label">STACK</span><span class="hc-val">Python</span></div>
+                                    <div class="hc-row"><span class="hc-label">LAST</span><span class="hc-val">3 days ago</span></div>
+                                    <div class="hc-row"><span class="hc-label">PHASE</span><span class="hc-val">Research</span></div>
+                                </div>
+                                <div class="hc-tags">
+                                    <span class="hc-tag">Python</span>
+                                    <span class="hc-tag">LLM</span>
+                                    <span class="hc-tag">MCP</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cmd-line" style="margin-top: 24px;">
+                    <span class="cmd-prompt">➜  </span>
+                    <span class="cmd-input">./list_modules.sh</span>
+                </div>
+
+                <div class="cmd-output">
+                    <div class="module-list">
+                        <span class="module-item m-mauve" style="color:var(--mauve); border-color:rgba(192,132,252,0.3);">GAMES</span>
+                        <span class="module-item m-cyan">NOTES</span>
+                        <span class="module-item m-yellow">TOOLS</span>
+                        <span class="module-item m-teal">TRENDS</span>
+                        <span class="module-item m-peach">ARCHIVE</span>
+                        <span class="module-item m-blue">CONNECT</span>
+                    </div>
+                </div>
+
+                <div class="cmd-line" style="margin-top: 24px;">
+                    <span class="cmd-prompt">➜  </span>
+                    <span class="cursor"></span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Move hover cards to <body> to escape backdrop-filter containing block
+        const cards = document.querySelectorAll('.hover-card');
+        cards.forEach(card => {
+            const entry = card.closest('.project-entry');
+            const projectName = entry.querySelector('.project-name').textContent.trim();
+            card.dataset.project = projectName;
+            document.body.appendChild(card);
+        });
+
+        // Wire hover events via data-project attribute
+        document.querySelectorAll('.project-entry').forEach(entry => {
+            const name = entry.querySelector('.project-name').textContent.trim();
+            const card = document.querySelector('.hover-card[data-project="' + name + '"]');
+            if (!card) return;
+
+            entry.addEventListener('mouseenter', () => {
+                const rect = entry.getBoundingClientRect();
+                const vw = window.innerWidth;
+                const cardW = 240;
+                let left = rect.right + 12;
+                // If card would overflow right edge, show it to the left
+                if (left + cardW > vw - 16) {
+                    left = rect.left - cardW - 12;
+                }
+                card.style.left = left + 'px';
+                card.style.top = (rect.top - 10) + 'px';
+                card.classList.add('visible');
+            });
+            entry.addEventListener('mouseleave', () => {
+                card.classList.remove('visible');
+            });
+        });
+    </script>
+</body>
+</html>

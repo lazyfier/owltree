@@ -1,13 +1,32 @@
 {
-  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/owltree-portal-implementation.md",
-  "started_at": "2026-04-07T02:13:43.783Z",
+  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/moon-throw-enhancement.md",
+  "started_at": "2026-04-12T09:22:32.765Z",
   "session_ids": [
-    "ses_29a5fb06effejwGWH1SB3s55wY"
+    "ses_2ad6b7e03ffeXzP31mkpRGZuYy"
   ],
   "session_origins": {
-    "ses_29a5fb06effejwGWH1SB3s55wY": "direct"
+    "ses_2ad6b7e03ffeXzP31mkpRGZuYy": "direct"
   },
-  "plan_name": "owltree-portal-implementation",
+  "plan_name": "moon-throw-enhancement",
   "agent": "atlas",
-  "task_sessions": {}
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "扩充游戏数据层",
+      "session_id": "ses_27efbd23affeYLcvL0sYyCF41g",
+      "agent": "Sisyphus-Junior",
+      "category": "writing",
+      "updated_at": "2026-04-12T09:43:44.892Z"
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "实现多轮对话系统引擎",
+      "session_id": "ses_27e96c489ffeUEIdPXJknwHHJQ",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-04-12T11:47:32.610Z"
+    }
+  }
 }

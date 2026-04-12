@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-export type Theme = 'galgame' | 'cyber' | 'minimal';
+export type Theme = 'galgame' | 'cyber' | 'minimal' | 'terminal';
 
 interface ThemeContextType {
   theme: Theme;
@@ -10,17 +10,17 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-const STORAGE_KEY = 'owltree-theme';
+const STORAGE_KEY = 'owltree-theme-v2';
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem(STORAGE_KEY) as Theme;
-      if (stored && ['galgame', 'cyber', 'minimal'].includes(stored)) {
+      if (stored && ['galgame', 'cyber', 'minimal', 'terminal'].includes(stored)) {
         return stored;
       }
     }
-    return 'galgame';
+    return 'terminal';
   });
 
   useEffect(() => {
@@ -33,7 +33,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   };
 
   const toggleTheme = () => {
-    const themes: Theme[] = ['galgame', 'cyber', 'minimal'];
+    const themes: Theme[] = ['galgame', 'cyber', 'minimal', 'terminal'];
     const currentIndex = themes.indexOf(theme);
     const nextIndex = (currentIndex + 1) % themes.length;
     setThemeState(themes[nextIndex]);

@@ -1,0 +1,786 @@
+.page-root[data-page="notes"] {
+  --theme-atmosphere-accent: var(--notes-accent);
+  --theme-atmosphere-accent-alt: var(--games-accent);
+}
+
+.page-root[data-page="games"] {
+  --theme-atmosphere-accent: var(--games-accent);
+  --theme-atmosphere-accent-alt: var(--notes-accent);
+}
+
+.page-root[data-page="trends"] {
+  --theme-atmosphere-accent: var(--trends-accent);
+  --theme-atmosphere-accent-alt: var(--tools-accent);
+}
+
+.page-root[data-page="tools"] {
+  --theme-atmosphere-accent: var(--tools-accent);
+  --theme-atmosphere-accent-alt: var(--trends-accent);
+}
+
+.page-root[data-page] {
+  --theme-atmosphere-shadow: color-mix(in srgb, var(--theme-atmosphere-accent) 24%, transparent);
+  --theme-atmosphere-shadow-strong: color-mix(in srgb, var(--theme-atmosphere-accent) 40%, transparent);
+  --theme-atmosphere-vignette: color-mix(in srgb, var(--page-bg) 72%, transparent);
+}
+
+@keyframes theme-atmosphere-term-cursor-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes theme-atmosphere-term-status-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.3;
+  }
+}
+
+@keyframes theme-atmosphere-term-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  92% {
+    opacity: 1;
+  }
+
+  93% {
+    opacity: 0.8;
+  }
+
+  94% {
+    opacity: 1;
+  }
+}
+
+@keyframes theme-atmosphere-term-glow-pulse {
+  0%,
+  100% {
+    text-shadow: 0 0 4px currentColor;
+  }
+
+  50% {
+    text-shadow: 0 0 12px currentColor, 0 0 20px currentColor;
+  }
+}
+
+@keyframes theme-atmosphere-gal-icon-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes theme-atmosphere-cyber-overlay-scan {
+  0% {
+    background-position: 0 0;
+  }
+
+  100% {
+    background-position: 0 100px;
+  }
+}
+
+@keyframes theme-atmosphere-cyber-icon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 10px var(--theme-atmosphere-shadow);
+  }
+
+  50% {
+    box-shadow: 0 0 22px var(--theme-atmosphere-shadow-strong);
+  }
+}
+
+/* ============================================
+   TERMINAL THEME — REAL TERMINAL WINDOW
+   ============================================ */
+
+/* Kill ParticleBackground canvas */
+[data-theme="terminal"] .page-root[data-page] canvas {
+  display: none !important;
+}
+
+/* Kill all particle divs */
+[data-theme="terminal"] .page-root[data-page] .particle-container,
+[data-theme="terminal"] .page-root[data-page] [class*="particle"] {
+  display: none !important;
+}
+
+/* Solid black background — no transparency, no glassmorphism */
+[data-theme="terminal"] .page-root[data-page] {
+  background: #0a0a0a !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* CRT scanlines — finer, more authentic */
+[data-theme="terminal"] .page-root[data-page]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0) 0px,
+    rgba(0, 0, 0, 0.12) 1px,
+    rgba(0, 0, 0, 0) 1px,
+    rgba(0, 0, 0, 0.12) 2px
+  );
+  pointer-events: none;
+  z-index: 10000;
+}
+
+/* CRT screen curvature vignette */
+[data-theme="terminal"] .page-root[data-page]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at 50% 40%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.6) 100%
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+/* Main area = terminal window body */
+[data-theme="terminal"] .page-root[data-page] main {
+  background: transparent !important;
+}
+
+/* Terminal window frame around main content area */
+[data-theme="terminal"] .page-root[data-page] main > div:first-child {
+  position: relative;
+  background: rgba(10, 10, 10, 0.95);
+  border: 1px solid #2a2a2a;
+  border-radius: 8px 8px 0 0;
+  overflow: hidden;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+}
+
+/* macOS-style title bar */
+[data-theme="terminal"] .page-root[data-page] main > div:first-child::before {
+  content: '● ● ●  lazyfier@owltree ~ $';
+  display: block;
+  background: #1e1e1e;
+  color: #777;
+  font-family: var(--page-font, Monaco, 'Courier New', monospace);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  padding: 8px 14px;
+  border-bottom: 1px solid #2a2a2a;
+  line-height: 1;
+}
+
+
+
+/* Monospace everywhere in terminal */
+[data-theme="terminal"] .page-root[data-page],
+[data-theme="terminal"] .page-root[data-page] *:where(:not(script):not(style)) {
+  font-family: var(--page-font, Monaco, 'Courier New', monospace) !important;
+}
+
+/* Green phosphor text tint */
+[data-theme="terminal"] .page-root[data-page] {
+  color: #c8c8c8;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card {
+  color: #d4d4d4;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card:hover {
+  color: #ffffff;
+}
+
+/* Page title = terminal command prompt */
+[data-theme="terminal"] .page-root[data-page] h1 {
+  font-size: 0.9rem !important;
+  text-transform: none !important;
+  letter-spacing: 0 !important;
+  color: #4ade80 !important;
+  font-weight: 600 !important;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.4);
+}
+
+[data-theme="terminal"] .page-root[data-page] h1::before {
+  content: '$ ';
+  color: #4ade80;
+}
+
+[data-theme="terminal"] .page-root[data-page] h1::after {
+  content: ' _';
+  color: #4ade80;
+  animation: theme-atmosphere-term-cursor-blink 1s step-end infinite;
+}
+
+/* Hide subtitle in terminal */
+[data-theme="terminal"] .page-root[data-page] h1 + p {
+  display: none !important;
+}
+
+/* Back button = terminal command */
+[data-theme="terminal"] .page-root[data-page] .page-back-btn {
+  border: 1px solid #333 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  color: #666 !important;
+  font-size: 0.7rem !important;
+  padding: 4px 8px !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-back-btn:hover {
+  color: #4ade80 !important;
+  border-color: #4ade8044 !important;
+  background: rgba(74, 222, 128, 0.05) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-back-btn svg {
+  color: inherit !important;
+}
+
+/* Header icon = terminal status dot */
+[data-theme="terminal"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon {
+  width: 6px !important;
+  height: 6px !important;
+  min-width: 6px !important;
+  min-height: 6px !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: #4ade80 !important;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.6) !important;
+  animation: theme-atmosphere-term-status-pulse 2s ease-in-out infinite !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon svg {
+  display: none !important;
+}
+
+/* Terminal-style prompt before each item row */
+[data-theme="terminal"] .page-root[data-page] .note-card::before,
+[data-theme="terminal"] .page-root[data-page] .trend-item::before,
+[data-theme="terminal"] .page-root[data-page] .game-card::before {
+  content: '>';
+  color: #4ade80;
+  font-weight: bold;
+  margin-right: 0.5rem;
+  opacity: 0.6;
+}
+
+[data-theme="terminal"] .page-root[data-page] .note-card-inner::before,
+[data-theme="terminal"] .page-root[data-page] .trend-item::before,
+[data-theme="terminal"] .page-root[data-page] .game-card-inner::before {
+  content: '';
+}
+
+/* Kill ALL card chrome in terminal — no borders, no bg, no radius, no shadow */
+[data-theme="terminal"] .page-root[data-page] .page-card,
+[data-theme="terminal"] .page-root[data-page] .note-card,
+[data-theme="terminal"] .page-root[data-page] .game-card,
+[data-theme="terminal"] .page-root[data-page] .trend-item,
+[data-theme="terminal"] .page-root[data-page] .trends-main-card,
+[data-theme="terminal"] .page-root[data-page] .tool-card {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding: 0.25rem 0.5rem !important;
+  margin: 0 !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .note-card-inner,
+[data-theme="terminal"] .page-root[data-page] .game-card-inner {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #1a1a1a !important;
+  border-radius: 0 !important;
+  padding: 0.35rem 0 !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card:hover,
+[data-theme="terminal"] .page-root[data-page] .trend-item:hover {
+  background: rgba(74, 222, 128, 0.04) !important;
+}
+
+/* Kill thumbnails and decorative icons */
+[data-theme="terminal"] .page-root[data-page] .note-card-thumb,
+[data-theme="terminal"] .page-root[data-page] .note-type-col,
+[data-theme="terminal"] .page-root[data-page] .game-icon-col,
+[data-theme="terminal"] .page-root[data-page] .tool-icon {
+  display: none !important;
+}
+
+/* Dense layout — no card gaps */
+[data-theme="terminal"] .page-root[data-page] .notes-grid,
+[data-theme="terminal"] .page-root[data-page] .games-grid,
+[data-theme="terminal"] .page-root[data-page] .tools-grid {
+  gap: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+/* Kill accent bars */
+[data-theme="terminal"] .page-root[data-page] .page-accent-bar {
+  display: none !important;
+}
+
+/* All text muted except titles */
+[data-theme="terminal"] .page-root[data-page] .page-card p,
+[data-theme="terminal"] .page-root[data-page] .game-info p,
+[data-theme="terminal"] .page-root[data-page] .note-card-desc {
+  color: #555 !important;
+  font-size: 0.75rem !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card h3,
+[data-theme="terminal"] .page-root[data-page] .note-card-title,
+[data-theme="terminal"] .page-root[data-page] .game-info h3 {
+  color: #ccc !important;
+  font-size: 0.8rem !important;
+}
+
+/* Terminal-style badges */
+[data-theme="terminal"] .page-root[data-page] .page-badge {
+  background: transparent !important;
+  border: 1px solid #333 !important;
+  color: #4ade80 !important;
+  font-family: var(--page-font, Monaco, monospace) !important;
+  font-size: 0.65rem !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-tag {
+  border: 1px solid #2a2a2a !important;
+  background: transparent !important;
+  color: #888 !important;
+}
+
+/* Filter buttons = terminal options */
+[data-theme="terminal"] .page-root[data-page] .page-filter-btn {
+  border: 1px solid #333 !important;
+  background: transparent !important;
+  color: #888 !important;
+  font-family: var(--page-font, Monaco, monospace) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-filter-btn[aria-pressed="true"] {
+  color: #4ade80 !important;
+  border-color: #4ade8044 !important;
+  background: rgba(74, 222, 128, 0.06) !important;
+}
+
+/* Action buttons = terminal commands */
+[data-theme="terminal"] .page-root[data-page] .page-action-btn {
+  border: 1px solid #333 !important;
+  background: transparent !important;
+  color: #4ade80 !important;
+  font-family: var(--page-font, Monaco, monospace) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-action-btn:hover {
+  background: rgba(74, 222, 128, 0.08) !important;
+}
+
+/* Labels = terminal path notation */
+[data-theme="terminal"] .page-root[data-page] .page-label {
+  color: #555 !important;
+  font-size: 0.65rem !important;
+}
+
+/* Footer = terminal status bar */
+[data-theme="terminal"] .page-root[data-page] .page-footer {
+  border-top: 1px solid #2a2a2a !important;
+  background: rgba(10, 10, 10, 0.95) !important;
+  border-radius: 0 0 8px 8px !important;
+  padding: 8px 14px !important;
+  font-size: 0.7rem !important;
+  color: #555 !important;
+  font-family: var(--page-font, Monaco, monospace) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-footer::before {
+  content: '[ready] ';
+  color: #4ade80;
+  opacity: 0.6;
+}
+
+/* Text selection in terminal = green */
+[data-theme="terminal"] .page-root[data-page] ::selection {
+  background: rgba(74, 222, 128, 0.25);
+  color: #fff;
+}
+
+/* Scrollbar = thin and dark */
+[data-theme="terminal"] .page-root[data-page] ::-webkit-scrollbar {
+  width: 6px;
+}
+
+[data-theme="terminal"] .page-root[data-page] ::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+
+[data-theme="terminal"] .page-root[data-page] ::-webkit-scrollbar-thumb {
+  background: #333;
+  border-radius: 0;
+}
+
+[data-theme="terminal"] .page-root[data-page] ::-webkit-scrollbar-thumb:hover {
+  background: #4ade80;
+}
+
+/* ============================================
+   TERMINAL GEEK ENHANCEMENTS
+   ============================================ */
+
+[data-theme="terminal"] .page-root[data-page] {
+  animation: theme-atmosphere-term-flicker 8s linear infinite;
+}
+
+[data-theme="terminal"] .page-root[data-page] main > div:first-child {
+  border: 1px solid #1a3a1a !important;
+  border-top: 2px solid #4ade8044 !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card h3,
+[data-theme="terminal"] .page-root[data-page] .note-card-title,
+[data-theme="terminal"] .page-root[data-page] .game-info h3 {
+  color: #e0e0e0 !important;
+  text-shadow: 0 0 2px rgba(255, 255, 255, 0.1);
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-card h3:hover,
+[data-theme="terminal"] .page-root[data-page] .note-card-title:hover {
+  color: #4ade80 !important;
+  text-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+  animation: theme-atmosphere-term-glow-pulse 2s ease-in-out infinite;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-label {
+  color: #38bdf8 !important;
+  font-size: 0.6rem !important;
+  text-transform: uppercase !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-badge {
+  color: #facc15 !important;
+  border-color: #facc1544 !important;
+  font-size: 0.6rem !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-tag {
+  color: #38bdf8 !important;
+  border-color: #38bdf822 !important;
+  font-size: 0.6rem !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-tag:hover {
+  border-color: #38bdf855 !important;
+  background: rgba(56, 189, 248, 0.06) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-filter-btn {
+  color: #666 !important;
+  font-size: 0.65rem !important;
+  text-transform: lowercase !important;
+  padding: 2px 8px !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-filter-btn[aria-pressed="true"] {
+  color: #4ade80 !important;
+  border-color: #4ade80 !important;
+  background: rgba(74, 222, 128, 0.08) !important;
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.3);
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-back-btn {
+  color: #4ade80 !important;
+  font-size: 0.65rem !important;
+  text-transform: lowercase !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-action-btn {
+  color: #c084fc !important;
+  border-color: #c084fc33 !important;
+  text-transform: lowercase !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-action-btn:hover {
+  background: rgba(192, 132, 252, 0.08) !important;
+  text-shadow: 0 0 6px rgba(192, 132, 252, 0.3);
+}
+
+[data-theme="terminal"] .page-root[data-page] .note-card::before,
+[data-theme="terminal"] .page-root[data-page] .trend-item::before,
+[data-theme="terminal"] .page-root[data-page] .game-card::before {
+  color: #4ade80;
+  opacity: 0.4;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-footer::before {
+  content: '[ready] ';
+  color: #4ade80;
+  opacity: 0.5;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-footer {
+  color: #333 !important;
+  font-size: 0.65rem !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .page-footer a,
+[data-theme="terminal"] .page-root[data-page] .page-footer svg {
+  color: #333 !important;
+  opacity: 0.3;
+}
+
+[data-theme="terminal"] .page-root[data-page] .trend-rank {
+  color: #4ade80 !important;
+  font-weight: 700 !important;
+  opacity: 0.6;
+}
+
+[data-theme="terminal"] .page-root[data-page] .game-info-label {
+  color: #555 !important;
+  font-size: 0.6rem !important;
+  text-transform: uppercase;
+}
+
+[data-theme="terminal"] .page-root[data-page] .note-meta,
+[data-theme="terminal"] .page-root[data-page] .note-meta svg {
+  color: #333 !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .tool-info .page-label {
+  color: #38bdf8 !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .trends-header-row h2 {
+  color: #4ade80 !important;
+  text-shadow: 0 0 6px rgba(74, 222, 128, 0.3);
+}
+
+[data-theme="terminal"] .page-root[data-page] .trend-info p {
+  color: #bbb !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .trend-item:hover {
+  background: rgba(74, 222, 128, 0.03) !important;
+}
+
+[data-theme="terminal"] .page-root[data-page] .trend-item:hover .trend-info p {
+  color: #4ade80 !important;
+  transition: color 0.15s;
+}
+
+/* ============================================
+   GALGAME THEME — VISUAL NOVEL SCREEN
+   ============================================ */
+
+[data-theme="galgame"] .page-root[data-page]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(
+    ellipse at center,
+    transparent 50%,
+    color-mix(in srgb, var(--page-bg) 58%, transparent) 100%
+  );
+  pointer-events: none;
+  z-index: 10000;
+}
+
+[data-theme="galgame"] .page-root[data-page]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--theme-atmosphere-accent) 6%, transparent) 0%,
+    transparent 30%,
+    transparent 70%,
+    color-mix(in srgb, var(--theme-atmosphere-accent-alt) 6%, transparent) 100%
+  );
+  pointer-events: none;
+  z-index: 9999;
+}
+
+[data-theme="galgame"] .page-root[data-page] h1 {
+  font-size: 2rem;
+  font-weight: 400;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 20px color-mix(in srgb, var(--theme-atmosphere-accent) 30%, transparent);
+}
+
+[data-theme="galgame"] .page-root[data-page] h1 + p {
+  font-style: italic;
+  opacity: 0.7;
+  font-size: 0.85rem;
+}
+
+[data-theme="galgame"] .page-root[data-page] .page-back-btn {
+  border: 1px solid color-mix(in srgb, var(--theme-atmosphere-accent) 20%, transparent);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--theme-atmosphere-accent) 5%, transparent);
+  transition: all 0.3s ease;
+}
+
+[data-theme="galgame"] .page-root[data-page] .page-back-btn:hover {
+  background: color-mix(in srgb, var(--theme-atmosphere-accent) 14%, transparent);
+  box-shadow: 0 0 15px color-mix(in srgb, var(--theme-atmosphere-accent) 24%, transparent);
+}
+
+[data-theme="galgame"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon {
+  box-shadow: 0 0 15px color-mix(in srgb, var(--theme-atmosphere-accent) 30%, transparent);
+  animation: theme-atmosphere-gal-icon-breathe 4s ease-in-out infinite;
+}
+
+/* ============================================
+   CYBER THEME — HUD DATA TERMINAL
+   ============================================ */
+
+[data-theme="cyber"] .page-root[data-page]::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    color-mix(in srgb, var(--theme-atmosphere-accent) 3%, transparent) 3px,
+    color-mix(in srgb, var(--theme-atmosphere-accent) 3%, transparent) 4px
+  );
+  pointer-events: none;
+  z-index: 10000;
+  animation: theme-atmosphere-cyber-overlay-scan 8s linear infinite;
+}
+
+[data-theme="cyber"] .page-root[data-page]::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--theme-atmosphere-accent) 4%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--theme-atmosphere-accent) 4%, transparent) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+[data-theme="cyber"] .page-root[data-page] h1 {
+  font-family: var(--page-font, 'Monaco', 'Consolas', monospace);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--theme-atmosphere-accent);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--theme-atmosphere-accent) 40%, transparent);
+}
+
+[data-theme="cyber"] .page-root[data-page] h1::before {
+  content: '[ ';
+  color: var(--page-text-muted);
+  font-family: var(--page-font, 'Monaco', 'Consolas', monospace);
+}
+
+[data-theme="cyber"] .page-root[data-page] h1::after {
+  content: ' ]';
+  color: var(--page-text-muted);
+  font-family: var(--page-font, 'Monaco', 'Consolas', monospace);
+}
+
+[data-theme="cyber"] .page-root[data-page] h1 + p {
+  font-family: var(--page-font, 'Monaco', 'Consolas', monospace);
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  opacity: 0.5;
+}
+
+[data-theme="cyber"] .page-root[data-page] .page-back-btn {
+  border: 1px solid color-mix(in srgb, var(--theme-atmosphere-accent) 30%, transparent);
+  border-radius: 0;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  background: color-mix(in srgb, var(--theme-atmosphere-accent) 5%, transparent);
+}
+
+[data-theme="cyber"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon {
+  border-radius: 0;
+  clip-path: polygon(4px 0, 100% 0, calc(100% - 4px) 100%, 0 100%);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--theme-atmosphere-accent) 40%, transparent);
+  animation: theme-atmosphere-cyber-icon-pulse 3s ease-in-out infinite;
+}
+
+[data-theme="cyber"] .page-root[data-page] :is(.page-badge, .page-filter-btn) {
+  text-shadow: 0 0 5px currentColor;
+}
+
+[data-theme="cyber"] .page-root[data-page] .page-card:hover {
+  text-shadow: 0 0 2px currentColor;
+  transition: all 0.15s ease;
+}
+
+/* ============================================
+   MINIMAL THEME — EDITORIAL / MAGAZINE
+   ============================================ */
+
+[data-theme="minimal"] .page-root[data-page] h1 {
+  font-size: 3rem;
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+  color: var(--page-text);
+}
+
+[data-theme="minimal"] .page-root[data-page] h1 + p {
+  font-size: 1rem;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  opacity: 0.5;
+}
+
+[data-theme="minimal"] .page-root[data-page] .page-back-btn {
+  border: none;
+  background: transparent;
+  color: var(--page-text-muted);
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+[data-theme="minimal"] .page-root[data-page] .page-back-btn:hover {
+  opacity: 1;
+}
+
+[data-theme="minimal"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon {
+  width: 0.5rem;
+  height: 0.5rem;
+  min-width: auto;
+  min-height: auto;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--page-text);
+  opacity: 0.3;
+  box-shadow: none;
+}
+
+[data-theme="minimal"] .page-root[data-page] :is(a.page-back-btn + .flex-1, a.page-back-btn + .trends-page-title) .page-header-icon svg {
+  display: none;
+}

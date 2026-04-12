@@ -1,21 +1,31 @@
-import { useReducer, useCallback, useMemo } from 'react'
-import type { GameState } from '@/game/types'
-import type { GameAction, ActionType } from '@/game/engine/actions'
-import type { GameOverResult } from '@/game/engine/game-over'
-import { createInitialState } from '@/game/engine/state'
-import { generatePartner } from '@/game/engine/partner'
-import { executeAction, getBlockedActions } from '@/game/engine/actions'
-import { goToHospital } from '@/game/engine/hospital'
-import { useTestkit } from '@/game/engine/items'
-import { chat } from '@/game/engine/chat'
-import { checkGameOver, isPanicMode } from '@/game/engine/game-over'
-import { createRngFromMath } from '@/game/engine/rng'
+import { useReducer, useCallback, useEffect, useMemo } from 'react'
+
 import { CONFIG } from '@/game/data/config'
 import { DISEASES } from '@/game/data/diseases'
 import { FLIRT_LINES } from '@/game/data/flirtLines'
-import type { Constraint, DiseaseKey } from '@/game/types'
+import {
+  checkAchievements,
+  checkEnding,
+  loadAchievementProgress,
+  recordEndingSeen,
+  resetRunProgress,
+  saveAchievementProgress,
+  unlockAchievement,
+} from '@/game/engine/achievements'
+import { executeAction, getBlockedActions } from '@/game/engine/actions'
+import type { GameAction } from '@/game/engine/actions'
+import { chat } from '@/game/engine/chat'
+import { checkGameOver, isPanicMode } from '@/game/engine/game-over'
+import type { GameOverResult } from '@/game/engine/game-over'
+import { goToHospital } from '@/game/engine/hospital'
+import { useTestkit as testkit } from '@/game/engine/items'
+import { generatePartner } from '@/game/engine/partner'
+import { createRngFromMath } from '@/game/engine/rng'
+import { createInitialState } from '@/game/engine/state'
+import type { ActionType, Constraint, GameEnding, GameState } from '@/game/types'
 
 type GamePhase = 'intro' | 'playing' | 'feedback' | 'gameover' | 'help'
+type ProgressTrigger = 'TAKE_ACTION' | 'END_DIALOGUE' | 'CHOOSE_EVENT_OPTION' | 'GAME_OVER'
 
 interface FeedbackData {
   title: string
@@ -46,7 +56,7 @@ type GameActionType =
   | { type: 'CLOSE_HELP' }
 
 function pickFlirtLine(): string {
-  return FLIRT_LINES[Math.floor(Math.random() * FLIRT_LINES.length)]
+  return FLIRT_LINES[Math.floor(Math.random() * FLIRT_LINES.length)]?.text ?? ''
 }
 
 function getActionLabel(action: string): string {
@@ -87,14 +97,182 @@ function buildActionFeedback(
   return { title, message: msg, icon }
 }
 
+function getStat(state: GameState, key: string): number {
+  const value = state.achievements.stats[key]
+  return typeof value === 'number' && Number.isFinite(value) ? value : 0
+}
+
+function countRevealedTags(state: GameState): number {
+  return state.currentPartner?.tags.filter((tag) => tag.revealed).length ?? 0
+}
+
+function updateAchievementStats(state: GameState, updates: Record<string, number>): GameState {
+  return {
+    ...state,
+    achievements: {
+      ...state.achievements,
+      stats: {
+        ...state.achievements.stats,
+        ...updates,
+      },
+    },
+  }
+}
+
+function applyProgressChecks(
+  prevState: GameState,
+  nextState: GameState,
+  options: {
+    trigger: ProgressTrigger
+    action?: GameAction
+    usedTestkit?: boolean
+    wentToHospital?: boolean
+    endedDialogue?: boolean
+    revealedInfection?: boolean
+  },
+): GameState {
+  const safeAction = options.action === 'refuse' || options.action === 'oral_condom' || options.action === 'sex_condom'
+  const revealedTagsDelta = Math.max(0, countRevealedTags(nextState) - countRevealedTags(prevState))
+  const currentFastestEndingTurn = getStat(nextState, 'fastestEndingTurn')
+
+  let progressedState = updateAchievementStats(nextState, {
+    maxAnxiety: Math.max(getStat(nextState, 'maxAnxiety'), nextState.anxiety),
+    revealedTagCount: getStat(nextState, 'revealedTagCount') + revealedTagsDelta,
+    testkitUses: getStat(nextState, 'testkitUses') + (options.usedTestkit ? 1 : 0),
+    hospitalVisits: getStat(nextState, 'hospitalVisits') + (options.wentToHospital ? 1 : 0),
+    chatCount: getStat(nextState, 'chatCount') + (options.endedDialogue ? 1 : 0),
+    lateActionCount: getStat(nextState, 'lateActionCount') + (options.action && prevState.turn >= 5 ? 1 : 0),
+    infectionTurn: !prevState.isInfected && nextState.isInfected ? nextState.turn : getStat(nextState, 'infectionTurn'),
+    infectionRevealed: getStat(nextState, 'infectionRevealed') + (options.revealedInfection ? 1 : 0),
+    safeActionStreak:
+      options.action === undefined
+        ? getStat(nextState, 'safeActionStreak')
+        : safeAction && !(!prevState.isInfected && nextState.isInfected)
+          ? getStat(nextState, 'safeActionStreak') + 1
+          : 0,
+  })
+
+  const ending = checkEnding(progressedState)
+  if (ending) {
+    progressedState = updateAchievementStats(recordEndingSeen(progressedState, ending.id), {
+      fastestEndingTurn:
+        currentFastestEndingTurn > 0
+          ? Math.min(currentFastestEndingTurn, progressedState.turn)
+          : progressedState.turn,
+    })
+  }
+
+  return checkAchievements(progressedState).reduce(
+    (state, achievementId) => unlockAchievement(state, achievementId),
+    progressedState,
+  )
+}
+
+function buildEndingFeedback(ending: GameEnding, state: GameState): FeedbackData {
+  const diseaseName = state.infectionData ? DISEASES[state.infectionData.disease].name : ''
+  const transmission = state.infectionData?.transmission ?? ''
+
+  switch (ending.id) {
+    case 'burned-out':
+      return {
+        title: '欲火焚身',
+        message: '长期的压抑让你彻底失去了理智。你无法再思考后果，在绝望中发生了一次随机的高危行为。',
+        icon: '🤯',
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'mental-breakdown':
+      return {
+        title: '精神崩溃',
+        message: '巨大的心理压力压垮了你。你开始出现幻觉，被送往了精神病院，游戏结束。',
+        icon: '😵‍💫',
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'confirmed-infection':
+      return {
+        title: ending.name,
+        message: `很遗憾，检查结果最终证实你已感染。\n\n确诊：${diseaseName}\n途径：${transmission}`,
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'secret-carrier':
+      return {
+        title: ending.name,
+        message: '你的压抑值清零了，表面上看一切如常。\n但那个危险的夜晚仍留在体内，真相暂时还没有被任何人发现。',
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'perfectionist':
+      return {
+        title: ending.name,
+        message: '你几乎把每一步都控制到了极致。谨慎、克制、观察——你像在解一道没有容错率的题。',
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'extreme-survival':
+      return {
+        title: ending.name,
+        message: '即使一路承受巨大的压力，你依然撑到了最后。这不是轻松的胜利，而是一场硬扛下来的生还。',
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'bad-victory':
+      return {
+        title: ending.name,
+        message: '你看似完成了这轮游戏，但代价远比表面更沉重。那份侥幸，终究会反噬回来。',
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+    case 'survivor':
+    default:
+      return {
+        title: ending.name,
+        message: '你成功清零了压抑值，且身体健康。\n\n在这场充满迷雾和风险的游戏中，你靠着谨慎、策略和一点运气活了下来。',
+        icon: ending.icon,
+        isGameOver: true,
+        reason: ending.id,
+        history: state.history,
+      }
+  }
+}
+
+function createInitialStore(): GameStore {
+  return {
+    state: {
+      ...createInitialState(),
+      achievements: loadAchievementProgress(),
+    },
+    phase: 'intro',
+    feedback: null,
+    flirtLine: '',
+  }
+}
+
 function gameReducer(store: GameStore, action: GameActionType): GameStore {
   const rng = createRngFromMath()
 
   switch (action.type) {
     case 'START_GAME': {
-      const partner = generatePartner(rng)
+      const partner = generatePartner(rng, 1)
       return {
-        state: { ...createInitialState(), currentPartner: partner },
+        state: {
+          ...createInitialState(),
+          achievements: resetRunProgress(store.state.achievements),
+          currentPartner: partner,
+        },
         phase: 'playing',
         feedback: null,
         flirtLine: pickFlirtLine(),
@@ -106,29 +284,45 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
       if (!prev.currentPartner) return store
 
       const wasInfectedBefore = prev.isInfected
-      const nextState = executeAction(prev, action.action, rng)
+      const nextState = applyProgressChecks(
+        prev,
+        executeAction(prev, action.action, rng),
+        { trigger: 'TAKE_ACTION', action: action.action },
+      )
       const overResult = checkGameOver(nextState)
 
       if (overResult) {
-        const reasonText = overResult.reason === 'frustration'
-          ? '欲火焚身'
-          : '精神崩溃'
-        const gameOverMsg = overResult.reason === 'frustration'
-          ? '长期的压抑让你彻底失去了理智。你无法再思考后果，在绝望中发生了一次随机的高危行为。'
-          : '巨大的心理压力压垮了你。你开始出现幻觉，被送往了精神病院，游戏结束。'
-
-        return {
-          state: { ...nextState, isGameOver: true },
-          phase: 'gameover',
-          feedback: {
-            title: reasonText,
-            message: gameOverMsg,
+        const ending = overResult.ending ?? checkEnding({ ...nextState, isGameOver: true })
+        const feedback = ending
+          ? buildEndingFeedback(ending, { ...nextState, isGameOver: true })
+          : {
+            title: overResult.reason === 'frustration' ? '欲火焚身' : '精神崩溃',
+            message: overResult.reason === 'frustration'
+              ? '长期的压抑让你彻底失去了理智。你无法再思考后果，在绝望中发生了一次随机的高危行为。'
+              : '巨大的心理压力压垮了你。你开始出现幻觉，被送往了精神病院，游戏结束。',
             icon: overResult.reason === 'frustration' ? '🤯' : '😵‍💫',
             isGameOver: true,
             reason: overResult.reason,
             history: nextState.history,
-          },
+          }
+
+        return {
+          state: { ...nextState, isGameOver: true },
+          phase: 'gameover',
+          feedback,
           flirtLine: store.flirtLine,
+        }
+      }
+
+      if (nextState.frustration <= 0) {
+        const ending = checkEnding(nextState)
+        if (ending) {
+          return {
+            ...store,
+            state: { ...nextState, isGameOver: true },
+            phase: 'gameover',
+            feedback: buildEndingFeedback(ending, { ...nextState, isGameOver: true }),
+          }
         }
       }
 
@@ -146,39 +340,6 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
         }
       }
 
-      // Check if frustration reached 0 (win)
-      if (nextState.frustration <= 0) {
-        if (nextState.isInfected) {
-          return {
-            ...store,
-            state: nextState,
-            phase: 'gameover',
-            feedback: {
-              title: '糟糕的胜利',
-              message: '你的压抑值清零了，你感到无比轻松...\n但在几天后，你的身体开始出现异常反应。\n你虽然释放了欲望，却输掉了健康。',
-              icon: '🥀',
-              isGameOver: true,
-              reason: 'infected_win',
-              history: nextState.history,
-            },
-          }
-        }
-        return {
-          ...store,
-          state: nextState,
-          phase: 'gameover',
-          feedback: {
-            title: '幸存者',
-            message: '你成功清零了压抑值，且身体健康。\n\n在这场充满迷雾和风险的游戏中，你靠着谨慎、策略和一点运气活了下来。',
-            icon: '✨',
-            isGameOver: true,
-            reason: 'win',
-            history: nextState.history,
-          },
-        }
-      }
-
-      // Normal action feedback with detailed values
       const isDiseased = prev.currentPartner.diseases.length > 0
       const isInfectedNow = nextState.isInfected
       const reduction = CONFIG.rewards[action.action as ActionType]
@@ -205,10 +366,14 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
       if (!prev.currentPartner) return store
 
       const updatedPartner = chat(prev.currentPartner, rng)
-      const nextState = executeAction(
-        { ...prev, currentPartner: updatedPartner },
-        'chat' as GameAction,
-        rng,
+      const nextState = applyProgressChecks(
+        prev,
+        executeAction(
+          { ...prev, currentPartner: updatedPartner },
+          'chat',
+          rng,
+        ),
+        { trigger: 'END_DIALOGUE', action: 'chat', endedDialogue: true },
       )
 
       return {
@@ -219,40 +384,24 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
     }
 
     case 'GO_TO_HOSPITAL': {
-      const nextState = goToHospital(store.state)
+      const nextState = applyProgressChecks(
+        store.state,
+        goToHospital(store.state),
+        {
+          trigger: 'CHOOSE_EVENT_OPTION',
+          wentToHospital: true,
+          revealedInfection: store.state.isInfected,
+        },
+      )
 
       if (nextState.isGameOver) {
-        if (nextState.isInfected) {
-          const diseaseName = nextState.infectionData
-            ? DISEASES[nextState.infectionData.disease].name
-            : ''
-          const transmission = nextState.infectionData?.transmission ?? ''
+        const ending = checkEnding(nextState)
+        if (ending) {
           return {
             ...store,
             state: nextState,
             phase: 'gameover',
-            feedback: {
-              title: '确诊感染',
-              message: `很遗憾，医院的检查结果显示你已感染。\n之前的侥幸心理终究没能救你。\n\n确诊：${diseaseName}\n途径：${transmission}`,
-              icon: '🏥',
-              isGameOver: true,
-              reason: 'hospital_infected',
-              history: nextState.history,
-            },
-          }
-        } else {
-          return {
-            ...store,
-            state: nextState,
-            phase: 'gameover',
-            feedback: {
-              title: '欲火焚身',
-              message: '去医院的路途让你更加焦虑，压抑值达到了极限。',
-              icon: '🤯',
-              isGameOver: true,
-              reason: 'frustration',
-              history: nextState.history,
-            },
+            feedback: buildEndingFeedback(ending, nextState),
           }
         }
       }
@@ -274,10 +423,16 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
       const partner = store.state.currentPartner
       if (!partner || store.state.items.testkit <= 0) return store
 
-      const result = useTestkit(store.state, partner)
+      const result = testkit(store.state, partner)
+      const nextState = applyProgressChecks(
+        store.state,
+        result.state,
+        { trigger: 'CHOOSE_EVENT_OPTION', usedTestkit: true },
+      )
+
       return {
         ...store,
-        state: result.state,
+        state: nextState,
         feedback: {
           title: '检测结果',
           message: result.message,
@@ -289,7 +444,7 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
     }
 
     case 'NEXT_PARTNER': {
-      const partner = generatePartner(rng)
+      const partner = generatePartner(rng, store.state.turn)
       return {
         ...store,
         state: { ...store.state, currentPartner: partner },
@@ -306,7 +461,7 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
       if (store.state.isGameOver) {
         return store
       }
-      const partner = generatePartner(rng)
+      const partner = generatePartner(rng, store.state.turn)
       return {
         ...store,
         state: { ...store.state, currentPartner: partner },
@@ -327,15 +482,12 @@ function gameReducer(store: GameStore, action: GameActionType): GameStore {
   }
 }
 
-const initialStore: GameStore = {
-  state: createInitialState(),
-  phase: 'intro',
-  feedback: null,
-  flirtLine: '',
-}
-
 export function useGameState() {
-  const [store, dispatch] = useReducer(gameReducer, initialStore)
+  const [store, dispatch] = useReducer(gameReducer, undefined, createInitialStore)
+
+  useEffect(() => {
+    saveAchievementProgress(store.state.achievements)
+  }, [store.state.achievements])
 
   const partner = store.state.currentPartner
   const isPanic = isPanicMode(store.state.anxiety)
@@ -343,15 +495,15 @@ export function useGameState() {
   const constraints = useMemo((): Constraint[] => {
     if (!partner) return []
     return partner.tags
-      .map((t) => t.constraint)
-      .filter((c): c is Constraint => c !== undefined)
+      .map((tag) => tag.constraint)
+      .filter((constraint): constraint is Constraint => constraint !== undefined)
   }, [partner])
 
   const blockedActions = useMemo(() => getBlockedActions(constraints), [constraints])
 
   const hiddenCount = useMemo(() => {
     if (!partner) return 0
-    return partner.tags.filter((t) => !t.revealed).length
+    return partner.tags.filter((tag) => !tag.revealed).length
   }, [partner])
 
   const gameOverResult: GameOverResult | null = useMemo(

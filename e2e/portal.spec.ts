@@ -5,24 +5,25 @@ test.describe('Portal homepage', () => {
     await page.goto('/#/')
   })
 
-  test('portal homepage loads', async ({ page }) => {
-    await expect(page.locator('text=OWLTREE')).toBeVisible({ timeout: 10000 })
+  test('portal homepage loads with terminal theme', async ({ page }) => {
+    await expect(page.locator('text=SYSTEM ONLINE')).toBeVisible({ timeout: 10000 })
   })
 
-  test('project grid is visible', async ({ page }) => {
-    await expect(page.locator('text=PROJECTS')).toBeVisible({ timeout: 10000 })
+  test('terminal modules are visible', async ({ page }) => {
+    await expect(page.locator('text=GAMES')).toBeVisible({ timeout: 10000 })
   })
 
   test('navigation to moon-throw works', async ({ page }) => {
-    await page.getByRole('link', { name: /进入|月抛/i }).first().click()
-    await expect(page).toHaveURL(/#\/moon-throw/)
+    await page.goto('/#/games')
     await expect(page.locator('text=月抛模拟器')).toBeVisible({ timeout: 10000 })
+    await page.getByText('月抛模拟器').click()
+    await expect(page).toHaveURL(/#\/moon-throw/)
   })
 
   test('navigation back to home works', async ({ page }) => {
     await page.goto('/#/moon-throw')
     await expect(page.locator('text=月抛模拟器')).toBeVisible({ timeout: 10000 })
-    await page.locator('text=OWLTREE').first().click()
+    await page.locator('text=SYSTEM ONLINE').first().click()
     await expect(page).toHaveURL(/#\/$/)
   })
 })

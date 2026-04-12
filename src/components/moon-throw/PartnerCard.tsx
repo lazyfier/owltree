@@ -18,14 +18,14 @@ function getTagIcon(colorClass: string, constraint?: string): string {
 export function PartnerCard({ partner, isPanic, flirtLine, showDangerBadge }: PartnerCardProps) {
   if (!partner) {
     return (
-      <div className="glass-card p-6 text-center">
+      <div className="p-6 text-center rounded-xl bg-slate-900/95 border border-white/10">
         <p className="text-slate-500 text-sm">寻找中...</p>
       </div>
     )
   }
 
   return (
-    <div className="glass-card p-4 mb-4">
+    <div className="p-4 mb-4 rounded-xl bg-slate-900/95 border border-white/10">
       {/* Avatar and flirt line */}
       <div className="text-center mb-3 relative">
         <div className="w-16 h-16 mx-auto bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center text-3xl shadow-xl border-2 border-slate-600 animate-float mb-2 relative">

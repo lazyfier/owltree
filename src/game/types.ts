@@ -1,4 +1,4 @@
-export type DiseaseKey = 'HIV' | 'SYPHILIS' | 'HERPES' | 'HPV' | 'GONORRHEA' | 'CRABS'
+export type DiseaseKey = 'HIV' | 'SYPHILIS' | 'HERPES' | 'HPV' | 'GONORRHEA' | 'CRABS' | 'CHLAMYDIA' | 'HEPATITIS_B' | 'TRICHOMONIASIS'
 
 export type ActionType = 'oral_condom' | 'oral_raw' | 'sex_condom' | 'sex_raw'
 
@@ -48,15 +48,46 @@ export interface TurnRecord {
   outcomeClass: string
 }
 
+export interface Achievement {
+  id: string
+  name: string
+  description: string
+  icon: string
+  condition: string
+  unlocked: boolean
+}
+
+export interface GameEnding {
+  id: string
+  name: string
+  description: string
+  icon: string
+  condition: string
+}
+
+export interface GameAchievements {
+  unlocked: string[]
+  endingsSeen: string[]
+  stats: Record<string, number>
+}
+
 export interface InventoryItems {
   testkit: number
+}
+
+export interface TestkitRewardRule {
+  amount: number
+  minTurn?: number
+  chance?: number
 }
 
 export interface GameState {
   frustration: number
   anxiety: number
   turn: number
+  difficulty: number
   items: InventoryItems
+  achievements: GameAchievements
   currentPartner: Partner | null
   isInfected: boolean
   infectionData: InfectionData | null
@@ -69,8 +100,73 @@ export interface GameConfig {
   passiveGain: number
   anxietyGainPassive: number
   refuseCost: number
-  chatCost: number
+  chatCost: (turn: number) => number
   hospitalCost: number
+  difficultyScale: number
+  testkitRewardConditions: {
+    refuse: TestkitRewardRule
+    hospitalNegative: TestkitRewardRule
+  }
   rewards: Record<ActionType, number>
   stress: Record<ActionType, number>
+}
+
+export interface FlirtLine {
+  text: string
+  category: 'direct' | 'teasing' | 'romantic' | 'aggressive' | 'subtle' | 'desperate'
+}
+
+export interface PartnerTemplate {
+  templateId: string
+  name: string
+  backstory: string
+  defaultTags: string[]
+  personality: 'shy' | 'dominant' | 'playful' | 'cold' | 'anxious' | 'experienced' | 'romantic' | 'mysterious'
+  dialogStyle: string
+  asciiPortrait: string[]
+}
+
+export interface EventChoice {
+  text: string
+  effects: {
+    frustration?: number
+    anxiety?: number
+    items?: Partial<InventoryItems>
+  }
+  nextEventId?: string
+}
+
+export interface EventTemplate {
+  eventId: string
+  title: string
+  description: string
+  choices: EventChoice[]
+  triggerCondition?: {
+    minTurn?: number
+    maxTurn?: number
+    minFrustration?: number
+    minAnxiety?: number
+    requiredItems?: Partial<InventoryItems>
+  }
+  priority: number
+}
+
+export interface DialogueChoice {
+  text: string
+  nextNodeId: string
+  effects?: { frustration?: number; anxiety?: number }
+}
+
+export interface DialogueNode {
+  id: string
+  speaker: string
+  text: string
+  choices: DialogueChoice[]
+  isEnd?: boolean
+}
+
+export interface DialogueState {
+  currentNodeId: string
+  history: string[]
+  effects: { frustration: number; anxiety: number }
 }

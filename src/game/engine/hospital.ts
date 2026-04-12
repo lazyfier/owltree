@@ -1,11 +1,14 @@
 import { CONFIG } from '../data/config'
+import { rewardHospitalNegativeTestkit } from './actions'
 import { checkGameOver } from './game-over'
+import { calculateDifficulty } from './state'
 import type { GameState } from '../types'
 
 export function goToHospital(state: GameState): GameState {
   // Use advanceTime-style logic: hospital costs frustration, no direct anxiety cost
   let { frustration, anxiety } = state
   const turn = state.turn + 1
+  const difficulty = calculateDifficulty(turn)
   frustration += CONFIG.hospitalCost
 
   // anxietyGainPassive applies if anxiety > 20 (same as advanceTime)
@@ -15,7 +18,7 @@ export function goToHospital(state: GameState): GameState {
   if (frustration > 100) frustration = 100
   if (anxiety > 100) anxiety = 100
 
-  let newState: GameState = { ...state, turn, frustration, anxiety }
+  let newState: GameState = { ...state, turn, difficulty, frustration, anxiety }
 
   // Check if game over from frustration or anxiety
   const overResult = checkGameOver(newState)
@@ -31,5 +34,5 @@ export function goToHospital(state: GameState): GameState {
     return { ...newState, isGameOver: true }
   }
 
-  return newState
+  return rewardHospitalNegativeTestkit(newState)
 }
