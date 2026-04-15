@@ -45,6 +45,14 @@
       "agent": "Sisyphus-Junior",
       "category": "visual-engineering",
       "updated_at": "2026-04-15T12:43:38.964Z"
+    },
+    "final-wave:f1": {
+      "task_key": "final-wave:f1",
+      "task_label": "F1",
+      "task_title": "Plan Compliance Audit — oracle",
+      "session_id": "ses_26eb07fc5ffeTxZHWidVgu1Tlz",
+      "agent": "oracle",
+      "updated_at": "2026-04-15T13:53:21.021Z"
     }
   }
 }

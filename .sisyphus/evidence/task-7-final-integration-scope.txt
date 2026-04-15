@@ -1,53 +1,14 @@
- .github/workflows/deploy.yml                       |    6 +
- .gitignore                                         |    1 +
- .sisyphus/boulder.json                             |   50 +-
- .sisyphus/drafts/optimization-opportunities.md     |   26 +
- .../evidence/task-1-quality-baseline-analyze.txt   |   15 +
- .sisyphus/evidence/task-1-quality-baseline.txt     |  158 ++
- .../evidence/task-2-state-split-typecheck.txt      |    4 +
- .sisyphus/evidence/task-2-state-split.txt          |   47 +
- .sisyphus/evidence/task-3-game-container-e2e.txt   |    8 +
- .sisyphus/evidence/task-3-game-container-unit.txt  |   27 +
- .sisyphus/evidence/task-4-terminal-home-e2e.txt    |    8 +
- .sisyphus/evidence/task-4-terminal-home-unit.txt   |   27 +
- .../evidence/task-5-game-regression-coverage.txt   |  154 ++
- .sisyphus/evidence/task-5-game-regression.txt      |   20 +
- .sisyphus/evidence/task-6-home-regression-e2e.txt  |    8 +
- .sisyphus/evidence/task-6-home-regression.txt      |   33 +
- .sisyphus/notepads/quality-baseline/decisions.md   |    4 +
- .sisyphus/notepads/quality-baseline/issues.md      |    4 +
- .sisyphus/notepads/quality-baseline/learnings.md   |    3 +
- .../structure-first-optimization/issues.md         |    3 +
- .../structure-first-optimization/learnings.md      |    9 +
- .sisyphus/plans/structure-first-optimization.md    |  419 ++++
- .../2026-04-15-moon-throw-ux-combined-pass.md      |  668 +++++
- e2e/game-flow.spec.ts                              |    8 +-
- e2e/portal.spec.ts                                 |    2 +-
- eslint.config.js                                   |   42 +
- package-lock.json                                  | 2548 +++++++++++++++++++-
- package.json                                       |   10 +
- src/components/moon-throw/GameActionPanel.tsx      |   48 +
- src/components/moon-throw/GameContainer.test.tsx   |   86 +
- src/components/moon-throw/GameContainer.tsx        |  247 +-
- src/components/moon-throw/GameHeader.tsx           |   16 +-
- src/components/moon-throw/GameIntro.tsx            |   37 +
- src/components/moon-throw/GamePortraitPanel.tsx    |   55 +
- src/components/moon-throw/GameScenePanel.tsx       |   80 +
- src/components/moon-throw/GameStatsPanel.tsx       |   57 +-
- src/components/moon-throw/VNPortrait.tsx           |    2 +-
- src/components/portal/ProjectRow.tsx               |   93 +
- src/components/portal/TerminalHome.test.tsx        |   59 +
- src/components/portal/TerminalHome.tsx             |  193 +-
- src/hooks/useGameState.ts                          |  517 +---
- src/hooks/useGameState/feedback.ts                 |  127 +
- src/hooks/useGameState/progress.ts                 |   76 +
- src/hooks/useGameState/reducer.ts                  |  294 +++
- src/hooks/useGameState/selectors.ts                |   24 +
- src/hooks/useGameState/types.ts                    |   42 +
- .../useGameState/useGameState.helpers.test.ts      |  351 +++
- src/hooks/useHoverCard.test.tsx                    |   41 +
- src/hooks/useHoverCard.tsx                         |   60 +
- src/pages/MoonThrow.tsx                            |    5 -
- vite.config.ts                                     |    3 +
- vitest.config.ts                                   |    4 +
- 52 files changed, 5862 insertions(+), 967 deletions(-)
+Task 7 Scope Fidelity Check
+===========================
+.github/workflows/deploy.yml
+.sisyphus/boulder.json
+.sisyphus/evidence/task-7-final-integration.txt
+.sisyphus/plans/structure-first-optimization.md
+
+---
+Stat:
+ .github/workflows/deploy.yml                    |  2 ++
+ .sisyphus/boulder.json                          |  8 ++++++++
+ .sisyphus/evidence/task-7-final-integration.txt | 19 +++++++++++--------
+ .sisyphus/plans/structure-first-optimization.md |  8 ++++----
+ 4 files changed, 25 insertions(+), 12 deletions(-)
