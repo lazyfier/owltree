@@ -1,0 +1,47 @@
+
+> owltree@0.1.0 test:unit
+> vitest run
+
+
+ RUN  v2.1.9 /Users/lazyfier/project/owltree
+
+ ✓ src/game/engine/__tests__/events.test.ts (6 tests) 15ms
+ ✓ src/game/engine/__tests__/dialogue.test.ts (7 tests) 2ms
+ ✓ src/game/engine/__tests__/achievements.test.ts (6 tests) 3ms
+ ✓ src/game/engine/__tests__/achievements-engine.test.ts (5 tests) 165ms
+ ✓ src/game/engine/__tests__/events-engine.test.ts (8 tests) 310ms
+ ✓ src/game/engine/__tests__/partner-generation.test.ts (5 tests) 251ms
+ ✓ src/hooks/useGameState/useGameState.helpers.test.ts (4 tests) 14ms
+ ✓ src/test/ParticleBackground.test.tsx (3 tests) 50ms
+ ✓ src/game/engine/__tests__/delayed-diagnosis.test.ts (3 tests) 580ms
+   ✓ delayed diagnosis characterization (red phase) > keeps infection hidden immediately after a risky action 370ms
+ ✓ src/test/Button.test.tsx (10 tests) 183ms
+ ✓ src/test/UIComponents.test.tsx (11 tests) 255ms
+ ✓ src/game/engine/__tests__/constraint-system.test.ts (3 tests) 76ms
+ ✓ src/game/engine/__tests__/action-effects.test.ts (4 tests) 49ms
+ ✓ src/game/engine/__tests__/game-over-conditions.test.ts (3 tests) 19ms
+ ✓ src/game/engine/__tests__/difficulty.test.ts (5 tests) 5ms
+ ✓ src/game/engine/__tests__/hidden-tag-invariant.test.ts (1 test) 32ms
+ ✓ src/game/engine/__tests__/dialogue-system.test.ts (3 tests) 2ms
+ ✓ src/test/cn.test.ts (4 tests) 10ms
+ ✓ src/game/engine/__tests__/panic-mode.test.ts (2 tests) 62ms
+stderr | src/test/App.test.tsx > App routing shell > still respects the current stored preference after the new baseline is established
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /Users/lazyfier/project/owltree/src/components/ui/ParticleBackground.tsx:201:28
+    at commitHookEffectListMount (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:27078:3) undefined
+
+ ✓ src/test/App.test.tsx (5 tests) 121ms
+
+ Test Files  20 passed (20)
+      Tests  98 passed (98)
+   Start at  17:08:30
+   Duration  9.15s (transform 3.18s, setup 3.08s, collect 8.10s, tests 2.20s, environment 35.31s, prepare 4.06s)
+
