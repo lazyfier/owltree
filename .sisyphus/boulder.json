@@ -36,6 +36,15 @@
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
       "updated_at": "2026-04-15T11:51:06.992Z"
+    },
+    "todo:4": {
+      "task_key": "todo:4",
+      "task_label": "4",
+      "task_title": "Isolate `TerminalHome` DOM and hover-card logic",
+      "session_id": "ses_26ede20ddffeNTC0x9OcSZJb4t",
+      "agent": "Sisyphus-Junior",
+      "category": "visual-engineering",
+      "updated_at": "2026-04-15T12:43:38.964Z"
     }
   }
 }

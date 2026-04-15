@@ -1,0 +1,27 @@
+
+> owltree@0.1.0 test:unit
+> vitest run App.test.tsx
+
+
+[1m[7m[36m RUN [39m[27m[22m [36mv2.1.9 [39m[90m/Users/lazyfier/project/owltree[39m
+
+[90mstderr[2m | src/test/App.test.tsx[2m > [22m[2mApp routing shell[2m > [22m[2mstill respects the current stored preference after the new baseline is established
+[22m[39mError: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /Users/lazyfier/project/owltree/src/components/ui/ParticleBackground.tsx:201:28
+    at commitHookEffectListMount (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:27078:3) [90mundefined[39m
+
+ [32m✓[39m src/test/App.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[90m 91[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m   Start at [22m 21:10:10
+[2m   Duration [22m 1.46s[2m (transform 305ms, setup 58ms, collect 580ms, tests 91ms, environment 320ms, prepare 68ms)[22m
+

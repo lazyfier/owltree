@@ -1,6 +1,6 @@
-import { useEffect, useRef, useCallback } from 'react'
-import { projects } from '@/data/projects'
 import { useNavigate } from 'react-router-dom'
+import { projects } from '@/data/projects'
+import { ProjectRow } from '@/components/portal/ProjectRow'
 
 const modules = [
   { label: 'GAMES', color: 't-m-mauve', inlineColor: 'var(--mauve)', href: '/games' },
@@ -9,53 +9,51 @@ const modules = [
   { label: 'TRENDS', color: 't-m-teal', inlineColor: 'var(--teal)', href: '/trends' },
 ]
 
-const stackList = [
-  { name: 'React', color: 'var(--cyan)' },
-  { name: 'TypeScript', color: 'var(--blue)' },
-  { name: 'Go', color: 'var(--teal)' },
-  { name: 'Python', color: 'var(--yellow)' },
-  { name: 'Node.js', color: 'var(--mauve)' },
-  { name: 'Rust', color: 'var(--peach)' },
-  { name: 'Figma', color: 'var(--pink)' },
+const stackRows = [
+  [
+    { name: 'React', color: 'var(--cyan)' },
+    { name: 'TypeScript', color: 'var(--blue)' },
+    { name: 'Go', color: 'var(--teal)' },
+    { name: 'Python', color: 'var(--yellow)' },
+  ],
+  [
+    { name: 'Node.js', color: 'var(--mauve)' },
+    { name: 'Rust', color: 'var(--peach)' },
+    { name: 'Figma', color: 'var(--pink)' },
+  ],
 ]
+
+function StackLine({ items }: { items: { name: string; color: string }[] }) {
+  return (
+    <div className="t-id-line" style={{ paddingLeft: 24 }}>
+      {items.map((s, i) => (
+        <span key={s.name}>
+          <span className="t-id-value" style={{ color: s.color }}>{s.name}</span>
+          {i < items.length - 1 && (
+            <span className="t-id-value" style={{ color: 'var(--t-subtle)' }}> · </span>
+          )}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function ModuleItem({ m, onNavigate }: { m: typeof modules[number]; onNavigate: (href: string) => void }) {
+  const isCyan = m.inlineColor === 'var(--cyan)'
+  return (
+    <button
+      type="button"
+      className={`t-module-item bg-transparent border border-current p-0 m-0 cursor-pointer font-[inherit] text-[inherit] ${m.color}`}
+      style={isCyan ? undefined : { color: m.inlineColor, borderColor: m.inlineColor.replace(')', ', 0.3)') }}
+      onClick={() => onNavigate(m.href)}
+    >
+      {m.label}
+    </button>
+  )
+}
 
 export function TerminalHome() {
   const navigate = useNavigate()
-  const cardRefs = useRef<Map<string, HTMLDivElement>>(new Map())
-
-  const handleMouseEnter = useCallback((id: string) => {
-    const card = cardRefs.current.get(id)
-    if (!card) return
-    const entry = card.closest('[data-entry-id]') as HTMLElement | null
-    if (!entry) return
-    const rect = entry.getBoundingClientRect()
-    const vw = window.innerWidth
-    const cardW = 240
-    let left = rect.right + 12
-    if (left + cardW > vw - 16) {
-      left = rect.left - cardW - 12
-    }
-    card.style.left = left + 'px'
-    card.style.top = (rect.top - 10) + 'px'
-    card.classList.add('t-visible')
-  }, [])
-
-  const handleMouseLeave = useCallback((id: string) => {
-    const card = cardRefs.current.get(id)
-    if (!card) return
-    card.classList.remove('t-visible')
-  }, [])
-
-  useEffect(() => {
-    cardRefs.current.forEach((card) => {
-      document.body.appendChild(card)
-    })
-    return () => {
-      cardRefs.current.forEach((card) => {
-        card.remove()
-      })
-    }
-  }, [])
 
   return (
     <>
@@ -83,22 +81,9 @@ export function TerminalHome() {
             <div className="t-id-line">
               <span className="t-id-key">STACK:</span>
             </div>
-            <div className="t-id-line" style={{ paddingLeft: 24 }}>
-              {stackList.slice(0, 4).map((s, i) => (
-                <span key={s.name}>
-                  <span className="t-id-value" style={{ color: s.color }}>{s.name}</span>
-                  {i < 3 && <span className="t-id-value" style={{ color: 'var(--t-subtle)' }}> · </span>}
-                </span>
-              ))}
-            </div>
-            <div className="t-id-line" style={{ paddingLeft: 24 }}>
-              {stackList.slice(4).map((s, i) => (
-                <span key={s.name}>
-                  <span className="t-id-value" style={{ color: s.color }}>{s.name}</span>
-                  {i < 2 && <span className="t-id-value" style={{ color: 'var(--t-subtle)' }}> · </span>}
-                </span>
-              ))}
-            </div>
+            {stackRows.map((row) => (
+              <StackLine key={row[0].name} items={row} />
+            ))}
             <hr className="t-id-divider" />
             <div className="t-id-line">
               <span className="t-id-key">FOCUS:</span>
@@ -127,79 +112,9 @@ export function TerminalHome() {
 
             <div style={{ marginTop: 4, paddingLeft: 16 }}>
               <div className="t-projects-output">
-                {projects.map((p) => {
-                  const isClickable = p.url !== '#'
-                  const Tag = isClickable ? 'button' : 'div'
-                  return (
-                    <Tag
-                      key={p.id}
-                      data-entry-id={p.id}
-                      type={isClickable ? 'button' : undefined}
-                      className={['t-project-entry', isClickable ? 'bg-transparent border-0 p-0 m-0 cursor-pointer text-left w-full font-[inherit] text-[inherit]' : 'opacity-60 cursor-default'].join(' ')}
-                      onMouseEnter={() => handleMouseEnter(p.id)}
-                      onMouseLeave={() => handleMouseLeave(p.id)}
-                      {...(isClickable ? { onClick: () => navigate(p.url) } : {})}
-                    >
-                    <span
-                      className="t-project-name"
-                      style={p.color !== 'var(--yellow)' ? { color: p.color, textShadow: `0 0 8px ${p.color.replace(')', ', 0.4)')}` } : undefined}
-                    >
-                      {p.name}
-                    </span>
-                    <div className="t-project-bar">
-                      <div
-                        className="t-project-bar-fill"
-                        style={{
-                          width: p.progress + '%',
-                          ...(p.gradient ? { background: p.gradient } : {}),
-                        }}
-                      />
-                    </div>
-                    <span
-                      className="t-project-percent"
-                      style={p.color !== 'var(--yellow)' ? { color: p.color } : undefined}
-                    >
-                      {p.progress}%
-                    </span>
-
-                    <div
-                      className="t-hover-card"
-                      ref={(el) => {
-                        if (el) cardRefs.current.set(p.id, el)
-                      }}
-                    >
-                      <div className="t-hc-header">
-                        <span className="t-hc-title" style={p.color !== 'var(--yellow)' ? { color: p.color } : undefined}>
-                          {p.name}
-                        </span>
-                        <span className={`t-hc-status t-${p.status}`}>
-                          {p.status.toUpperCase()}
-                        </span>
-                      </div>
-                      <div className="t-hc-desc">{p.description}</div>
-                      <div className="t-hc-meta">
-                        <div className="t-hc-row">
-                          <span className="t-hc-label">STACK</span>
-                          <span className="t-hc-val">{p.stack}</span>
-                        </div>
-                        <div className="t-hc-row">
-                          <span className="t-hc-label">LAST</span>
-                          <span className="t-hc-val">{p.lastUpdate}</span>
-                        </div>
-                        <div className="t-hc-row">
-                          <span className="t-hc-label">{p.extraLabel}</span>
-                          <span className="t-hc-val">{p.extra}</span>
-                        </div>
-                      </div>
-                      <div className="t-hc-tags">
-                        {p.tags.map((tag) => (
-                          <span key={tag} className="t-hc-tag">{tag}</span>
-                        ))}
-                      </div>
-                    </div>
-                    </Tag>
-                  )
-                })}
+                {projects.map((p) => (
+                  <ProjectRow key={p.id} project={p} onNavigate={navigate} />
+                ))}
               </div>
             </div>
 
@@ -211,15 +126,7 @@ export function TerminalHome() {
             <div style={{ marginTop: 4, paddingLeft: 16 }}>
               <div className="t-module-list">
                 {modules.map((m) => (
-                  <button
-                    key={m.label}
-                    type="button"
-                    className={`t-module-item bg-transparent border border-current p-0 m-0 cursor-pointer font-[inherit] text-[inherit] ${m.color}`}
-                    style={m.inlineColor !== 'var(--cyan)' ? { color: m.inlineColor, borderColor: m.inlineColor.replace(')', ', 0.3)') } : undefined}
-                    onClick={() => navigate(m.href)}
-                  >
-                    {m.label}
-                  </button>
+                  <ModuleItem key={m.label} m={m} onNavigate={navigate} />
                 ))}
               </div>
             </div>

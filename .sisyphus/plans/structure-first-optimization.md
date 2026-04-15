@@ -227,7 +227,7 @@ Wave 3: regression coverage + CI enforcement + cleanup
 
   **Commit**: YES | Message: `refactor(game-ui): decompose game container scenes` | Files: [`src/components/moon-throw/GameContainer.tsx`, extracted moon-throw UI components, related tests]
 
-- [ ] 4. Isolate `TerminalHome` DOM and hover-card logic
+- [x] 4. Isolate `TerminalHome` DOM and hover-card logic
 
   **What to do**: Refactor `src/components/portal/TerminalHome.tsx` so data mapping, hover-card rendering, and card positioning/portal behavior are isolated into dedicated components/hooks. Replace ad hoc `document.body.appendChild` wiring with a React-friendly portal pattern or encapsulated hook that owns mount/unmount behavior and is testable. Centralize repetitive inline style decisions where practical without changing the terminal aesthetic.
   **Must NOT do**: Must NOT redesign terminal visual language, change project list content, alter routes, or remove current hover-card functionality. Must NOT introduce a generic overlay framework that is only used once.
