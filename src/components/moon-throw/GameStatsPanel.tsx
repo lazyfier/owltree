@@ -1,11 +1,62 @@
 import type { GameStats } from '@/game/engine/stats'
 
-interface GameStatsPanelProps {
+interface SummaryGameStatsPanelProps {
   stats: GameStats
 }
 
-export function GameStatsPanel({ stats }: GameStatsPanelProps) {
-  const { outcomeCounts, actionCounts, survivedTurns } = stats
+interface LiveGameStatsPanelProps {
+  frustration: number
+  anxiety: number
+  testkitCount: number
+}
+
+type GameStatsPanelProps = SummaryGameStatsPanelProps | LiveGameStatsPanelProps
+
+function isSummaryPanelProps(props: GameStatsPanelProps): props is SummaryGameStatsPanelProps {
+  return 'stats' in props
+}
+
+export function GameStatsPanel(props: GameStatsPanelProps) {
+  if (!isSummaryPanelProps(props)) {
+    const { frustration, anxiety, testkitCount } = props
+
+    return (
+      <div className="px-8 py-5 border-b border-[var(--vn-border)]">
+        <div className="grid grid-cols-3 gap-8">
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-[var(--vn-danger)]">生理压抑</span>
+              <span className="text-[var(--vn-danger)] font-bold">{frustration}%</span>
+            </div>
+            <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-red-600 to-red-400 rounded-full transition-all"
+                style={{ width: `${frustration}%` }}
+              />
+            </div>
+          </div>
+          <div>
+            <div className="flex justify-between text-sm mb-2">
+              <span className="text-[var(--vn-warning)]">心理压力</span>
+              <span className="text-[var(--vn-warning)] font-bold">{anxiety}%</span>
+            </div>
+            <div className="h-2.5 bg-slate-800 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-gradient-to-r from-amber-600 to-amber-400 rounded-full transition-all"
+                style={{ width: `${anxiety}%` }}
+              />
+            </div>
+          </div>
+          <div className="text-center">
+            <div className="text-sm text-[var(--vn-accent)] mb-1">检测试纸</div>
+            <div className="text-4xl font-bold">{testkitCount}</div>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
+  const { outcomeCounts, actionCounts, survivedTurns } = props.stats
 
   return (
     <div className="mt-4 bg-slate-950/50 rounded-xl p-3 border border-white/5 text-xs">
