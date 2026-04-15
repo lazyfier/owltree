@@ -1,0 +1,158 @@
+
+> owltree@0.1.0 typecheck
+> tsc --noEmit
+
+
+> owltree@0.1.0 lint
+> eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0
+
+
+> owltree@0.1.0 test:unit
+> vitest run --coverage
+
+
+ RUN  v2.1.9 /Users/lazyfier/project/owltree
+      Coverage enabled with v8
+
+ ✓ src/game/engine/__tests__/events.test.ts (6 tests) 6ms
+ ✓ src/game/engine/__tests__/achievements.test.ts (6 tests) 7ms
+ ✓ src/game/engine/__tests__/dialogue.test.ts (7 tests) 6ms
+ ✓ src/game/engine/__tests__/achievements-engine.test.ts (5 tests) 71ms
+ ✓ src/game/engine/__tests__/delayed-diagnosis.test.ts (3 tests) 134ms
+ ✓ src/game/engine/__tests__/action-effects.test.ts (4 tests) 49ms
+ ✓ src/game/engine/__tests__/partner-generation.test.ts (5 tests) 57ms
+ ✓ src/game/engine/__tests__/events-engine.test.ts (8 tests) 148ms
+ ✓ src/test/ParticleBackground.test.tsx (3 tests) 47ms
+ ✓ src/test/UIComponents.test.tsx (11 tests) 87ms
+ ✓ src/test/Button.test.tsx (10 tests) 432ms
+ ✓ src/game/engine/__tests__/constraint-system.test.ts (3 tests) 35ms
+ ✓ src/game/engine/__tests__/hidden-tag-invariant.test.ts (1 test) 32ms
+ ✓ src/game/engine/__tests__/game-over-conditions.test.ts (3 tests) 34ms
+ ✓ src/game/engine/__tests__/dialogue-system.test.ts (3 tests) 7ms
+ ✓ src/test/cn.test.ts (4 tests) 10ms
+ ✓ src/game/engine/__tests__/difficulty.test.ts (5 tests) 6ms
+ ✓ src/game/engine/__tests__/panic-mode.test.ts (2 tests) 30ms
+stderr | src/test/App.test.tsx > App routing shell > still respects the current stored preference after the new baseline is established
+Error: Not implemented: HTMLCanvasElement.prototype.getContext (without installing the canvas npm package)
+    at module.exports (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/browser/not-implemented.js:9:17)
+    at HTMLCanvasElementImpl.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/nodes/HTMLCanvasElement-impl.js:42:5)
+    at HTMLCanvasElement.getContext (/Users/lazyfier/project/owltree/node_modules/jsdom/lib/jsdom/living/generated/HTMLCanvasElement.js:131:58)
+    at /Users/lazyfier/project/owltree/src/components/ui/ParticleBackground.tsx:201:28
+    at commitHookEffectListMount (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:23189:26)
+    at commitPassiveMountOnFiber (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24970:11)
+    at commitPassiveMountEffects_complete (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24930:9)
+    at commitPassiveMountEffects_begin (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24917:7)
+    at commitPassiveMountEffects (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:24905:3)
+    at flushPassiveEffectsImpl (/Users/lazyfier/project/owltree/node_modules/react-dom/cjs/react-dom.development.js:27078:3) undefined
+
+ ✓ src/test/App.test.tsx (5 tests) 133ms
+
+ Test Files  19 passed (19)
+      Tests  94 passed (94)
+   Start at  16:47:08
+   Duration  4.63s (transform 968ms, setup 2.68s, collect 2.36s, tests 1.33s, environment 14.55s, prepare 3.91s)
+
+ % Coverage report from v8
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   53.69 |     74.4 |   52.41 |   53.69 |                   
+ owltree           |       0 |        0 |       0 |       0 |                   
+  ...ght.config.ts |       0 |        0 |       0 |       0 | 1-25              
+  ...css.config.js |       0 |        0 |       0 |       0 | 1-6               
+  ...ind.config.js |       0 |        0 |       0 |       0 | 1-44              
+ owltree/src       |   65.38 |       50 |      50 |   65.38 |                   
+  App.tsx          |     100 |      100 |     100 |     100 |                   
+  main.tsx         |       0 |        0 |       0 |       0 | 1-11              
+ ...ponents/layout |   69.56 |    66.66 |      50 |   69.56 |                   
+  Footer.tsx       |     100 |      100 |     100 |     100 |                   
+  ...eSwitcher.tsx |       0 |        0 |       0 |       0 | 1-18              
+ ...nts/moon-throw |      12 |    16.66 |   10.71 |      12 |                   
+  ...onButtons.tsx |       0 |        0 |       0 |       0 | 1-91              
+  ...backModal.tsx |   21.51 |    33.33 |   33.33 |   21.51 | 34-111            
+  ...Container.tsx |   38.16 |    27.27 |      20 |   38.16 | ...,81-83,122-254 
+  GameHeader.tsx   |       0 |        0 |       0 |       0 | 1-10              
+  ...tatsPanel.tsx |     3.5 |      100 |       0 |     3.5 | 8-66              
+  HelpModal.tsx    |       0 |        0 |       0 |       0 | 1-95              
+  HistoryPanel.tsx |    5.12 |      100 |       0 |    5.12 | 9-51              
+  IntroModal.tsx   |       0 |        0 |       0 |       0 | 1-51              
+  PartnerCard.tsx  |       0 |        0 |       0 |       0 | 1-79              
+  StatsPanel.tsx   |       0 |        0 |       0 |       0 | 1-79              
+  ...ievements.tsx |       0 |        0 |       0 |       0 | 1-92              
+  VNChoices.tsx    |   11.11 |      100 |       0 |   11.11 | 8-25              
+  ...ransition.tsx |       0 |        0 |       0 |       0 | 1-25              
+  ...alogueBox.tsx |    4.54 |      100 |       0 |    4.54 | 13-85             
+  ...logueFlow.tsx |       0 |        0 |       0 |       0 | 1-73              
+  VNPortrait.tsx   |   44.44 |      100 |       0 |   44.44 | 15-25             
+  VNTransition.tsx |       0 |        0 |       0 |       0 | 1-34              
+ ...ponents/portal |   71.39 |     97.5 |   54.54 |   71.39 |                   
+  CategoryGrid.tsx |     100 |      100 |     100 |     100 |                   
+  CyberSearch.tsx  |       0 |        0 |       0 |       0 | 1-145             
+  Hero.tsx         |     100 |      100 |     100 |     100 |                   
+  TerminalHome.tsx |   91.94 |      100 |   33.33 |   91.94 | 27-40,44-46       
+ .../components/ui |      75 |    82.97 |   61.11 |      75 |                   
+  Badge.tsx        |     100 |      100 |     100 |     100 |                   
+  Button.tsx       |     100 |       50 |     100 |     100 | 39                
+  Card.tsx         |   90.62 |       25 |      50 |   90.62 | 35-37             
+  ...ackground.tsx |   64.43 |    89.74 |   57.14 |   64.43 | ...14-215,232-248 
+  PixelDivider.tsx |     100 |      100 |     100 |     100 |                   
+ ...e/src/contexts |   76.31 |     87.5 |      50 |   76.31 |                   
+  ThemeContext.tsx |   76.31 |     87.5 |      50 |   76.31 | 32-33,36-40,52-53 
+ owltree/src/data  |     100 |      100 |     100 |     100 |                   
+  i18n.ts          |     100 |      100 |     100 |     100 |                   
+  projects.ts      |     100 |      100 |     100 |     100 |                   
+ owltree/src/game  |       0 |        0 |       0 |       0 |                   
+  types.ts         |       0 |        0 |       0 |       0 |                   
+ .../src/game/data |     100 |      100 |       0 |     100 |                   
+  achievements.ts  |     100 |      100 |     100 |     100 |                   
+  avatars.ts       |     100 |      100 |     100 |     100 |                   
+  config.ts        |     100 |      100 |       0 |     100 |                   
+  dialogues.ts     |     100 |      100 |     100 |     100 |                   
+  diseases.ts      |     100 |      100 |     100 |     100 |                   
+  endings.ts       |     100 |      100 |     100 |     100 |                   
+  events.ts        |     100 |      100 |     100 |     100 |                   
+  flirtLines.ts    |     100 |      100 |     100 |     100 |                   
+  partners.ts      |     100 |      100 |     100 |     100 |                   
+  tags.ts          |     100 |      100 |     100 |     100 |                   
+ ...rc/game/engine |   74.39 |    74.67 |   84.31 |   74.39 |                   
+  achievements.ts  |   78.42 |    69.33 |   94.44 |   78.42 | ...15-216,219-220 
+  actions.ts       |   60.43 |    47.61 |      80 |   60.43 | ...03-119,131-137 
+  chat.ts          |   11.11 |      100 |       0 |   11.11 | 4-12              
+  dialogue.ts      |     100 |    78.57 |     100 |     100 | 14-15,20          
+  events.ts        |   86.86 |    78.57 |     100 |   86.86 | ...-88,98,127-128 
+  game-over.ts     |     100 |    83.33 |     100 |     100 | 26                
+  hospital.ts      |      80 |       20 |     100 |      80 | 26-27,37-38       
+  index.ts         |       0 |        0 |       0 |       0 | 1                 
+  items.ts         |    8.69 |      100 |       0 |    8.69 | 12-34             
+  partner.ts       |   96.87 |    93.33 |     100 |   96.87 | 59-60             
+  rng.ts           |   84.61 |      100 |      50 |   84.61 | 17-18             
+  state.ts         |     100 |      100 |     100 |     100 |                   
+  stats.ts         |      12 |      100 |       0 |      12 | 23-44,47-49       
+ owltree/src/hooks |   14.51 |    77.77 |   18.18 |   14.51 |                   
+  useGameState.ts  |   14.51 |    77.77 |   18.18 |   14.51 | ...83,497-499,506 
+ owltree/src/lib   |     100 |    66.66 |     100 |     100 |                   
+  cn.ts            |     100 |      100 |     100 |     100 |                   
+  i18n.ts          |     100 |       50 |     100 |     100 | 3                 
+ owltree/src/pages |    31.5 |      100 |      30 |    31.5 |                   
+  Games.tsx        |   26.42 |      100 |       0 |   26.42 | 72-86,89-241      
+  Home.tsx         |     100 |      100 |     100 |     100 |                   
+  MoonThrow.tsx    |     100 |      100 |     100 |     100 |                   
+  Notes.tsx        |   37.72 |      100 |       0 |   37.72 | 105-107,110-262   
+  Tools.tsx        |   32.24 |      100 |       0 |   32.24 | 101-293           
+  Trends.tsx       |   24.54 |      100 |       0 |   24.54 | 117-452           
+-------------------|---------|----------|---------|---------|-------------------
+
+> owltree@0.1.0 analyze
+> vite-bundle-visualizer
+
+vite v6.4.1 building for production...
+transforming...
+✓ 1987 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.41 kB │ gzip:   0.27 kB
+dist/assets/index-XTwYFOau.css  117.25 kB │ gzip:  19.50 kB
+dist/assets/index-DQV_iUfa.js   434.65 kB │ gzip: 139.53 kB │ map: 1,771.68 kB
+✓ built in 2.10s
+
+Generated at /private/var/folders/5v/w5th60f52rz95gz_73b3gw1w0000gn/T/tmp-25554-mMmUFbSzVThD/stats.html
