@@ -1,0 +1,8 @@
+
+> owltree@0.1.0 test:e2e
+> playwright test --pass-with-no-tests e2e/portal.spec.ts
+
+
+Running 4 tests using 1 worker
+····
+  4 passed (4.1s)

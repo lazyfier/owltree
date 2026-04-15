@@ -312,7 +312,7 @@ Wave 3: regression coverage + CI enforcement + cleanup
 
   **Commit**: YES | Message: `test(game): add moon-throw regression coverage` | Files: [new/updated hook and component test files]
 
-- [ ] 6. Strengthen homepage and shell regression coverage
+- [x] 6. Strengthen homepage and shell regression coverage
 
   **What to do**: Add focused tests for `TerminalHome` and app shell behavior that validate home rendering, module navigation, and hover-card/path logic at the right level. Prefer React Testing Library for structure/behavior and keep Playwright for true route flow. If portal extraction introduces hooks/utilities, add unit tests for positioning decisions with deterministic viewport assumptions.
   **Must NOT do**: Must NOT overfit tests to implementation details like private state names. Must NOT duplicate the exact same assertion across unit and E2E layers.
