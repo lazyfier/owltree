@@ -352,7 +352,7 @@ Wave 3: regression coverage + CI enforcement + cleanup
 
   **Commit**: YES | Message: `test(portal): strengthen homepage regression coverage` | Files: [`src/test/App.test.tsx`, new portal/home tests, optional hook tests]
 
-- [ ] 7. Integrate and verify end-to-end engineering workflow
+- [x] 7. Integrate and verify end-to-end engineering workflow
 
   **What to do**: Perform final integration cleanup across refactored modules and quality gates. Update any remaining imports, remove dead code left by extractions, ensure analyzer/coverage/lint docs in scripts are coherent, and validate the full command chain used by CI and local development. If deploy workflow should skip E2E due to GitHub Pages preview constraints, document and encode the chosen check set explicitly rather than leaving ambiguity.
   **Must NOT do**: Must NOT silently weaken checks to get green. Must NOT leave duplicate legacy code paths or unused helper modules behind.
