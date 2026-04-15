@@ -270,4 +270,82 @@ describe('useGameState extracted helpers', () => {
     expect(getStat(progressed, 'chatCount')).toBe(1)
     expect(getStat(progressed, 'revealedTagCount')).toBe(1)
   })
+
+  it('transitions to gameover when an action pushes anxiety to 100', () => {
+    const store = createStore({
+      state: createState({
+        anxiety: 80,
+        frustration: 50,
+        currentPartner: createPartner({ diseases: [] }),
+      }),
+    })
+
+    const result = gameReducer(store, { type: 'TAKE_ACTION', action: 'sex_raw' })
+
+    expect(result.phase).toBe('gameover')
+    expect(result.state.anxiety).toBe(100)
+    expect(result.feedback).toMatchObject({
+      isGameOver: true,
+      title: '精神崩溃',
+    })
+  })
+
+  it('retains the current partner when closing feedback with keepPartner=true', () => {
+    const partner = createPartner({ avatar: 'keeper' })
+    const store = createStore({
+      state: createState({ currentPartner: partner }),
+      phase: 'feedback',
+      feedback: {
+        title: '聊天',
+        message: 'msg',
+        icon: '💬',
+        isGameOver: false,
+        keepPartner: true,
+      },
+    })
+
+    const result = gameReducer(store, { type: 'CLOSE_FEEDBACK' })
+
+    expect(result.phase).toBe('playing')
+    expect(result.state.currentPartner?.avatar).toBe('keeper')
+    expect(result.feedback).toBeNull()
+  })
+
+  it('replaces the current partner when closing feedback without keepPartner', () => {
+    const partner = createPartner({ avatar: 'old-partner' })
+    const store = createStore({
+      state: createState({ currentPartner: partner }),
+      phase: 'feedback',
+      feedback: {
+        title: '行动结果',
+        message: 'msg',
+        icon: '✅',
+        isGameOver: false,
+      },
+    })
+
+    const result = gameReducer(store, { type: 'CLOSE_FEEDBACK' })
+
+    expect(result.phase).toBe('playing')
+    expect(result.state.currentPartner).not.toBeNull()
+    expect(result.state.currentPartner?.avatar).not.toBe('old-partner')
+    expect(result.feedback).toBeNull()
+  })
+
+  it('transitions to feedback phase via SHOW_FEEDBACK', () => {
+    const store = createStore({ phase: 'playing' })
+
+    const result = gameReducer(store, {
+      type: 'SHOW_FEEDBACK',
+      data: {
+        title: 'Event',
+        message: 'Something happened',
+        icon: '⚠️',
+        isGameOver: false,
+      },
+    })
+
+    expect(result.phase).toBe('feedback')
+    expect(result.feedback?.title).toBe('Event')
+  })
 })

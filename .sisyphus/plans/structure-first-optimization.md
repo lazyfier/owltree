@@ -270,7 +270,7 @@ Wave 3: regression coverage + CI enforcement + cleanup
 
   **Commit**: YES | Message: `refactor(home): isolate terminal hover card logic` | Files: [`src/components/portal/TerminalHome.tsx`, extracted portal components/hooks, related tests]
 
-- [ ] 5. Add focused regression tests for extracted game boundaries
+- [x] 5. Add focused regression tests for extracted game boundaries
 
   **What to do**: Add unit tests around the newly extracted game-state helpers/selectors and at least one render-level test for the decomposed moon-throw container flow. Cover the highest-risk branches: action feedback, gameover transition, hidden/revealed tags count, and partner replacement/retention behavior on feedback close.
   **Must NOT do**: Must NOT rely only on broad app smoke tests. Must NOT snapshot massive rendered trees when targeted assertions are clearer.

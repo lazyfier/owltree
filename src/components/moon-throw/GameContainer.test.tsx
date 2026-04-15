@@ -64,4 +64,23 @@ describe('GameContainer', () => {
     expect(await screen.findByText(/回合\s+1/)).toBeInTheDocument()
     expect(screen.getByRole('button', { name: /试探聊天/ })).toBeInTheDocument()
   })
+
+  it('selects an action and transitions into the result scene', async () => {
+    const user = userEvent.setup()
+
+    render(
+      <MemoryRouter>
+        <GameContainer />
+      </MemoryRouter>,
+    )
+
+    await user.click(screen.getByRole('button', { name: '开始游戏' }))
+    expect(await screen.findByText(/回合\s+1/)).toBeInTheDocument()
+
+    expect(await screen.findByText('选择行动')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: /戴套口交/ }))
+
+    await screen.findByRole('button', { name: '' })
+    expect(screen.queryByText('选择行动')).not.toBeInTheDocument()
+  })
 })

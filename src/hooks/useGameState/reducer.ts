@@ -238,11 +238,15 @@ function handleCloseFeedback(store: GameStore): GameStore {
     return store
   }
 
+  const keepPartner = store.feedback?.keepPartner ?? false
+
   return {
     ...store,
     state: {
       ...store.state,
-      currentPartner: generatePartner(createRngFromMath(), store.state.turn),
+      currentPartner: keepPartner
+        ? store.state.currentPartner
+        : generatePartner(createRngFromMath(), store.state.turn),
     },
     phase: 'playing',
     feedback: null,
