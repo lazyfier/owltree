@@ -23,7 +23,8 @@ test.describe('Moon-Throw game flow', () => {
   })
 
   test('partner card renders with avatar', async ({ page }) => {
-    const avatar = page.locator('[data-testid="partner-avatar"]')
-    await expect(avatar).toBeVisible({ timeout: 10000 })
+    // After the intro is skipped in beforeEach, the partner is shown as an emoji portrait.
+    const emojiPortrait = page.locator('.vn-portrait-fade div').first()
+    await expect(emojiPortrait).toBeVisible({ timeout: 10000 })
   })
 })
