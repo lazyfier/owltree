@@ -13,11 +13,12 @@ export function VNChoices({ choices, onSelect, disabled = false }: VNChoicesProp
           type="button"
           onClick={() => onSelect(index)}
           disabled={choice.disabled}
-          className={`vn-choice choice-reveal ${choice.disabled ? 'opacity-40 cursor-not-allowed' : ''}`}
+          className={`vn-choice choice-reveal ${choice.disabled ? 'vn-choice-disabled' : ''}`}
           style={{ animationDelay: `${index * 100}ms` }}
         >
-          <span className="mr-2">▸</span>
+          <span className="mr-2">{choice.disabled ? '✕' : '▸'}</span>
           <span>{choice.text}</span>
+          {choice.disabled && <span className="ml-2 text-xs opacity-60">(不可用)</span>}
         </button>
       ))}
     </div>

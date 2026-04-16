@@ -22,11 +22,11 @@ const ACTION_OPTIONS = [
   { text: '无套性交', action: 'sex_raw', risk: 'high' },
 ] as const
 
-function getAsciiPortrait(partner: Partner | null): string[] {
-  if (!partner) return []
+function getPartnerEmoji(partner: Partner | null): string {
+  if (!partner) return '🧑'
 
   const template = PARTNER_TEMPLATES.find((entry) => entry.name === partner.avatar)
-  return template?.asciiPortrait || []
+  return template?.emoji || '🧑'
 }
 
 const contentVariants = {
@@ -55,7 +55,7 @@ export function GameContainer() {
 
   const [currentScene, setCurrentScene] = useState<GameScene>('dialogue')
 
-  const asciiPortrait = useMemo(() => getAsciiPortrait(partner), [partner])
+  const partnerEmoji = useMemo(() => getPartnerEmoji(partner), [partner])
   const visibleTags = partner?.tags.filter((tag) => tag.revealed) || []
   const actionChoices = ACTION_OPTIONS.map((option) => ({
     text: option.text,
@@ -112,7 +112,7 @@ export function GameContainer() {
                     testkitCount={state.items.testkit}
                   />
                   <GamePortraitPanel
-                    asciiPortrait={asciiPortrait}
+                    emoji={partnerEmoji}
                     partnerName={partner.avatar}
                     isPanic={isPanic}
                     visibleTags={visibleTags}

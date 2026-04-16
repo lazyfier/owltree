@@ -5,7 +5,7 @@ import type { PartnerTag } from '@/game/types'
 import { VNPortrait } from './VNPortrait'
 
 interface GamePortraitPanelProps {
-  asciiPortrait: string[]
+  emoji: string
   partnerName: string
   isPanic: boolean
   visibleTags: PartnerTag[]
@@ -13,7 +13,7 @@ interface GamePortraitPanelProps {
 }
 
 export function GamePortraitPanel({
-  asciiPortrait,
+  emoji,
   partnerName,
   isPanic,
   visibleTags,
@@ -22,7 +22,7 @@ export function GamePortraitPanel({
   return (
     <div className="px-8 py-8 grid place-items-center overflow-hidden">
       <div className="text-center">
-        <VNPortrait asciiArt={asciiPortrait} name={partnerName} size="large" />
+        <VNPortrait emoji={emoji} name={partnerName} size="large" isPanic={isPanic} />
 
         {isPanic && (
           <motion.div

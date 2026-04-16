@@ -1,25 +1,27 @@
 interface VNPortraitProps {
-  asciiArt: string[]
+  emoji: string
   name?: string
   size?: 'normal' | 'large'
+  isPanic?: boolean
 }
 
-const DEFAULT_PORTRAIT = [
-  '    ╭──────╮',
-  '    │ ◕ ◕ │',
-  '    │  ▽  │',
-  '    ╰──────╯',
-]
-
-export function VNPortrait({ asciiArt, name, size = 'normal' }: VNPortraitProps) {
-  const lines = asciiArt.length > 0 ? asciiArt : DEFAULT_PORTRAIT
-  const fontSize = size === 'large' ? '1.5rem' : '0.875rem'
+export function VNPortrait({ emoji, name, size = 'normal', isPanic = false }: VNPortraitProps) {
+  const sizeClass = size === 'large' ? 'text-[8rem]' : 'text-6xl'
+  const glowColor = isPanic ? 'var(--vn-danger-glow)' : 'var(--vn-cyan-glow)'
+  
   return (
     <div className="vn-portrait-fade flex flex-col items-center" data-testid="partner-avatar">
-      <pre className="vn-portrait-ascii" style={{ color: 'var(--vn-accent)', fontSize, lineHeight: '1.1' }}>
-        {lines.join('\n')}
-      </pre>
-      {name && <span className={`text-slate-500 mt-2 tracking-wider ${size === 'large' ? 'text-sm' : 'text-xs'}`}>{name}</span>}
+      <span 
+        className={`vn-emoji-portrait ${sizeClass} leading-none`}
+        style={{ 
+          filter: `drop-shadow(0 0 20px ${glowColor}) drop-shadow(0 0 40px ${glowColor})`,
+          animation: 'vn-breathe 3s ease-in-out infinite'
+        }}
+        aria-hidden="true"
+      >
+        {emoji}
+      </span>
+      {name && <span className={`text-slate-500 mt-4 tracking-wider ${size === 'large' ? 'text-sm' : 'text-xs'}`}>{name}</span>}
     </div>
   )
 }

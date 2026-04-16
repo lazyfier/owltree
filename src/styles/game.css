@@ -192,24 +192,24 @@
 /* ---- Back to home button ---- */
 .vn-back-btn {
   position: fixed;
-  top: 1.5rem;
-  right: 1.5rem;
+  top: 1rem;
+  right: 1rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: rgba(10, 10, 15, 0.9);
+  padding: 0.4rem 0.8rem;
+  background: rgba(10, 10, 15, 0.95);
   border: 1px solid var(--vn-border);
   border-radius: 8px;
   color: var(--vn-text-dim);
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   backdrop-filter: blur(16px);
   text-decoration: none;
   z-index: 100;
-  opacity: 0.7;
+  opacity: 0.6;
 }
 
 .vn-back-btn:hover {
@@ -347,4 +347,34 @@ button[class*="bg-violet-900"]:hover {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(0, 240, 255, 0.4);
+}
+
+/* ---- Disabled choice buttons ---- */
+.vn-choice-disabled {
+  background: rgba(30, 30, 35, 0.5) !important;
+  border-color: rgba(255, 51, 102, 0.3) !important;
+  border-left-color: rgba(255, 51, 102, 0.5) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.vn-choice-disabled:hover {
+  background: rgba(30, 30, 35, 0.5) !important;
+  border-color: rgba(255, 51, 102, 0.3) !important;
+  border-left-color: rgba(255, 51, 102, 0.5) !important;
+  color: rgba(255, 255, 255, 0.4) !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ---- Emoji portrait glow ---- */
+.vn-emoji-portrait {
+  display: inline-block;
+  animation: vn-breathe 3s ease-in-out infinite;
+}
+
+/* ---- Panic mode emoji ---- */
+.panic-mode .vn-emoji-portrait {
+  animation: panic-shake 0.5s infinite, vn-breathe 3s ease-in-out infinite;
 }

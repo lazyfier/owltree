@@ -8,12 +8,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['清纯男大', '性压抑的小处男', '对很多药物过敏'],
     personality: 'shy',
     dialogStyle: '说话结结巴巴，经常脸红，会问你很多问题',
-    asciiPortrait: [
-      '   o   ',
-      '  /|\\  ',
-      '   |   ',
-      '  / \\  ',
-    ],
+    emoji: '🧑‍🎓',
   },
   {
     templateId: 'gym_bro',
@@ -22,13 +17,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['体育学院猛男', '急性子/不想洗澡', '说已经三个月没约了'],
     personality: 'dominant',
     dialogStyle: '语气自信甚至有点傲慢，喜欢用命令式口吻',
-    asciiPortrait: [
-      '  __O__  ',
-      '  \\ | /  ',
-      '   \|/   ',
-      '    |    ',
-      '   / \\   ',
-    ],
+    emoji: '💪',
   },
   {
     templateId: 'art_student',
@@ -37,12 +26,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['艺术学院留长发男', '手机里全是裸照', '床头放着手铐/玩具'],
     personality: 'mysterious',
     dialogStyle: '诗意朦胧，经常引用电影台词或诗句',
-    asciiPortrait: [
-      '  ~o~  ',
-      '  /|\\  ',
-      '  ~|~  ',
-      '  / \\  ',
-    ],
+    emoji: '🎨',
   },
   {
     templateId: 'finance_elite',
@@ -51,12 +35,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['金融男/投行精英', '急着进入正题不想聊天', 'App显示24小时在线'],
     personality: 'cold',
     dialogStyle: '简洁直接，不废话，像在进行商务谈判',
-    asciiPortrait: [
-      '   _O_  ',
-      '   /|\\  ',
-      '   /|\\  ',
-      '   / \\  ',
-    ],
+    emoji: '💼',
   },
   {
     templateId: 'medical_intern',
@@ -65,12 +44,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['医学院学生/医生', '随身带消毒湿巾', '有专门的药箱且很整齐'],
     personality: 'anxious',
     dialogStyle: '专业术语频出，严谨谨慎，偶尔会走神',
-    asciiPortrait: [
-      '   +o+  ',
-      '   /|\\  ',
-      '   /|   ',
-      '   / \\  ',
-    ],
+    emoji: '🩺',
   },
   {
     templateId: 'otaku_gamer',
@@ -79,12 +53,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['沉迷二次元的死宅', '说话前后矛盾', '资料写得很详细认真'],
     personality: 'shy',
     dialogStyle: '小声嘀咕，不敢直视，偶尔冒出动漫台词',
-    asciiPortrait: [
-      '   [o]  ',
-      '   /|\\  ',
-      '    |   ',
-      '   /|\\  ',
-    ],
+    emoji: '🎮',
   },
   {
     templateId: 'rock_musician',
@@ -93,12 +62,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['摇滚乐队乐手', '刚从泰国/东南亚回来', '有多个现任伴侣'],
     personality: 'playful',
     dialogStyle: '戏剧化，手势多，像在表演',
-    asciiPortrait: [
-      '  \\o/  ',
-      '   |\\  ',
-      '   |   ',
-      '  / \\  ',
-    ],
+    emoji: '🎤',
   },
   {
     templateId: 'prep_user',
@@ -107,12 +71,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['是PrEP推广志愿者', '包里放着PrEP药物', '参加过安全性行为培训'],
     personality: 'playful',
     dialogStyle: '热情科普，专业术语信手拈来，像在做健康讲座',
-    asciiPortrait: [
-      '   *o*  ',
-      '   /|\\  ',
-      '   /|   ',
-      '   / \\  ',
-    ],
+    emoji: '🛡️',
   },
   {
     templateId: 'married_curious',
@@ -121,12 +80,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['已婚寻找刺激', '朋友圈三天可见且空白', '身上有膏药/止痛贴'],
     personality: 'anxious',
     dialogStyle: '时不时看手机，语气忽冷忽热，容易分心',
-    asciiPortrait: [
-      '   o   ',
-      '   |\\  ',
-      '   |\\  ',
-      '   / \\  ',
-    ],
+    emoji: '💍',
   },
   {
     templateId: 'flight_attendant',
@@ -135,12 +89,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['飞行员/空乘', '刚参加完多人派对', '说自己是留学生刚回国'],
     personality: 'playful',
     dialogStyle: '服务式微笑，职业化亲昵，但偶尔会流露疲惫',
-    asciiPortrait: [
-      '   ^o^  ',
-      '   /|\\  ',
-      '   ||   ',
-      '   / \\  ',
-    ],
+    emoji: '✈️',
   },
   {
     templateId: 'cdcc_counselor',
@@ -149,12 +98,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['疾控中心(CDC)员工', '坚持要先用检测试纸', '墙上挂着健康证/体检报告'],
     personality: 'cold',
     dialogStyle: '极其专业冷静，像在问诊，会问很细节的问题',
-    asciiPortrait: [
-      '   @o@  ',
-      '   /|\\  ',
-      '   /|\\  ',
-      '   / \\  ',
-    ],
+    emoji: '🔬',
   },
   {
     templateId: 'heartbroken_rebound',
@@ -163,12 +107,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['刚失恋求安慰', '说只有我一个性伴侣', '动作有些神经质/紧张'],
     personality: 'anxious',
     dialogStyle: '情绪波动大，一会儿热情一会儿冷淡',
-    asciiPortrait: [
-      '   ;o;  ',
-      '   /|\\  ',
-      '   /|   ',
-      '   / \\  ',
-    ],
+    emoji: '💔',
   },
   {
     templateId: 'virgo_cleanfreak',
@@ -177,12 +116,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['处女座/重度洁癖', '随身带消毒湿巾', '冰箱里全是健康食品'],
     personality: 'anxious',
     dialogStyle: '反复强调卫生要求，不容商量，语气有点强迫症',
-    asciiPortrait: [
-      '   !o!  ',
-      '   /|\\  ',
-      '   ||   ',
-      '   ||   ',
-    ],
+    emoji: '🧼',
   },
   {
     templateId: 'exam_stress',
@@ -191,12 +125,7 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['备战考研压力怪', '说自己是vegan/素食者', '家里有健身器材'],
     personality: 'cold',
     dialogStyle: '简短直接，不时看表，像在完成一项任务',
-    asciiPortrait: [
-      '   #o#  ',
-      '   /|\\  ',
-      '    |   ',
-      '   / \\  ',
-    ],
+    emoji: '📚',
   },
   {
     templateId: 'keyboard_warrior',
@@ -205,11 +134,6 @@ export const PARTNER_TEMPLATES: PartnerTemplate[] = [
     defaultTags: ['满嘴骚话的键盘侠', '头像用卡通/不露脸', '社交账号全部私密'],
     personality: 'shy',
     dialogStyle: '声音小得像蚊子，和线上判若两人',
-    asciiPortrait: [
-      '   :o:  ',
-      '   /|\\  ',
-      '    |   ',
-      '   /|\\  ',
-    ],
+    emoji: '⌨️',
   },
 ]

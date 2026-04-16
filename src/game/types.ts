@@ -123,7 +123,7 @@ export interface PartnerTemplate {
   defaultTags: string[]
   personality: 'shy' | 'dominant' | 'playful' | 'cold' | 'anxious' | 'experienced' | 'romantic' | 'mysterious'
   dialogStyle: string
-  asciiPortrait: string[]
+  emoji: string
 }
 
 export interface EventChoice {
