@@ -1,0 +1,69 @@
+- generic [ref=e3]:
+  - heading "[owltree] SYSTEM ONLINE // TERMINAL INTERFACE" [level=1] [ref=e4]:
+    - generic [ref=e5]: "[owltree]"
+    - generic [ref=e6]: SYSTEM ONLINE
+    - generic [ref=e7]: // TERMINAL INTERFACE
+  - generic [ref=e9]:
+    - text: ➜ ~ whoami
+    - generic [ref=e10]: Building systems at the edge of narrative and code.
+    - separator [ref=e11]
+    - generic [ref=e13]: "STACK:"
+    - generic [ref=e14]:
+      - generic [ref=e15]: React ·
+      - generic [ref=e16]: TypeScript ·
+      - generic [ref=e17]: Go ·
+      - generic [ref=e18]: Python
+    - generic [ref=e19]:
+      - generic [ref=e20]: Node.js ·
+      - generic [ref=e21]: Rust ·
+      - generic [ref=e22]: Figma
+    - separator [ref=e23]
+    - generic [ref=e24]:
+      - generic [ref=e25]: "FOCUS:"
+      - generic [ref=e26]: Portal UX + Game
+    - generic [ref=e27]:
+      - generic [ref=e28]: "NOW:"
+      - generic [ref=e29]: Building Owltree Portal
+    - separator [ref=e30]
+    - generic [ref=e31]:
+      - generic [ref=e32]: "GITHUB:"
+      - generic [ref=e33]: github.com/lazyfier
+  - generic [ref=e34]:
+    - generic [ref=e35]: ➜ ~/projects git:(main) ls -la
+    - generic [ref=e36]:
+      - generic [ref=e37]: ➜ ./show_projects.sh
+      - generic [ref=e40]:
+        - button "月抛模拟器 87%" [ref=e41] [cursor=pointer]:
+          - generic [ref=e42]: 月抛模拟器
+          - generic [ref=e45]: 87%
+        - generic [ref=e46]:
+          - generic [ref=e47]: Owltree Portal
+          - generic [ref=e50]: 62%
+        - generic [ref=e51]:
+          - generic [ref=e52]: Secret Project
+          - generic [ref=e55]: 23%
+        - generic [ref=e56]:
+          - generic [ref=e57]: API Gateway
+          - generic [ref=e60]: 45%
+        - generic [ref=e61]:
+          - generic [ref=e62]: Data Pipeline
+          - generic [ref=e65]: 71%
+        - generic [ref=e66]:
+          - generic [ref=e67]: Design System
+          - generic [ref=e70]: 34%
+        - generic [ref=e71]:
+          - generic [ref=e72]: NeoBrutal UI
+          - generic [ref=e75]: 56%
+        - generic [ref=e76]:
+          - generic [ref=e77]: CLI Toolkit
+          - generic [ref=e80]: 12%
+        - generic [ref=e81]:
+          - generic [ref=e82]: AI Agent
+          - generic [ref=e85]: 8%
+      - generic [ref=e86]: ➜ ./list_modules.sh
+      - generic [ref=e88]:
+        - button "GAMES" [ref=e89] [cursor=pointer]
+        - button "NOTES" [ref=e90] [cursor=pointer]
+        - button "TOOLS" [ref=e91] [cursor=pointer]
+        - button "TRENDS" [ref=e92] [cursor=pointer]
+      - generic [ref=e93]: ➜

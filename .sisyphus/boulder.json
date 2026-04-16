@@ -1,58 +1,23 @@
 {
-  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/structure-first-optimization.md",
-  "started_at": "2026-04-15T08:24:04.270Z",
+  "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/performance-optimization.md",
+  "started_at": "2026-04-16T01:26:58.120Z",
   "session_ids": [
     "ses_26ff77101ffesx0FcZSEEQcAna"
   ],
   "session_origins": {
     "ses_26ff77101ffesx0FcZSEEQcAna": "direct"
   },
-  "plan_name": "structure-first-optimization",
+  "plan_name": "performance-optimization",
   "agent": "atlas",
   "task_sessions": {
     "todo:1": {
       "task_key": "todo:1",
       "task_label": "1",
-      "task_title": "Establish engineering quality baseline",
-      "session_id": "ses_26fbd1b91ffeEtcZqqpAnYS4UN",
-      "agent": "Sisyphus-Junior",
-      "category": "deep",
-      "updated_at": "2026-04-15T08:51:48.466Z"
-    },
-    "todo:2": {
-      "task_key": "todo:2",
-      "task_label": "2",
-      "task_title": "Split moon-throw state orchestration into focused modules",
-      "session_id": "ses_26fa48e3affesKn0MJLb3Cvv4r",
+      "task_title": "Implement route-level code splitting with React.lazy + Suspense",
+      "session_id": "ses_26c156ed4ffellYWLWzzPqIRPF",
       "agent": "Sisyphus-Junior",
       "category": "unspecified-high",
-      "updated_at": "2026-04-15T09:11:11.741Z"
-    },
-    "todo:3": {
-      "task_key": "todo:3",
-      "task_label": "3",
-      "task_title": "Decompose `GameContainer` into scene and panel components",
-      "session_id": "ses_26f206703ffeEIWPq8GwQBQPBR",
-      "agent": "Sisyphus-Junior",
-      "category": "unspecified-high",
-      "updated_at": "2026-04-15T11:51:06.992Z"
-    },
-    "todo:4": {
-      "task_key": "todo:4",
-      "task_label": "4",
-      "task_title": "Isolate `TerminalHome` DOM and hover-card logic",
-      "session_id": "ses_26ede20ddffeNTC0x9OcSZJb4t",
-      "agent": "Sisyphus-Junior",
-      "category": "visual-engineering",
-      "updated_at": "2026-04-15T12:43:38.964Z"
-    },
-    "final-wave:f1": {
-      "task_key": "final-wave:f1",
-      "task_label": "F1",
-      "task_title": "Plan Compliance Audit — oracle",
-      "session_id": "ses_26eb07fc5ffeTxZHWidVgu1Tlz",
-      "agent": "oracle",
-      "updated_at": "2026-04-15T13:53:21.021Z"
+      "updated_at": "2026-04-16T02:01:58.313Z"
     }
   }
 }

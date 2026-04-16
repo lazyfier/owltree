@@ -39,10 +39,10 @@ describe('App routing shell', () => {
     expect(screen.getByText('SYSTEM ONLINE')).toBeInTheDocument()
   })
 
-  it('renders the moon throw intro on the game route', () => {
+  it('renders the moon throw intro on the game route', async () => {
     window.location.hash = '#/moon-throw'
     render(<App />)
 
-    expect(screen.getByText('Panic Edition')).toBeInTheDocument()
+    expect(await screen.findByText('Panic Edition')).toBeInTheDocument()
   })
 })

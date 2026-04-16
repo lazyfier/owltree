@@ -1,0 +1,11 @@
+- generic [ref=e149]:
+  - link "返回首页" [ref=e150] [cursor=pointer]:
+    - /url: "#/"
+    - img [ref=e151]
+    - generic [ref=e153]: 返回首页
+  - generic [ref=e155]:
+    - generic [ref=e157]: ╭────────╮ │ ◉ ◉ │ │ ◡ │ ╰────────╯
+    - heading "月抛模拟器" [level=1] [ref=e158]
+    - paragraph [ref=e159]: Panic Edition
+    - paragraph [ref=e160]: 一个关于选择与后果的实验性互动叙事游戏
+    - button "开始游戏" [ref=e161] [cursor=pointer]
