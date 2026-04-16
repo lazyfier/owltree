@@ -5,7 +5,7 @@ import '@/styles/pages/trends.css'
 import '@/styles/pages/_theme-atmosphere.css'
 import { ArrowLeft, TrendingUp, RefreshCw, ExternalLink, Flame, Rss, Hash } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 interface TrendItem {
   id: string
@@ -91,6 +91,21 @@ const trendCategories = [
   { id: 'design', name: '设计', color: 'var(--games-accent-light)' },
 ]
 
+const trendCategoryMap: Record<string, string> = {
+  all: '全部',
+  dev: 'dev',
+  ai: 'ai',
+  tech: 'tech',
+  design: 'design',
+}
+
+const trendCategoryLabelMap: Record<string, string> = {
+  dev: '开发',
+  ai: 'AI',
+  tech: '科技',
+  design: '设计',
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -118,20 +133,18 @@ export function Trends() {
   const [trends, setTrends] = useState(mockTrends)
   const [activeCategory, setActiveCategory] = useState('all')
 
-  const categoryMap: Record<string, string> = {
-    all: '全部',
-    dev: 'dev',
-    ai: 'ai',
-    tech: 'tech',
-    design: 'design',
-  }
+  const filteredTrends = useMemo(
+    () =>
+      activeCategory === 'all'
+        ? trends
+        : trends.filter((trend) => trendCategoryMap[activeCategory] === trend.category),
+    [activeCategory, trends],
+  )
 
-  const filteredTrends =
-    activeCategory === 'all'
-      ? trends
-      : trends.filter((trend) => categoryMap[activeCategory] === trend.category)
-
-  const hotTrendCount = filteredTrends.filter((trend) => trend.hot).length
+  const hotTrendCount = useMemo(
+    () => filteredTrends.filter((trend) => trend.hot).length,
+    [filteredTrends],
+  )
 
   return (
     <div data-page="trends" className="min-h-screen relative overflow-hidden page-root">
@@ -367,12 +380,12 @@ export function Trends() {
                           </p>
                           <div className="trend-source-row">
                             <span className="text-xs text-[var(--page-text-muted)]">{trend.source}</span>
-                            <span className="text-xs text-[var(--page-text-muted)]">•</span>
-                            <span className="text-xs text-[var(--page-text-muted)]">
-                              {trendCategories.find((c) => c.id === trend.category)?.name}
-                            </span>
+                              <span className="text-xs text-[var(--page-text-muted)]">•</span>
+                              <span className="text-xs text-[var(--page-text-muted)]">
+                              {trendCategoryLabelMap[trend.category]}
+                              </span>
+                            </div>
                           </div>
-                        </div>
 
                         {trend.hot && (
                           <span className="page-badge" style={{ background: 'color-mix(in srgb, var(--games-accent) 10%, transparent)', color: 'var(--games-accent)' }}>

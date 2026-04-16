@@ -5,7 +5,7 @@ import '@/styles/pages/tools.css'
 import '@/styles/pages/_theme-atmosphere.css'
 import { ArrowLeft, Wrench, ExternalLink } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 
 interface Tool {
   id: string
@@ -75,6 +75,14 @@ const categories = [
   { id: 'utility', name: '实用工具', color: '#8b5cf6' },
 ]
 
+const toolCategoryMap: Record<string, string> = {
+  all: '全部',
+  dev: '开发工具',
+  security: '安全工具',
+  design: '设计工具',
+  utility: '实用工具',
+}
+
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
@@ -101,27 +109,26 @@ export function Tools() {
   const [activeCategory, setActiveCategory] = useState('all')
   const { theme } = useTheme()
 
-  const categoryMap: Record<string, string> = {
-    all: '全部',
-    dev: '开发工具',
-    security: '安全工具',
-    design: '设计工具',
-    utility: '实用工具',
-  }
+  const filteredTools = useMemo(
+    () =>
+      activeCategory === 'all'
+        ? toolsData
+        : toolsData.filter((tool) => toolCategoryMap[activeCategory] === tool.category),
+    [activeCategory],
+  )
 
-  const filteredTools =
-    activeCategory === 'all'
-      ? toolsData
-      : toolsData.filter((tool) => categoryMap[activeCategory] === tool.category)
+  const toolsByCategory = useMemo(
+    () =>
+      toolsData.reduce<Record<string, Tool[]>>((groups, tool) => {
+        const existingTools = groups[tool.category] ?? []
 
-  const toolsByCategory = toolsData.reduce<Record<string, Tool[]>>((groups, tool) => {
-    const existingTools = groups[tool.category] ?? []
-
-    return {
-      ...groups,
-      [tool.category]: [...existingTools, tool],
-    }
-  }, {})
+        return {
+          ...groups,
+          [tool.category]: [...existingTools, tool],
+        }
+      }, {}),
+    [],
+  )
 
   if (theme === 'terminal') {
     return (
