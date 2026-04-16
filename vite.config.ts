@@ -8,6 +8,14 @@ export default defineConfig({
   plugins: [react()],
   build: {
     sourcemap: true,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'framer-motion': ['framer-motion'],
+          'lucide-react': ['lucide-react'],
+        },
+      },
+    },
   },
   resolve: {
     alias: {
