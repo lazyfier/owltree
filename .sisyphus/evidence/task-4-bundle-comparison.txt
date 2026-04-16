@@ -1,0 +1,28 @@
+Bundle Size Comparison (Performance Optimization)
+==================================================
+Date: 2026-04-16
+
+Before (baseline):
+- Single index chunk: ~436 KB
+
+After (with code splitting + manualChunks):
+- dist/assets/index-BXRpU-L-.js        198 KB (main chunk)
+- dist/assets/framer-motion-CHryn_UW.js 120 KB
+- dist/assets/lucide-react-CvqHKB12.js   8.1 KB
+- dist/assets/Games-BcJpDVA2.js          5.3 KB
+- dist/assets/Notes-D5wLY2sz.js          6.2 KB
+- dist/assets/Tools-B-iUba1X.js          6.8 KB
+- dist/assets/Trends-BJn_M-kI.js         11 KB
+- dist/assets/MoonThrow-70q9M9DG.js      74 KB
+
+Results:
+- Main chunk reduced from ~436 KB to 198 KB (-54.5%)
+- Vendor chunks split: framer-motion (120K) and lucide-react (8.1K)
+- Route chunks split: Games, Notes, Tools, Trends, MoonThrow
+- Total JS chunks: 8
+
+Verification:
+- npm run typecheck    PASS
+- npm run test:unit    PASS (114 tests)
+- npm run build        PASS
+- npm run test:e2e     PASS (8 tests)

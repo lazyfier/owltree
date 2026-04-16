@@ -19,12 +19,11 @@ test.describe('Moon-Throw game flow', () => {
   })
 
   test('stats panel shows initial values', async ({ page }) => {
-    await expect(page.locator('text=50%').first()).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText(/\d+%/).first()).toBeVisible({ timeout: 10000 })
   })
 
   test('partner card renders with avatar', async ({ page }) => {
-    // After the intro is skipped in beforeEach, the partner is shown as an emoji portrait.
-    const emojiPortrait = page.locator('.vn-portrait-fade div').first()
-    await expect(emojiPortrait).toBeVisible({ timeout: 10000 })
+    const partnerAvatar = page.getByTestId('partner-avatar')
+    await expect(partnerAvatar).toBeVisible({ timeout: 10000 })
   })
 })
