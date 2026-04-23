@@ -1,27 +1,23 @@
 interface VNPortraitProps {
   emoji: string
-  name?: string
   size?: 'normal' | 'large'
   isPanic?: boolean
 }
 
-export function VNPortrait({ emoji, name, size = 'normal', isPanic = false }: VNPortraitProps) {
-  const sizeClass = size === 'large' ? 'text-[8rem]' : 'text-6xl'
-  const glowColor = isPanic ? 'var(--vn-danger-glow)' : 'var(--vn-cyan-glow)'
-  
+export function VNPortrait({ emoji, size = 'normal', isPanic = false }: VNPortraitProps) {
+  const containerSize = size === 'large' ? 'w-32 h-32' : 'w-20 h-20'
+  const emojiSize = size === 'large' ? 'text-6xl' : 'text-4xl'
+  const panicClass = isPanic ? 'animate-[panic-shake_0.5s_infinite]' : ''
+
   return (
     <div className="vn-portrait-fade flex flex-col items-center" data-testid="partner-avatar">
-      <span 
-        className={`vn-emoji-portrait ${sizeClass} leading-none`}
-        style={{ 
-          filter: `drop-shadow(0 0 20px ${glowColor}) drop-shadow(0 0 40px ${glowColor})`,
-          animation: 'vn-breathe 3s ease-in-out infinite'
-        }}
-        aria-hidden="true"
+      <div
+        className={`${containerSize} mx-auto bg-gradient-to-br from-slate-700 to-slate-800 rounded-full flex items-center justify-center shadow-xl border-2 border-slate-600 avatar-float relative ${panicClass}`}
       >
-        {emoji}
-      </span>
-      {name && <span className={`text-slate-500 mt-4 tracking-wider ${size === 'large' ? 'text-sm' : 'text-xs'}`}>{name}</span>}
+        <span className={`${emojiSize} leading-none select-none`} aria-hidden="true">
+          {emoji}
+        </span>
+      </div>
     </div>
   )
 }

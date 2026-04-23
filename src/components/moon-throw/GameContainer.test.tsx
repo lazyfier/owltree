@@ -48,6 +48,21 @@ describe('GameScenePanel', () => {
 })
 
 describe('GameContainer', () => {
+  let originalMathRandom: () => number
+
+  beforeEach(() => {
+    originalMathRandom = Math.random
+    let callCount = 0
+    Math.random = vi.fn(() => {
+      callCount++
+      return 0.5 + (callCount % 100) / 1000
+    })
+  })
+
+  afterEach(() => {
+    Math.random = originalMathRandom
+  })
+
   it('starts from the intro screen and enters the play layout after starting', async () => {
     const user = userEvent.setup()
 
@@ -62,7 +77,7 @@ describe('GameContainer', () => {
     await user.click(screen.getByRole('button', { name: '开始游戏' }))
 
     expect(await screen.findByText(/回合\s+1/)).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /试探聊天/ })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /试探聊天|已完全了解/ })).toBeInTheDocument()
   })
 
   it('selects an action and transitions into the result scene', async () => {

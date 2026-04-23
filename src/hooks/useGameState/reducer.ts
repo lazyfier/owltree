@@ -288,6 +288,12 @@ export function gameReducer(store: GameStore, action: GameStoreAction): GameStor
       return { ...store, phase: 'help' }
     case 'CLOSE_HELP':
       return { ...store, phase: store.feedback ? 'feedback' : 'playing' }
+    case 'RESET_TO_INTRO':
+      return {
+        ...store,
+        phase: 'intro',
+        feedback: null,
+      }
     default:
       return store
   }

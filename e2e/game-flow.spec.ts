@@ -4,9 +4,9 @@ test.describe('Moon-Throw game flow', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/#/moon-throw')
     const startButton = page.getByRole('button', { name: '开始游戏' })
-    if (await startButton.isVisible().catch(() => false)) {
-      await startButton.click()
-    }
+    await expect(startButton).toBeVisible({ timeout: 10000 })
+    await startButton.click()
+    await page.waitForSelector('text=回合 1', { timeout: 15000 })
   })
 
   test('game page loads with correct initial state', async ({ page }) => {
@@ -14,12 +14,13 @@ test.describe('Moon-Throw game flow', () => {
   })
 
   test('action buttons are present', async ({ page }) => {
+    await page.waitForSelector('text=选择行动', { timeout: 15000 })
     await expect(page.getByRole('button', { name: /口交/ }).first()).toBeVisible({ timeout: 10000 })
     await expect(page.getByRole('button', { name: /性交/ }).first()).toBeVisible({ timeout: 10000 })
   })
 
   test('stats panel shows initial values', async ({ page }) => {
-    await expect(page.getByText(/\d+%/).first()).toBeVisible({ timeout: 10000 })
+    await expect(page.getByText('50%').first()).toBeVisible({ timeout: 10000 })
   })
 
   test('partner card renders with avatar', async ({ page }) => {

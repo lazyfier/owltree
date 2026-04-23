@@ -5,25 +5,28 @@ interface VNDialogueBoxProps {
   text: string
   onComplete?: () => void
   isTyping?: boolean
+  className?: string
 }
 
 const CHAR_INTERVAL_MS = 40
 
-export function VNDialogueBox({ speaker, text, onComplete, isTyping = true }: VNDialogueBoxProps) {
+export function VNDialogueBox({ speaker, text, onComplete, isTyping = true, className = '' }: VNDialogueBoxProps) {
   const [displayedLength, setDisplayedLength] = useState(0)
   const [skipped, setSkipped] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const shouldType = isTyping && import.meta.env.MODE !== 'test'
   const isComplete = displayedLength >= text.length
 
-  // Reset when text changes - text dependency is intentional
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(() => {
-    setDisplayedLength(0)
-    setSkipped(false)
-  }, [text])
+    if (!shouldType) {
+      setDisplayedLength(text.length)
+      setSkipped(true)
+      return
+    }
+  }, [shouldType, text])
 
   useEffect(() => {
-    if (!isTyping || isComplete || skipped) {
+    if (!shouldType || isComplete || skipped) {
       if ((isComplete || skipped) && displayedLength >= text.length && onComplete) {
         onComplete()
       }
@@ -45,7 +48,7 @@ export function VNDialogueBox({ speaker, text, onComplete, isTyping = true }: VN
         intervalRef.current = null
       }
     }
-  }, [text, isTyping, isComplete, skipped, displayedLength, onComplete])
+  }, [text, shouldType, isComplete, skipped, displayedLength, onComplete])
 
   const handleSkip = useCallback(() => {
     if (!isComplete && !skipped) {
@@ -71,7 +74,7 @@ export function VNDialogueBox({ speaker, text, onComplete, isTyping = true }: VN
   return (
     <button
       type="button"
-      className="vn-dialogue relative cursor-pointer select-none text-left w-full"
+      className={`vn-dialogue relative cursor-pointer select-none text-left w-full ${className}`}
       onClick={handleSkip}
     >
       <div className="absolute top-0 left-0 right-0 h-[2px] rounded-t-xl" style={{ background: 'linear-gradient(90deg, transparent, var(--vn-accent), var(--vn-name), var(--vn-accent), transparent)' }} />

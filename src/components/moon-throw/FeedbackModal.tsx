@@ -1,8 +1,6 @@
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import type { GameState } from '@/game/types'
-import { computeStats } from '@/game/engine/stats'
-import { GameStatsPanel } from './GameStatsPanel'
 import { HistoryPanel } from './HistoryPanel'
 
 interface FeedbackModalProps {
@@ -11,6 +9,7 @@ interface FeedbackModalProps {
   message: string
   icon: string
   onClose: () => void
+  onRestart?: () => void
   isGameOver?: boolean
   history?: GameState['history']
 }
@@ -21,12 +20,11 @@ export function FeedbackModal({
   message,
   icon,
   onClose,
+  onRestart,
   isGameOver = false,
   history,
 }: FeedbackModalProps) {
   const [showHistory, setShowHistory] = useState(false)
-
-  const stats = history ? computeStats({ history } as GameState) : null
 
   return (
     <AnimatePresence>
@@ -61,29 +59,40 @@ export function FeedbackModal({
                   <div className="bg-slate-800/80 rounded-xl p-4 text-sm text-slate-300 leading-relaxed border border-white/5 whitespace-pre-line">
                     {message}
                   </div>
-                  {stats && isGameOver && <GameStatsPanel stats={stats} />}
                 </div>
 
                 <div className="p-6 pt-4 flex flex-col gap-3 flex-shrink-0 mt-auto">
-                  {isGameOver && history && history.length > 0 && (
+                  {isGameOver && onRestart && (
                     <button
-                      onClick={() => setShowHistory(true)}
-                      className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl border border-white/10 flex items-center justify-center gap-2 transition-colors text-sm"
+                      type="button"
+                      onClick={onRestart}
+                      className="w-full py-3 font-bold rounded-xl transition-colors shadow-lg text-sm bg-rose-600 text-white hover:bg-rose-500 shadow-rose-900/50"
                     >
-                      📋 查看约会记录复盘
+                      🔄 再来一局
                     </button>
                   )}
 
                   <button
+                    type="button"
                     onClick={onClose}
                     className={`w-full py-3 font-bold rounded-xl transition-colors shadow-lg text-sm ${
                       isGameOver
-                        ? 'bg-rose-600 text-white hover:bg-rose-500 shadow-rose-900/50'
+                        ? 'bg-slate-700 text-white hover:bg-slate-600'
                         : 'bg-white text-slate-900 hover:bg-slate-200'
                     }`}
                   >
-                    {isGameOver ? '返回首页' : '继续'}
+                    {isGameOver ? '🏠 返回首页' : '继续'}
                   </button>
+
+                  {isGameOver && history && history.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowHistory(true)}
+                      className="w-full py-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl border border-white/10 flex items-center justify-center gap-2 transition-colors text-sm"
+                    >
+                      📋 查看详细复盘
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -99,6 +108,7 @@ export function FeedbackModal({
                 <HistoryPanel history={history} />
                 <div className="p-6 pt-2 flex-shrink-0 border-t border-white/5">
                   <button
+                    type="button"
                     onClick={() => setShowHistory(false)}
                     className="w-full py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl transition-colors text-sm"
                   >

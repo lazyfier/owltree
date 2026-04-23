@@ -169,7 +169,7 @@ Wave 2: vendor chunk 拆分 + 集成验证 + bundle 对比
 
   **Commit**: YES | Message: `perf(router): implement route-level code splitting` | Files: [`src/App.tsx`]
 
-- [ ] 2. Add useMemo memoization to large page components
+- [x] 2. Add useMemo memoization to large page components
 
   **What to do**:
   1. **Games.tsx**: 如果存在基于 data 数组的过滤或映射计算（如 `games.filter(...)` 或 `games.map(...)` 中有派生值），用 `useMemo` 包裹。如果页面主要是静态渲染（无过滤/排序），则跳过。
@@ -216,7 +216,7 @@ Wave 2: vendor chunk 拆分 + 集成验证 + bundle 对比
 
   **Commit**: YES | Message: `perf(pages): add useMemo for derived values in large pages` | Files: [`src/pages/Games.tsx`, `src/pages/Notes.tsx`, `src/pages/Tools.tsx`, `src/pages/Trends.tsx`（按实际改动）]
 
-- [ ] 3. Configure vendor chunk splitting via manualChunks
+- [x] 3. Configure vendor chunk splitting via manualChunks
 
   **What to do**:
   1. 在 `vite.config.ts` 的 `build` 配置中添加 `rollupOptions.output.manualChunks`：
@@ -270,7 +270,7 @@ Wave 2: vendor chunk 拆分 + 集成验证 + bundle 对比
 
   **Commit**: YES | Message: `perf(build): split vendor chunks for framer-motion and lucide-react` | Files: [`vite.config.ts`]
 
-- [ ] 4. Verify performance improvements and integration
+- [x] 4. Verify performance improvements and integration
 
   **What to do**:
   1. 运行完整验证链：`npm run typecheck && npm run lint && npm run test:unit -- --coverage && npm run build && npm run test:e2e`
@@ -323,10 +323,10 @@ Wave 2: vendor chunk 拆分 + 集成验证 + bundle 对比
 > 4 review agents run in PARALLEL. ALL must APPROVE. Present consolidated results to user and get explicit "okay" before completing.
 > **Do NOT auto-proceed after verification. Wait for user's explicit approval before marking work complete.**
 > **Never mark F1-F4 as checked before getting user's okay.** Rejection or user feedback -> fix -> re-run -> present again -> wait for okay.
-- [ ] F1. Plan Compliance Audit — oracle
-- [ ] F2. Code Quality Review — unspecified-high
-- [ ] F3. Real Manual QA — unspecified-high (+ playwright if UI)
-- [ ] F4. Scope Fidelity Check — deep
+- [x] F1. Plan Compliance Audit — oracle
+- [x] F2. Code Quality Review — unspecified-high
+- [x] F3. Real Manual QA — unspecified-high (+ playwright if UI)
+- [x] F4. Scope Fidelity Check — deep
 
 ## Commit Strategy
 - Commit after each task完成。

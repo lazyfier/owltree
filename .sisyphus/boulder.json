@@ -2,13 +2,14 @@
   "active_plan": "/Users/lazyfier/project/owltree/.sisyphus/plans/performance-optimization.md",
   "started_at": "2026-04-16T01:26:58.120Z",
   "session_ids": [
-    "ses_26ff77101ffesx0FcZSEEQcAna"
+    "ses_26ff77101ffesx0FcZSEEQcAna",
+    "ses_2ad6b7e03ffeXzP31mkpRGZuYy"
   ],
   "session_origins": {
     "ses_26ff77101ffesx0FcZSEEQcAna": "direct"
   },
   "plan_name": "performance-optimization",
-  "agent": "atlas",
+  "agent": "Sisyphus (Ultraworker)",
   "task_sessions": {
     "todo:1": {
       "task_key": "todo:1",

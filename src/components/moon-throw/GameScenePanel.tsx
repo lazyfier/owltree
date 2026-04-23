@@ -31,6 +31,11 @@ export function GameScenePanel({
   onActionSelect,
   onResultComplete,
 }: GameScenePanelProps) {
+  const theme = typeof document !== 'undefined'
+    ? document.documentElement.getAttribute('data-theme') ?? 'terminal'
+    : 'terminal'
+  const isTerminal = theme === 'terminal'
+
   return (
     <div className="px-8 py-6 overflow-hidden">
       <AnimatePresence mode="wait">
@@ -42,7 +47,7 @@ export function GameScenePanel({
             exit={{ opacity: 0, y: -10 }}
             className="h-full flex items-end"
           >
-            <VNDialogueBox speaker={partnerName} text={flirtLine} onComplete={onDialogueComplete} />
+            <VNDialogueBox key={`${partnerName}-${flirtLine}`} speaker={partnerName} text={flirtLine} onComplete={onDialogueComplete} />
           </motion.div>
         )}
 
@@ -71,7 +76,28 @@ export function GameScenePanel({
             exit={{ opacity: 0, y: -10 }}
             className="h-full flex items-end"
           >
-            <VNDialogueBox speaker=" " text={feedbackText} onComplete={onResultComplete} />
+            <button
+              type="button"
+              onClick={onResultComplete}
+              className={`page-card w-full max-h-full overflow-y-auto p-6 text-left transition-all ${
+                isTerminal ? 'font-mono rounded-xl' : ''
+              }`}
+            >
+              <div aria-hidden="true">
+                <div className="mb-4 flex items-center gap-3">
+                  <span className="text-xs font-semibold uppercase tracking-[0.25em] text-[var(--page-text-secondary)]">
+                    结算
+                  </span>
+                  <span className="h-px flex-1 bg-black/10 dark:bg-white/10" />
+                </div>
+                <div className="whitespace-pre-wrap break-words text-sm leading-7 text-[var(--page-text)] sm:text-base">
+                  {feedbackText}
+                </div>
+                <div className="mt-6 text-xs text-[var(--page-text-muted)]">
+                  点击继续
+                </div>
+              </div>
+            </button>
           </motion.div>
         )}
       </AnimatePresence>

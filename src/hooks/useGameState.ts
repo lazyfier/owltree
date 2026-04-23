@@ -34,6 +34,7 @@ export function useGameState() {
   const showHelp = useCallback(() => dispatch({ type: 'SHOW_HELP' }), [])
   const closeHelp = useCallback(() => dispatch({ type: 'CLOSE_HELP' }), [])
   const closeFeedback = useCallback(() => dispatch({ type: 'CLOSE_FEEDBACK' }), [])
+  const resetToIntro = useCallback(() => dispatch({ type: 'RESET_TO_INTRO' }), [])
 
   return {
     state: store.state,
@@ -54,5 +55,6 @@ export function useGameState() {
     showHelp,
     closeHelp,
     closeFeedback,
+    resetToIntro,
   }
 }

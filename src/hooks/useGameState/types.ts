@@ -40,3 +40,4 @@ export type GameStoreAction =
   | { type: 'CLOSE_FEEDBACK' }
   | { type: 'SHOW_HELP' }
   | { type: 'CLOSE_HELP' }
+  | { type: 'RESET_TO_INTRO' }

@@ -478,7 +478,7 @@
 
   **Commit**: YES | Message: `feat(game): implement random event system engine with conditional triggers` | Files: [src/game/engine/events.ts, src/game/types.ts, src/game/engine/index.ts, src/hooks/useGameState.ts]
 
-- [ ] 7. 实现难度递增和试纸补充机制
+- [x] 7. 实现难度递增和试纸补充机制
 
   **What to do**:
   - 修改 `src/game/data/config.ts`：
@@ -531,7 +531,7 @@
 
   **Commit**: YES | Message: `feat(game): add difficulty progression and testkit refill mechanics` | Files: [src/game/data/config.ts, src/game/engine/partner.ts, src/game/engine/actions.ts, src/game/engine/state.ts, src/game/types.ts]
 
-- [ ] 8. 实现成就系统引擎
+- [x] 8. 实现成就系统引擎
 
   **What to do**:
   - 创建 `src/game/engine/achievements.ts`
@@ -1102,10 +1102,10 @@
   **Commit**: YES | Message: `test(game): add engine tests for dialogue, events, achievements, and difficulty systems` | Files: [src/game/engine/__tests__/dialogue.test.ts, src/game/engine/__tests__/events.test.ts, src/game/engine/__tests__/achievements.test.ts, src/game/engine/__tests__/difficulty.test.ts, src/game/engine/__tests__/stats.test.ts]
 
 ## Final Verification Wave (MANDATORY — after ALL implementation tasks)
-- [ ] F1. Plan Compliance Audit — oracle
-- [ ] F2. Code Quality Review — unspecified-high
+- [x] F1. Plan Compliance Audit — oracle
+- [x] F2. Code Quality Review — unspecified-high
 - [ ] F3. Real Manual QA — unspecified-high (+ playwright)
-- [ ] F4. Scope Fidelity Check — deep
+- [x] F4. Scope Fidelity Check — deep
 
 ## Commit Strategy
 - Wave 1: 4 commits (data, fixes, css, types)

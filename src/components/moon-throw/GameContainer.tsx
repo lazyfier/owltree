@@ -1,10 +1,9 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ArrowLeft } from 'lucide-react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
-import { PARTNER_TEMPLATES } from '@/game/data/partners'
-import type { ActionType, Partner } from '@/game/types'
+import type { ActionType } from '@/game/types'
 import { useGameState } from '@/hooks/useGameState'
 
 import { FeedbackModal } from './FeedbackModal'
@@ -22,13 +21,6 @@ const ACTION_OPTIONS = [
   { text: '无套性交', action: 'sex_raw', risk: 'high' },
 ] as const
 
-function getPartnerEmoji(partner: Partner | null): string {
-  if (!partner) return '🧑'
-
-  const template = PARTNER_TEMPLATES.find((entry) => entry.name === partner.avatar)
-  return template?.emoji || '🧑'
-}
-
 const contentVariants = {
   initial: { opacity: 0 },
   animate: { opacity: 1, transition: { duration: 0.3 } },
@@ -36,6 +28,7 @@ const contentVariants = {
 }
 
 export function GameContainer() {
+  const navigate = useNavigate()
   const {
     state,
     phase,
@@ -50,12 +43,19 @@ export function GameContainer() {
     chatWithPartner,
     goHospital,
     closeFeedback,
+    resetToIntro,
     flirtLine,
   } = useGameState()
 
   const [currentScene, setCurrentScene] = useState<GameScene>('dialogue')
 
-  const partnerEmoji = useMemo(() => getPartnerEmoji(partner), [partner])
+  useEffect(() => {
+    if (feedback && phase !== 'gameover' && currentScene !== 'result') {
+      setCurrentScene('result')
+    }
+  }, [feedback, phase, currentScene])
+
+  const partnerEmoji = partner?.avatar ?? '🧑'
   const visibleTags = partner?.tags.filter((tag) => tag.revealed) || []
   const actionChoices = ACTION_OPTIONS.map((option) => ({
     text: option.text,
@@ -73,25 +73,45 @@ export function GameContainer() {
     if (!action || blockedActions.includes(action)) return
 
     takeAction(action)
-    setCurrentScene('result')
+  }
+
+  const handleRefuse = () => {
+    takeAction('refuse')
+  }
+
+  const handleRestart = () => {
+    startGame()
+    setCurrentScene('dialogue')
+  }
+
+  const handleBackToGameHome = () => {
+    resetToIntro()
   }
 
   const handleCloseResult = () => {
-    if (feedback?.isGameOver) return
+    if (feedback?.isGameOver) {
+      handleBackToGameHome()
+      return
+    }
 
     closeFeedback()
     setCurrentScene('dialogue')
   }
 
-  return (
-    <div className="h-screen w-screen bg-[var(--vn-bg)] text-[var(--vn-text)] overflow-hidden grid grid-rows-[auto_1fr]">
-      <Link to="/" className="vn-back-btn z-50">
-        <ArrowLeft className="w-5 h-5" />
-        <span>返回首页</span>
-      </Link>
+  const isChatDisabled = hiddenCount === 0 && !isPanic
 
-      <AnimatePresence mode="wait">
-        {phase === 'intro' ? (
+  return (
+    <div className="h-screen w-screen bg-[var(--vn-bg)] text-[var(--vn-text)] overflow-hidden flex flex-col">
+      {phase === 'intro' && (
+        <button type="button" onClick={() => navigate('/')} className="vn-back-btn z-50">
+          <ArrowLeft className="w-5 h-5" />
+          <span>返回首页</span>
+        </button>
+      )}
+
+      <div className="flex-1">
+        <AnimatePresence mode="wait">
+          {phase === 'intro' ? (
           <GameIntro onStart={handleStart} variants={contentVariants} />
         ) : (
           <motion.div
@@ -100,7 +120,7 @@ export function GameContainer() {
             initial="initial"
             animate="animate"
             exit="exit"
-            className="grid grid-cols-2"
+            className="grid grid-cols-2 h-full"
           >
             {partner && (
               <>
@@ -113,19 +133,26 @@ export function GameContainer() {
                   />
                   <GamePortraitPanel
                     emoji={partnerEmoji}
-                    partnerName={partner.avatar}
                     isPanic={isPanic}
                     visibleTags={visibleTags}
                     hiddenCount={hiddenCount}
                   />
                 </div>
 
-                <div className="grid grid-rows-[auto_1fr] min-w-0">
+                <div className="grid grid-rows-[auto_auto_1fr] min-w-0">
+                  <div className="px-4 py-2 border-b border-[var(--vn-border)] flex items-center justify-end bg-black/10">
+                    <button type="button" onClick={() => navigate('/')} className="vn-back-btn-toolbar">
+                      <ArrowLeft className="w-4 h-4" />
+                      返回首页
+                    </button>
+                  </div>
                   <GameActionPanel
                     canUseTestkit={state.items.testkit > 0}
                     onUseTestkit={triggerTestkit}
                     onChat={chatWithPartner}
                     onGoHospital={goHospital}
+                    onRefuse={handleRefuse}
+                    isChatDisabled={isChatDisabled}
                   />
                   <GameScenePanel
                     currentScene={currentScene}
@@ -143,6 +170,7 @@ export function GameContainer() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
 
       <FeedbackModal
         show={phase === 'gameover'}
@@ -150,6 +178,7 @@ export function GameContainer() {
         message={feedback?.message ?? ''}
         icon={feedback?.icon ?? ''}
         onClose={handleCloseResult}
+        onRestart={handleRestart}
         isGameOver={true}
         history={feedback?.history}
       />
