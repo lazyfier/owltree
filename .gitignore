@@ -30,3 +30,4 @@ blob-report/
 
 # Worktrees
 .worktrees/
+.omx/

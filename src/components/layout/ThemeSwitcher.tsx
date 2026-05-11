@@ -1,18 +1,12 @@
 import { useTheme } from '@/contexts/ThemeContext'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 
 export function ThemeInitializer() {
-  const { theme, setTheme } = useTheme()
-  const [initialized, setInitialized] = useState(false)
+  const { theme } = useTheme()
 
   useEffect(() => {
-    if (!initialized) {
-      if (theme !== 'terminal') {
-        setTheme('terminal')
-      }
-      setInitialized(true)
-    }
-  }, [theme, setTheme, initialized])
+    document.documentElement.setAttribute('data-theme', theme)
+  }, [theme])
 
   return null
 }

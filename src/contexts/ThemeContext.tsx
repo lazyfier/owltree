@@ -1,55 +1,33 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect } from 'react'
 
-export type Theme = 'galgame' | 'cyber' | 'minimal' | 'terminal';
+export type Theme = 'terminal'
 
 interface ThemeContextType {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
+  theme: Theme
+  setTheme: (theme: Theme) => void
+  toggleTheme: () => void
 }
 
-const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-const STORAGE_KEY = 'owltree-theme-v2';
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined)
+const FIXED_THEME: Theme = 'terminal'
+const noop = () => {}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>(() => {
-    if (typeof window !== 'undefined') {
-      const stored = localStorage.getItem(STORAGE_KEY) as Theme;
-      if (stored && ['galgame', 'cyber', 'minimal', 'terminal'].includes(stored)) {
-        return stored;
-      }
-    }
-    return 'terminal';
-  });
-
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, theme);
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
-
-  const setTheme = (newTheme: Theme) => {
-    setThemeState(newTheme);
-  };
-
-  const toggleTheme = () => {
-    const themes: Theme[] = ['galgame', 'cyber', 'minimal', 'terminal'];
-    const currentIndex = themes.indexOf(theme);
-    const nextIndex = (currentIndex + 1) % themes.length;
-    setThemeState(themes[nextIndex]);
-  };
+    document.documentElement.setAttribute('data-theme', FIXED_THEME)
+  }, [])
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme, toggleTheme }}>
+    <ThemeContext.Provider value={{ theme: FIXED_THEME, setTheme: noop, toggleTheme: noop }}>
       {children}
     </ThemeContext.Provider>
-  );
+  )
 }
 
 export function useTheme() {
-  const context = useContext(ThemeContext);
+  const context = useContext(ThemeContext)
   if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
+    throw new Error('useTheme must be used within a ThemeProvider')
   }
-  return context;
+  return context
 }
