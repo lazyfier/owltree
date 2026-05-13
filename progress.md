@@ -123,7 +123,7 @@
 ## Session: 2026-05-13
 
 ### Phase 6: Project Link Configuration
-- **Status:** in_progress
+- **Status:** complete
 - Actions taken:
   - Added centralized project link configuration in `src/config/projectLinks.ts`.
   - Added `.env.example` entries for optional `VITE_PROJECT_LINK_*` variables.
@@ -131,15 +131,23 @@
   - Updated `TerminalHome` so configured `http`/`https` project links open in a new tab while internal routes still use React Router navigation.
   - Added focused tests for internal route preservation and external URL classification.
   - Updated README with local project link configuration instructions.
+  - Added a small SVG favicon to avoid local browser smoke-test 404 noise.
+  - Started Vite dev server at `http://127.0.0.1:5173/owltree/`.
+  - Opened `http://127.0.0.1:5173/owltree/#/` with Playwright and confirmed the terminal homepage renders without console errors after the favicon fix.
 - Files created/modified:
   - `src/config/projectLinks.ts` created.
   - `src/config/projectLinks.test.ts` created.
   - `src/data/projects.ts` modified.
   - `src/components/portal/TerminalHome.tsx` modified.
+  - `index.html` modified.
+  - `public/favicon.svg` created.
   - `.env.example` created.
   - `README.md` modified.
+  - `.gitignore` modified.
 
 ### Phase 6 Test Results
 | Test | Input | Expected | Actual | Status |
 |------|-------|----------|--------|--------|
 | Project link focused tests | `npm run test:unit -- src/config/projectLinks.test.ts src/components/portal/TerminalHome.test.tsx` | Link config and terminal homepage tests pass | 2 files, 7 tests passed | pass |
+| Phase 6 final verification | `npm run typecheck && npm run lint && npm run test:unit && npm run build` | Static checks, unit tests, and production build pass | 24 files, 116 tests passed; build passed | pass |
+| Browser smoke test | Open `http://127.0.0.1:5173/owltree/#/` | Homepage renders without console errors | Page title `Owltree`, terminal homepage rendered | pass |

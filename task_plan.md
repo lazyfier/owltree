@@ -4,7 +4,7 @@
 Bring the Owltree repository to a clean, maintainable baseline by fixing current verification failures, removing obvious repository cruft, correcting stale maintenance documentation, and re-running the standard checks.
 
 ## Current Phase
-Phase 6: Project Link Configuration
+Complete
 
 ## Phases
 
@@ -47,9 +47,9 @@ Phase 6: Project Link Configuration
 - [x] Document `.env.local` values through `.env.example` and README.
 - [x] Preserve internal routing for built-in projects.
 - [x] Add focused test coverage for link classification.
-- [ ] Run final verification after configuration changes.
-- [ ] Confirm the dev server URL for local viewing.
-- **Status:** in_progress
+- [x] Run final verification after configuration changes.
+- [x] Confirm the dev server URL for local viewing.
+- **Status:** complete
 
 ## Key Questions
 1. Why does the current Vitest run fail on `window.localStorage.setItem`?
@@ -78,3 +78,4 @@ Phase 6: Project Link Configuration
 - Typecheck passed before maintenance changes.
 - Worktree was clean before creating planning files.
 - Final verification passed: lint, typecheck, unit tests, production build, and E2E.
+- Link configuration verification passed: typecheck, lint, unit tests, production build, and browser smoke test at `http://127.0.0.1:5173/owltree/#/`.
