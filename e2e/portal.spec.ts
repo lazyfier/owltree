@@ -23,7 +23,7 @@ test.describe('Portal homepage', () => {
   test('navigation back to home works', async ({ page }) => {
     await page.goto('/#/moon-throw')
     await expect(page.locator('text=月抛模拟器')).toBeVisible({ timeout: 10000 })
-    await page.getByRole('link', { name: /返回首页/ }).click()
+    await page.getByRole('button', { name: /返回首页/ }).click()
     await expect(page).toHaveURL(/#\/$/)
   })
 })

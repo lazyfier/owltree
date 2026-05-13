@@ -10,13 +10,12 @@
 
 ## ✨ 特性
 
-- 🎨 **四主题切换** — 终端 / 视觉小说 / 赛博朋克 / 极简风格一键切换
 - 💻 **终端 UI** — CRT 扫描线 + 霓虹光标 + 命令行美学
-- 🎮 **视觉小说主题** — Glitch 故障艺术 + 角色状态面板 + 像素风格
+- 🎨 **原型参考** — `theme/` 保留视觉小说等 HTML/CSS 原型，不参与运行时主题切换
 - 🎲 **月抛模拟器** — 关于选择与后果的实验性互动叙事游戏
 - 🌐 **自动 i18n** — 根据浏览器语言自动切换中英文
 - 🎯 **HashRouter** — 支持 GitHub Pages 部署的单页应用
-- 💾 **主题持久化** — 自动记忆用户主题偏好
+- 💾 **游戏进度存储** — 使用浏览器存储保存月抛模拟器成就进度
 
 ## 🛠️ 技术栈
 
@@ -24,7 +23,7 @@
 - **构建**: Vite
 - **样式**: Tailwind CSS + CSS Variables
 - **动画**: Framer Motion
-- **状态**: React Context + localStorage
+- **状态**: React Context + 浏览器存储（游戏成就）
 - **测试**: Vitest (单元) + Playwright (E2E)
 
 ## 🚀 快速开始
@@ -53,10 +52,11 @@ npm run test:e2e
 owltree/
 ├── src/
 │   ├── components/     # UI 组件
-│   │   ├── portal/     # 门户首页组件
+│   │   ├── portal/     # 终端门户首页组件
 │   │   ├── moon-throw/ # 游戏组件
+│   │   ├── layout/     # 全局布局组件
 │   │   └── ui/         # 基础 UI 组件
-│   ├── contexts/       # React Context (主题等)
+│   ├── contexts/       # React Context
 │   ├── pages/          # 页面
 │   ├── hooks/          # React Hooks
 │   ├── game/           # 游戏引擎与数据
@@ -69,27 +69,36 @@ owltree/
 │   ├── themes/       # 主题原型
 │   └── moon-throw.html # 原始游戏原型
 ├── e2e/                # Playwright E2E 测试
-├── dist/               # 构建输出
+├── dist/               # 构建输出（生成物，默认忽略）
 └── docs/               # 设计文档
 ```
 
 ## 🎨 主题系统
 
-支持四种主题风格，点击右上角按钮切换：
+当前运行时固定使用 `terminal` 主题。`ThemeContext` 会在根元素上设置 `data-theme="terminal"`，并忽略旧版本可能留下的主题 localStorage 值。
 
 | 主题 | 风格 | 预览 |
 |------|------|------|
-| 💻 Terminal | 终端 - CRT 扫描线 + 霓虹光标 | 默认 |
-| 🎮 Galgame | 视觉小说 - 故障艺术 + 角色面板 | 可用 |
-| ⚡ Cyber | 赛博朋克 - 霓虹光效 + 科技感 | 可用 |
-| ◐ Minimal | 极简主义 - 清爽留白 | 可用 |
+| 💻 Terminal | 终端 - CRT 扫描线 + 霓虹光标 | 当前运行时主题 |
 
 ### 技术实现
 
-- **CSS Variables**: 主题变量定义在 `:root` 和 `[data-theme]` 选择器中
-- **Context API**: `ThemeContext` 管理全局主题状态
-- **localStorage**: 自动持久化用户选择
-- **动态切换**: 无刷新即时切换，过渡动画平滑
+- **CSS Variables**: 变量定义在 `:root` 和 `[data-theme="terminal"]` 选择器中
+- **Context API**: `ThemeContext` 提供固定终端主题
+- **原型隔离**: 其他视觉方向保留在 `theme/` 作为参考，不作为运行时主题入口
+
+## 🔗 项目链接配置
+
+首页项目列表的外部链接集中配置在 `src/config/projectLinks.ts`。
+
+本地开发时可以复制 `.env.example` 为 `.env.local`，填写对应的 `VITE_PROJECT_LINK_*`：
+
+```bash
+VITE_PROJECT_LINK_API_GATEWAY=https://example.com/api-gateway
+VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
+```
+
+留空或不配置时，对应项目会保持不可点击；内部项目如 `moon-throw` 仍使用站内路由。
 
 ## 🌙 月抛模拟器
 
@@ -123,7 +132,7 @@ owltree/
 
 - `theme/moon-throw.html` — 原始游戏原型
 - `theme/themes/style-visual-novel-personal.html` — 视觉小说主题原型
-- `theme/archive/` — 废弃样式归档
+- `theme/layouts/terminal.html` — 终端布局原型
 
 ## 📝 License
 

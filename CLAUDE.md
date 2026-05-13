@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Owltree — a personal portal homepage built with React 18, Vite, and TypeScript. Features a terminal-first UI with four theme options (terminal, galgame, cyber, minimal) and an experimental narrative game "月抛模拟器" (moon-throw simulator).
+Owltree — a personal portal homepage built with React 18, Vite, and TypeScript. It currently ships a terminal-first UI (`data-theme="terminal"`) and an experimental narrative game "月抛模拟器" (moon-throw simulator).
 
 The `theme/` directory contains HTML/CSS prototypes used as visual references (not part of the build).
 
@@ -13,7 +13,7 @@ The `theme/` directory contains HTML/CSS prototypes used as visual references (n
 - **Framework**: React 18 + TypeScript
 - **Build Tool**: Vite
 - **Styling**: Tailwind CSS + CSS Variables for theming
-- **State**: React Context + localStorage for theme persistence
+- **State**: React Context for fixed terminal theme + browser storage for game achievements
 - **Animation**: Framer Motion
 - **Testing**: Vitest (unit) + Playwright (E2E)
 - **Routing**: HashRouter for GitHub Pages compatibility
@@ -46,9 +46,9 @@ npm run preview
 owltree/
 ├── src/
 │   ├── components/     # React components
-│   │   ├── portal/     # Portal homepage components (Hero, TerminalHome, CategoryGrid)
+│   │   ├── portal/     # Terminal portal homepage components (TerminalHome, ProjectRow)
 │   │   ├── moon-throw/ # Game UI components
-│   │   ├── layout/     # Layout components (Footer, ThemeSwitcher)
+│   │   ├── layout/     # Layout components (Footer)
 │   │   └── ui/         # Base UI components (Button, Card, Badge)
 │   ├── contexts/       # React Context (ThemeContext)
 │   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends)
@@ -197,11 +197,11 @@ If you cannot clearly justify why something must live in `src/`, it does not bel
 
 ### Theme System
 
-Four themes controlled by `data-theme` attribute on root element:
-- `terminal` (default): CRT scanlines, neon cursor, command-line aesthetic
-- `galgame`: Visual novel style with glitch effects
-- `cyber`: Cyberpunk with neon glows
-- `minimal`: Clean, whitespace-focused design
+Runtime theme behavior is terminal-only:
+- `terminal` is the only active runtime theme.
+- `ThemeContext` sets `data-theme="terminal"` on the root element.
+- Old theme localStorage values are ignored.
+- Static visual experiments live under `theme/` and are not mounted by the app.
 
 Uses CSS custom properties defined in `src/styles/globals.css`.
 

@@ -8,6 +8,10 @@ export default tseslint.config(
     ignores: [
       'coverage',
       'dist',
+      'playwright-report',
+      'test-results',
+      'blob-report',
+      '.worktrees',
       'src/components/moon-throw/VNDialogueBox.tsx',
       'src/components/portal/TerminalHome.tsx',
       'src/contexts/ThemeContext.tsx',

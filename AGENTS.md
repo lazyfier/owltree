@@ -4,7 +4,7 @@ Guidelines for AI agents working in this repository.
 
 ## Project Overview
 
-Owltree is a personal portal homepage built with React, Vite, and TypeScript. Features a terminal-first UI with four theme options (terminal, galgame, cyber, minimal) and an experimental narrative game "月抛模拟器" (moon-throw simulator).
+Owltree is a personal portal homepage built with React, Vite, and TypeScript. It currently ships a terminal-first UI (`data-theme="terminal"`) and an experimental narrative game "月抛模拟器" (moon-throw simulator). The `theme/` directory contains HTML/CSS prototypes for visual reference only.
 
 **Stack**: React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion.
 
@@ -40,7 +40,7 @@ npm run preview
 
 - **Framework**: React 18 with functional components and hooks
 - **Types**: Strict TypeScript with explicit return types on exported functions
-- **Components**: One component per file, PascalCase naming (`Hero.tsx`, `CategoryGrid.tsx`)
+- **Components**: One component per file, PascalCase naming (`TerminalHome.tsx`, `GameContainer.tsx`)
 - **Hooks**: Custom hooks in `src/hooks/`, camelCase with `use` prefix (`useGameState.ts`)
 - **Imports**: Use path aliases (`@/components`, `@/hooks`, `@/contexts`)
 
@@ -50,9 +50,9 @@ npm run preview
 owltree/
 ├── src/
 │   ├── components/     # React components
-│   │   ├── portal/     # Portal homepage components (Hero, TerminalHome, CategoryGrid)
+│   │   ├── portal/     # Terminal portal homepage components (TerminalHome, ProjectRow)
 │   │   ├── moon-throw/ # Game UI components (VNDialogueBox, VNPortrait, etc.)
-│   │   ├── layout/     # Layout components (Footer, ThemeSwitcher)
+│   │   ├── layout/     # Layout components (Footer)
 │   │   └── ui/         # Base UI components (Button, Card, Badge)
 │   ├── contexts/       # React Context (ThemeContext)
 │   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends, MoonThrow)
@@ -69,10 +69,11 @@ owltree/
 │   ├── moon-throw.html # Original game prototype
 │   └── themes/         # Theme prototypes
 ├── e2e/                # Playwright E2E tests
-├── dist/               # Build output
+├── dist/               # Build output (generated, ignored)
 ├── docs/               # Design documentation
 ├── archive/            # Archived/legacy files
-└── .sisyphus/          # AI planning files and evidence
+├── .sisyphus/          # AI planning files and evidence
+└── .worktrees/         # Local auxiliary git worktrees (ignored by tooling)
 ```
 
 ## Directory Placement Rules
@@ -209,8 +210,8 @@ If you cannot clearly justify why something must live in `src/`, it does not bel
 ### CSS/Styling
 
 - **Primary**: Tailwind CSS utility classes
-- **Custom**: CSS variables for theme switching (defined in `globals.css`)
-- **Themes**: Four themes controlled by `data-theme` attribute (`terminal`, `galgame`, `cyber`, `minimal`)
+- **Custom**: CSS variables for the terminal theme (defined in `globals.css`)
+- **Theme**: Runtime is fixed to `data-theme="terminal"` by `ThemeContext`
 - **Game Theme**: Independent CSS variable system in `game.css` (cyberpunk neon aesthetic)
 - **Pattern**: Use CSS variables for theme-dependent colors: `var(--bg-primary)`, `var(--text-primary)`
 
@@ -228,20 +229,17 @@ If you cannot clearly justify why something must live in `src/`, it does not bel
 
 ### Theme System
 
-Four themes available, switched via `ThemeContext`:
+Runtime theme behavior is intentionally terminal-only:
 
 | Theme | Description |
 |-------|-------------|
-| `terminal` | Default. CRT scanlines, neon cursor, command-line aesthetic |
-| `galgame` | Visual novel style with glitch effects and character panels |
-| `cyber` | Cyberpunk with neon glows and tech aesthetic |
-| `minimal` | Clean, whitespace-focused design |
+| `terminal` | Default and only active runtime theme. CRT scanlines, neon cursor, command-line aesthetic |
 
-Theme switching:
+Theme behavior:
 - Uses CSS custom properties (variables)
-- `data-theme` attribute on root element
-- Persists to localStorage
-- Smooth transitions between themes
+- `data-theme="terminal"` attribute on root element
+- Does not persist or restore theme selections from localStorage
+- Visual experiments live in `theme/` as static prototypes
 
 ### Common Components
 
@@ -261,7 +259,7 @@ The "月抛模拟器" game uses a pure TypeScript engine in `src/game/`:
 - **Engine**: Deterministic game logic with RNG
 - **State**: Managed via `useGameState` hook
 - **UI**: Visual novel style with dialogue boxes, ASCII portraits, and choice buttons
-- **Tests**: Full unit test coverage with Vitest (94 tests)
+- **Tests**: Unit coverage with Vitest for engine and UI flows
 
 ### Key Components
 
@@ -297,7 +295,7 @@ The "月抛模拟器" game uses a pure TypeScript engine in `src/game/`:
 
 - **Unit**: Vitest for game logic and utilities (`npm run test:unit`)
 - **E2E**: Playwright for UI flows (`npm run test:e2e`)
-- **Coverage**: 94 tests covering game engine, actions, and conditions
+- **Coverage**: Unit tests cover game engine, actions, UI helpers, and app routing
 
 ---
 
@@ -379,4 +377,4 @@ GitHub Actions auto-deploys to GitHub Pages on push to `main`.
 
 ---
 
-*Last updated: Visual novel game enhancement complete — 94 tests passing*
+*Last updated: repository cleanup and terminal-only maintenance alignment*

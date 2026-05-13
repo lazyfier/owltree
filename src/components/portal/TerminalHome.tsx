@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import { isExternalProjectUrl } from '@/config/projectLinks'
 import { projects } from '@/data/projects'
 import { ProjectRow } from '@/components/portal/ProjectRow'
 
@@ -54,6 +55,15 @@ function ModuleItem({ m, onNavigate }: { m: typeof modules[number]; onNavigate: 
 
 export function TerminalHome() {
   const navigate = useNavigate()
+
+  const handleProjectNavigate = (url: string) => {
+    if (isExternalProjectUrl(url)) {
+      window.open(url, '_blank', 'noopener,noreferrer')
+      return
+    }
+
+    navigate(url)
+  }
 
   return (
     <>
@@ -113,7 +123,7 @@ export function TerminalHome() {
             <div style={{ marginTop: 4, paddingLeft: 16 }}>
               <div className="t-projects-output">
                 {projects.map((p) => (
-                  <ProjectRow key={p.id} project={p} onNavigate={navigate} />
+                  <ProjectRow key={p.id} project={p} onNavigate={handleProjectNavigate} />
                 ))}
               </div>
             </div>
