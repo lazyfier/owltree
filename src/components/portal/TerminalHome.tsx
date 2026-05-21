@@ -4,10 +4,8 @@ import { projects } from '@/data/projects'
 import { ProjectRow } from '@/components/portal/ProjectRow'
 
 const modules = [
-  { label: 'GAMES', color: 't-m-mauve', inlineColor: 'var(--mauve)', href: '/games' },
   { label: 'NOTES', color: 't-m-cyan', inlineColor: 'var(--cyan)', href: '/notes' },
-  { label: 'TOOLS', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/tools' },
-  { label: 'TRENDS', color: 't-m-teal', inlineColor: 'var(--teal)', href: '/trends' },
+  { label: 'PROJECTS', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/projects' },
 ]
 
 const stackRows = [

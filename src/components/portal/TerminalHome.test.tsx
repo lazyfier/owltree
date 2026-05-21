@@ -26,8 +26,8 @@ describe('TerminalHome', () => {
 
     expect(screen.getByText('./show_projects.sh')).toBeInTheDocument()
     expect(screen.getByText('./list_modules.sh')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'GAMES' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'NOTES' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'PROJECTS' })).toBeInTheDocument()
   })
 
   it('navigates to a module route when a module button is clicked', async () => {
@@ -37,13 +37,13 @@ describe('TerminalHome', () => {
       <MemoryRouter initialEntries={['/#/']}>
         <Routes>
           <Route path="/" element={<TerminalHome />} />
-          <Route path="/games" element={<div data-testid="games-page">Games</div>} />
+          <Route path="/projects" element={<div data-testid="projects-page">Projects</div>} />
         </Routes>
       </MemoryRouter>,
     )
 
-    await user.click(screen.getByRole('button', { name: 'GAMES' }))
-    expect(screen.getByTestId('games-page')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'PROJECTS' }))
+    expect(screen.getByTestId('projects-page')).toBeInTheDocument()
   })
 
   it('shows a project row for clickable projects', () => {

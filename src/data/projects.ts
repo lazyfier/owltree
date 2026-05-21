@@ -5,6 +5,7 @@ export interface Project {
   name: string
   description: string
   url: string
+  isFrontendProject: boolean
   tags: string[]
   icon: string
   featured: boolean
@@ -24,6 +25,7 @@ export const projects: Project[] = [
     name: '月抛模拟器',
     description: '关于选择与后果的实验性互动叙事游戏，融合视觉小说引擎与概率系统。',
     url: PROJECT_LINKS['moon-throw'],
+    isFrontendProject: true,
     tags: ['React', 'TypeScript', 'Framer Motion'],
     icon: '🌙',
     featured: true,
@@ -41,6 +43,7 @@ export const projects: Project[] = [
     name: 'Owltree Portal',
     description: '个人门户主页，支持终端主题、游戏入口、模块系统。',
     url: PROJECT_LINKS['owltree-portal'],
+    isFrontendProject: true,
     tags: ['React', 'Tailwind', 'Design'],
     icon: '🦉',
     featured: false,
@@ -58,6 +61,7 @@ export const projects: Project[] = [
     name: 'Secret Project',
     description: '神秘项目，详情暂不公开。属于个人实验性探索方向。',
     url: PROJECT_LINKS['secret-project'],
+    isFrontendProject: false,
     tags: ['Private', 'Experiment'],
     icon: '🔐',
     featured: false,
@@ -75,6 +79,7 @@ export const projects: Project[] = [
     name: 'API Gateway',
     description: '统一API网关，处理鉴权、限流、路由与日志聚合。',
     url: PROJECT_LINKS['api-gateway'],
+    isFrontendProject: false,
     tags: ['Go', 'gRPC', 'Redis'],
     icon: '🚪',
     featured: false,
@@ -92,6 +97,7 @@ export const projects: Project[] = [
     name: 'Data Pipeline',
     description: '数据采集与ETL管道，支持多源接入和实时流处理。',
     url: PROJECT_LINKS['data-pipeline'],
+    isFrontendProject: false,
     tags: ['Python', 'Airflow', 'Kafka'],
     icon: '📊',
     featured: false,
@@ -109,6 +115,7 @@ export const projects: Project[] = [
     name: 'Design System',
     description: '统一设计语言，包含Token、组件库和文档站点。',
     url: PROJECT_LINKS['design-system'],
+    isFrontendProject: true,
     tags: ['Figma', 'Storybook'],
     icon: '🎨',
     featured: false,
@@ -126,6 +133,7 @@ export const projects: Project[] = [
     name: 'NeoBrutal UI',
     description: '新野兽主义UI组件库，粗边框 + 高对比 + 强排版。',
     url: PROJECT_LINKS['neobrutal-ui'],
+    isFrontendProject: true,
     tags: ['React', 'CSS', 'A11y'],
     icon: '💥',
     featured: false,
@@ -143,6 +151,7 @@ export const projects: Project[] = [
     name: 'CLI Toolkit',
     description: '开发者命令行工具集，代码生成、部署自动化等。',
     url: PROJECT_LINKS['cli-toolkit'],
+    isFrontendProject: false,
     tags: ['Rust', 'CLI'],
     icon: '⌨️',
     featured: false,
@@ -160,6 +169,7 @@ export const projects: Project[] = [
     name: 'AI Agent',
     description: '自主AI代理框架，支持工具调用与多Agent协作。',
     url: PROJECT_LINKS['ai-agent'],
+    isFrontendProject: false,
     tags: ['Python', 'LLM', 'MCP'],
     icon: '🤖',
     featured: false,
@@ -173,3 +183,5 @@ export const projects: Project[] = [
     extraLabel: 'PHASE',
   },
 ]
+
+export const frontendProjects = projects.filter((project) => project.isFrontendProject)

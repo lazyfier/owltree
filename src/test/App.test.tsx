@@ -35,4 +35,12 @@ describe('App routing shell', () => {
 
     expect(await screen.findByText('Panic Edition')).toBeInTheDocument()
   })
+
+  it('renders the projects page on the projects route', async () => {
+    window.location.hash = '#/projects'
+    render(<App />)
+
+    expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
+    expect(screen.getByText('[React] [CSS] [A11y]')).toBeInTheDocument()
+  })
 })

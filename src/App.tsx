@@ -5,6 +5,7 @@ import { Home } from '@/pages/Home'
 
 const Games = lazy(() => import('@/pages/Games').then(m => ({ default: m.Games })))
 const Notes = lazy(() => import('@/pages/Notes').then(m => ({ default: m.Notes })))
+const Projects = lazy(() => import('@/pages/Projects').then(m => ({ default: m.Projects })))
 const Tools = lazy(() => import('@/pages/Tools').then(m => ({ default: m.Tools })))
 const Trends = lazy(() => import('@/pages/Trends').then(m => ({ default: m.Trends })))
 const MoonThrow = lazy(() => import('@/pages/MoonThrow').then(m => ({ default: m.MoonThrow })))
@@ -26,6 +27,7 @@ export default function App() {
             <Route path="/" element={<Home />} />
             <Route path="/games" element={<Games />} />
             <Route path="/notes" element={<Notes />} />
+            <Route path="/projects" element={<Projects />} />
             <Route path="/tools" element={<Tools />} />
             <Route path="/trends" element={<Trends />} />
             <Route path="/moon-throw" element={<MoonThrow />} />
