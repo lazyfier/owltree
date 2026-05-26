@@ -19,15 +19,6 @@ interface Game {
 
 const gamesData: Game[] = [
   {
-    id: 'moon-throw',
-    name: '月抛模拟器',
-    description: '关于选择与后果的实验性互动叙事游戏。管理生理与心理压力，在随机生成的伙伴中做出选择。',
-    url: '/moon-throw',
-    icon: '🌙',
-    featured: true,
-    tags: ['互动叙事', '教育', '实验性'],
-  },
-  {
     id: 'coming-soon-1',
     name: '像素冒险',
     description: '即将推出的复古像素风格冒险游戏。探索、战斗、解谜。',
@@ -76,10 +67,6 @@ function getTerminalStatus(game: Game): 'RUNNING' | 'PLANNED' {
 function getTerminalProgress(game: Game): string {
   if (game.url === '#') {
     return '---'
-  }
-
-  if (game.featured) {
-    return '████████░░ 87%'
   }
 
   return '██████░░░░ 63%'

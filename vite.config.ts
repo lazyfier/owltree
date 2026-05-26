@@ -2,10 +2,11 @@ import { fileURLToPath, URL } from 'node:url'
 
 import react from '@vitejs/plugin-react'
 import { defineConfig } from 'vite'
+import { owltreeNotesPlugin } from './vite.notesPlugin'
 
 export default defineConfig({
   base: '/owltree/',
-  plugins: [react()],
+  plugins: [react(), owltreeNotesPlugin()],
   build: {
     sourcemap: true,
     rollupOptions: {

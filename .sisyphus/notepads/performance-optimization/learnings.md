@@ -1,2 +1,0 @@
-- 2026-04-16: For page-level performance work, only memoized real derived collections/counters. `src/pages/Tools.tsx` now memoizes category filtering and terminal grouping; `src/pages/Trends.tsx` now memoizes filtered trend lists and hot-count derivation.
-- 2026-04-16: `src/pages/Games.tsx` and `src/pages/Notes.tsx` were left unchanged because they only contained straightforward per-item render formatting, not reusable derived datasets worth `useMemo`.

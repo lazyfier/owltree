@@ -1,158 +1,292 @@
 import { ParticleBackground } from '@/components/ui/ParticleBackground'
 import { Footer } from '@/components/layout/Footer'
 import { useTheme } from '@/contexts/ThemeContext'
+import { getAssetsInDirectory, getChildDirectories, getNotesInDirectory, type NoteAsset, type NoteDocument } from '@/data/notes'
+import { slugToMarkdownPath, validateNoteMarkdownPath } from '@/lib/notePaths'
 import '@/styles/pages/notes.css'
 import '@/styles/pages/_theme-atmosphere.css'
-import { ArrowLeft, BookOpen, Calendar, Clock } from 'lucide-react'
+import { ArrowLeft, BookOpen, Calendar, Clock, ChevronRight, FilePlus2 } from 'lucide-react'
 import { motion } from 'framer-motion'
-import { useNavigate } from 'react-router-dom'
-
-interface Note {
-  id: string
-  title: string
-  excerpt: string
-  date: string
-  readTime: string
-  tags: string[]
-  type: 'article' | 'podcast' | 'thought'
-}
-
-const notesData: Note[] = [
-  {
-    id: '1',
-    title: '构建个人知识管理系统',
-    excerpt: '如何搭建一个高效的第二大脑,让知识真正为你所用。从收集、整理到输出的完整流程。',
-    date: '2026-04-01',
-    readTime: '8分钟',
-    tags: ['效率', '知识管理'],
-    type: 'article',
-  },
-  {
-    id: '2',
-    title: '独立开发者的生存指南',
-    excerpt: '从0到1打造产品,技术、设计、营销三位一体。聊聊我在独立开发路上踩过的坑。',
-    date: '2026-03-28',
-    readTime: '15分钟',
-    tags: ['独立开发', '创业'],
-    type: 'podcast',
-  },
-  {
-    id: '3',
-    title: '随机思考:关于创意的产生',
-    excerpt: '创意不是凭空出现的,它是对已有元素的重新组合。如何培养创造性思维?',
-    date: '2026-03-25',
-    readTime: '3分钟',
-    tags: ['思考', '创意'],
-    type: 'thought',
-  },
-  {
-    id: '4',
-    title: '前端工程化最佳实践',
-    excerpt: '现代化前端项目架构设计,从工具链选择到CI/CD流程的完整方案。',
-    date: '2026-03-20',
-    readTime: '12分钟',
-    tags: ['前端', '工程化'],
-    type: 'article',
-  },
-]
+import { useMemo, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 
 const typeConfig = {
   article: {
-    icon: '📝',
-    label: '文章',
+    icon: '::',
+    label: 'article',
     color: 'var(--notes-accent)',
-    colorFallback: '#6b9bd1',
-    bgGradient: 'from-[var(--notes-accent)] to-[var(--notes-accent-light)]',
   },
-  podcast: {
-    icon: '🎙️',
-    label: '播客',
-    color: 'var(--games-accent)',
-    colorFallback: '#e85d75',
-    bgGradient: 'from-[var(--games-accent)] to-[var(--games-accent-light)]',
+  log: {
+    icon: '>>',
+    label: 'log',
+    color: 'var(--yellow)',
+  },
+  dailywork: {
+    icon: '[]',
+    label: 'daily',
+    color: 'var(--green)',
   },
   thought: {
-    icon: '💭',
-    label: '随想',
-    color: 'var(--tools-accent)',
-    colorFallback: '#9bc47f',
-    bgGradient: 'from-[var(--tools-accent)] to-[var(--tools-accent-light)]',
+    icon: '??',
+    label: 'thought',
+    color: 'var(--mauve)',
   },
-}
+} as const
 
 const containerVariants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.08,
+      staggerChildren: 0.06,
     },
   },
 }
 
 const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 14 },
   visible: {
     opacity: 1,
     y: 0,
     transition: {
-      duration: 0.5,
-      ease: [0.175, 0.885, 0.32, 1.275],
+      duration: 0.35,
+      ease: [0.175, 0.885, 0.32, 1.12],
     },
   },
 }
 
-function formatTerminalTags(tags: Note['tags']): string {
+function formatTerminalTags(tags: string[]): string {
   return tags.map((tag) => `[${tag}]`).join(' ')
+}
+
+function formatUpdatedAt(value: string | null): string {
+  if (!value) {
+    return '--'
+  }
+
+  return value.slice(0, 10)
+}
+
+type NoteSortKey = 'updated' | 'title' | 'type'
+type NoteSortDirection = 'asc' | 'desc'
+const canEditNotes = import.meta.env.DEV
+
+function compareNotes(left: NoteDocument, right: NoteDocument, key: NoteSortKey, direction: NoteSortDirection): number {
+  const order = direction === 'asc' ? 1 : -1
+
+  if (key === 'updated') {
+    return order * (left.updatedAt ?? '').localeCompare(right.updatedAt ?? '')
+  }
+
+  if (key === 'type') {
+    return order * left.type.localeCompare(right.type)
+  }
+
+  return order * left.title.localeCompare(right.title)
+}
+
+function assetKindLabel(asset: NoteAsset): string {
+  return asset.previewKind === 'download' ? 'file' : asset.previewKind
+}
+
+function buildNewNoteTemplate(title: string): string {
+  const today = new Date().toISOString().slice(0, 10)
+
+  return [
+    '---',
+    `title: ${title}`,
+    `date: ${today}`,
+    'tags: notes',
+    `summary: ${title}`,
+    'type: article',
+    '---',
+    '',
+    `# ${title}`,
+    '',
+  ].join('\n')
+}
+
+async function createNote(path: string, title: string): Promise<void> {
+  const response = await fetch('/__owltree/notes/raw', {
+    method: 'PUT',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ path, content: buildNewNoteTemplate(title) }),
+  })
+
+  if (!response.ok) {
+    const payload = await response.json().catch(() => ({ error: 'Unable to create note.' })) as { error?: string }
+    throw new Error(payload.error ?? 'Unable to create note.')
+  }
 }
 
 export function Notes() {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { theme } = useTheme()
+  const currentDirectory = searchParams.get('dir') ?? ''
+  const sortKey = (searchParams.get('sort') as NoteSortKey | null) ?? 'updated'
+  const sortDirection = (searchParams.get('order') as NoteSortDirection | null) ?? 'desc'
+  const childDirectories = getChildDirectories(currentDirectory)
+  const directoryNotes = getNotesInDirectory(currentDirectory)
+  const directoryAssets = getAssetsInDirectory(currentDirectory)
+  const displayPath = currentDirectory ? `~/notes/${currentDirectory}` : '~/notes'
+  const [newNoteName, setNewNoteName] = useState('new.md')
+  const [newNoteStatus, setNewNoteStatus] = useState('')
+
+  const sortedDirectoryNotes = useMemo(() => {
+    return [...directoryNotes].sort((left, right) => compareNotes(left, right, sortKey, sortDirection))
+  }, [directoryNotes, sortDirection, sortKey])
+
+  const openDirectory = (path: string) => {
+    const nextParams = new URLSearchParams(searchParams)
+    if (path) {
+      nextParams.set('dir', path)
+    } else {
+      nextParams.delete('dir')
+    }
+    const query = nextParams.toString()
+    navigate(`/notes${query ? `?${query}` : ''}`)
+  }
+
+  const applySort = (nextKey: NoteSortKey) => {
+    const nextDirection: NoteSortDirection =
+      nextKey === sortKey
+        ? (sortDirection === 'desc' ? 'asc' : 'desc')
+        : 'desc'
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('sort', nextKey)
+    nextParams.set('order', nextDirection)
+    setSearchParams(nextParams)
+  }
+
+  const createNewNote = async () => {
+    const notePath = currentDirectory ? `${currentDirectory}/${newNoteName}` : newNoteName
+    const validation = validateNoteMarkdownPath(notePath)
+
+    if (!validation.ok) {
+      setNewNoteStatus(validation.error ?? 'Invalid note path.')
+      return
+    }
+
+    setNewNoteStatus('creating...')
+    try {
+      await createNote(validation.path, newNoteName.replace(/\.md$/, '').replace(/[-_]/g, ' '))
+      setNewNoteStatus('created; Vite will reload the note index.')
+      navigate(`/notes/${slugToMarkdownPath(validation.path).replace(/\.md$/, '')}`)
+    } catch (error) {
+      setNewNoteStatus(error instanceof Error ? error.message : 'Unable to create note.')
+    }
+  }
 
   return (
-    <div data-page="notes" className="page-root min-h-screen relative overflow-hidden">
+    <div data-page="notes" className="page-root min-h-screen relative">
       <ParticleBackground />
       <main className="relative z-10 flex flex-col items-center px-4 py-8 sm:py-12">
-        <div className="w-full max-w-4xl">
+        <div className="w-full max-w-5xl">
           {theme === 'terminal' ? (
             <motion.div
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
-              className="term-command-output font-mono text-sm leading-7 text-[var(--page-text)]"
+              className="term-command-output font-mono text-sm leading-7 text-[var(--page-text)] note-shell"
             >
               <div className="term-output-line flex items-center gap-2 mb-2">
                 <a
-                  href="#/"
+                  href={currentDirectory ? `#/notes` : '#/'}
                   className="page-back-btn inline-flex items-center gap-1 px-2 py-1 text-xs transition-all"
                 >
                   <ArrowLeft className="w-3 h-3" />
                   cd ..
                 </a>
               </div>
-              <div className="term-output-line">$ ls -la ~/notes/</div>
-              {notesData.map((note) => {
-                const config = typeConfig[note.type]
-
-                return (
-                  <button
-                    key={note.id}
-                    type="button"
-                    className="term-output-line grid grid-cols-[9rem_6rem_8rem_2.5rem_6rem_minmax(0,1fr)_minmax(8rem,auto)] gap-3 cursor-pointer hover:bg-[var(--glass-highlight)] rounded px-1 -mx-1 transition-colors text-left"
-                    onClick={() => navigate(`/notes/${note.id}`)}
-                  >
-                    <span className="whitespace-nowrap">-rw-r--r--</span>
-                    <span className="whitespace-nowrap">lazyfier</span>
-                    <span className="whitespace-nowrap">{note.date}</span>
-                    <span aria-hidden="true">{config.icon}</span>
-                    <span className="whitespace-nowrap uppercase">{note.type}</span>
-                    <span className="truncate">{note.title}</span>
-                    <span className="justify-self-start whitespace-nowrap sm:justify-self-end">
-                      {formatTerminalTags(note.tags)}
-                    </span>
+              <div className="notes-terminal-header">
+                <span className="notes-terminal-prompt">$ ls -la {displayPath}/</span>
+                <span className="notes-terminal-count">{childDirectories.length + directoryNotes.length + directoryAssets.length} entries</span>
+              </div>
+              <div className="notes-terminal-sortbar">
+                <button type="button" className="notes-sort-chip" onClick={() => applySort('updated')}>
+                  updated {sortKey === 'updated' ? `[${sortDirection}]` : ''}
+                </button>
+                <button type="button" className="notes-sort-chip" onClick={() => applySort('title')}>
+                  title {sortKey === 'title' ? `[${sortDirection}]` : ''}
+                </button>
+                <button type="button" className="notes-sort-chip" onClick={() => applySort('type')}>
+                  type {sortKey === 'type' ? `[${sortDirection}]` : ''}
+                </button>
+              </div>
+              {canEditNotes ? (
+                <div className="notes-new-row">
+                  <span>$ touch</span>
+                  <input
+                    className="notes-new-input"
+                    value={newNoteName}
+                    onChange={(event) => setNewNoteName(event.target.value)}
+                    aria-label="New note filename"
+                  />
+                  <button type="button" className="notes-action-btn" onClick={createNewNote}>
+                    <FilePlus2 className="h-3.5 w-3.5" />
+                    new.md
                   </button>
-                )
-              })}
+                  {newNoteStatus ? <span className="notes-new-status">{newNoteStatus}</span> : null}
+                </div>
+              ) : null}
+              <div className="notes-terminal-table">
+                {childDirectories.map((directory) => (
+                  <button
+                    key={directory.path}
+                    type="button"
+                    className="notes-terminal-row"
+                    onClick={() => openDirectory(directory.path)}
+                  >
+                    <span className="notes-cell notes-cell-perms">drwxr-xr-x</span>
+                    <span className="notes-cell notes-cell-title" title={directory.name}>{directory.name}</span>
+                    <span className="notes-cell notes-cell-type notes-cell-type-folder" style={{ color: 'var(--yellow)' }}>
+                      {'<>'}
+                    </span>
+                    <span className="notes-cell notes-cell-kind">dir</span>
+                    <span className="notes-cell notes-cell-date">folder</span>
+                    <span className="notes-cell notes-cell-tags">[open]</span>
+                  </button>
+                ))}
+                {sortedDirectoryNotes.map((note) => {
+                  const config = typeConfig[note.type]
+
+                  return (
+                    <button
+                      key={note.slug}
+                      type="button"
+                      className="notes-terminal-row"
+                      onClick={() => navigate(`/notes/${note.slug}`)}
+                    >
+                      <span className="notes-cell notes-cell-perms">-rw-r--r--</span>
+                      <span className="notes-cell notes-cell-title" title={note.title}>{note.title}</span>
+                      <span className="notes-cell notes-cell-type" style={{ color: config.color }}>
+                        {config.icon}
+                      </span>
+                      <span className="notes-cell notes-cell-kind">{config.label}</span>
+                      <span className="notes-cell notes-cell-date">{formatUpdatedAt(note.updatedAt)}</span>
+                      <span className="notes-cell notes-cell-tags" title={formatTerminalTags(note.tags)}>{formatTerminalTags(note.tags)}</span>
+                    </button>
+                  )
+                })}
+                {directoryAssets.map((asset) => (
+                  <button
+                    key={asset.slug}
+                    type="button"
+                    className="notes-terminal-row"
+                    onClick={() => navigate(`/notes/${asset.slug}`)}
+                  >
+                    <span className="notes-cell notes-cell-perms">-rw-r--r--</span>
+                    <span className="notes-cell notes-cell-title" title={asset.name}>{asset.name}</span>
+                    <span className="notes-cell notes-cell-type" style={{ color: 'var(--cyan)' }}>
+                      {'--'}
+                    </span>
+                    <span className="notes-cell notes-cell-kind">{assetKindLabel(asset)}</span>
+                    <span className="notes-cell notes-cell-date">preview</span>
+                    <span className="notes-cell notes-cell-tags">[open]</span>
+                  </button>
+                ))}
+              </div>
               <div className="term-cursor-line">$ _</div>
             </motion.div>
           ) : (
@@ -160,26 +294,57 @@ export function Notes() {
               <motion.div
                 initial={{ opacity: 0, y: -20 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-4 mb-10"
+                className="flex items-center gap-4 mb-8"
               >
                 <a
-                  href="#/"
+                  href={currentDirectory ? '#/notes' : '#/'}
                   className="page-back-btn flex items-center justify-center w-11 h-11 rounded-2xl transition-all"
                 >
                   <ArrowLeft className="w-5 h-5" />
                 </a>
                 <div className="flex-1">
                   <div className="flex items-center gap-3">
-                    <div className="page-header-icon flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[var(--notes-accent)] to-[var(--notes-accent-light)]">
-                      <BookOpen className="w-5 h-5 text-white" />
+                    <div className="page-header-icon flex h-10 w-10 items-center justify-center rounded-xl bg-transparent">
+                      <BookOpen className="w-5 h-5" />
                     </div>
                     <div>
                       <h1 className="text-2xl font-bold text-[var(--page-text)]">笔记</h1>
-                      <p className="text-sm text-[var(--page-text-muted)]">像角色日志和剧情片段一样收纳你的文字与记录</p>
+                      <p className="text-sm text-[var(--page-text-muted)]">从 markdown 目录递归读取，并按文件夹与文件浏览</p>
                     </div>
                   </div>
                 </div>
               </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="notes-directory-bar"
+              >
+                <button type="button" className="notes-directory-chip" onClick={() => openDirectory('')}>
+                  root
+                </button>
+                {currentDirectory ? (
+                  <span className="notes-directory-current">
+                    <ChevronRight className="h-3.5 w-3.5" />
+                    {currentDirectory}
+                  </span>
+                ) : null}
+                {canEditNotes ? (
+                  <div className="notes-new-row">
+                    <input
+                      className="notes-new-input"
+                      value={newNoteName}
+                      onChange={(event) => setNewNoteName(event.target.value)}
+                      aria-label="New note filename"
+                    />
+                    <button type="button" className="notes-action-btn" onClick={createNewNote}>
+                      <FilePlus2 className="h-3.5 w-3.5" />
+                      new.md
+                    </button>
+                  </div>
+                ) : null}
+              </motion.div>
+              {newNoteStatus ? <p className="notes-new-status">{newNoteStatus}</p> : null}
 
               <motion.div
                 variants={containerVariants}
@@ -187,43 +352,60 @@ export function Notes() {
                 animate="visible"
                 className="notes-grid"
               >
-                {notesData.map((note) => {
+                {childDirectories.map((directory) => (
+                  <motion.button
+                    key={directory.path}
+                    variants={itemVariants}
+                    type="button"
+                    className="page-card note-card group relative overflow-hidden cursor-pointer transition-all text-left"
+                    onClick={() => openDirectory(directory.path)}
+                  >
+                    <div className="note-card-inner">
+                      <div className="note-layout">
+                        <div className="note-type-col">
+                            <span className="note-type-icon">{'<>'}</span>
+                          <span className="page-label text-[10px] font-semibold uppercase tracking-wider">
+                            dir
+                          </span>
+                        </div>
+
+                        <div className="note-body">
+                          <span className="note-title text-lg font-bold text-[var(--page-text)] transition-colors">
+                            {directory.name}
+                          </span>
+                          <span className="note-excerpt text-sm text-[var(--page-text-secondary)] leading-relaxed line-clamp-2">
+                            打开文件夹并浏览其中的 markdown 文档
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
+                {sortedDirectoryNotes.map((note) => {
                   const config = typeConfig[note.type]
                   return (
                     <motion.button
-                      key={note.id}
+                      key={note.slug}
                       variants={itemVariants}
                       type="button"
                       className="page-card note-card group relative overflow-hidden cursor-pointer transition-all text-left"
-                      onClick={() => navigate(`/notes/${note.id}`)}
+                      onClick={() => navigate(`/notes/${note.slug}`)}
                     >
-                      <div
-                        className="page-accent-bar absolute left-0 top-0 bottom-0"
-                        style={{
-                          background: `linear-gradient(to bottom, ${config.color}, color-mix(in srgb, ${config.color} 60%, transparent))`,
-                        }}
-                      />
-
                       <div className="note-card-inner">
                         <div className="note-layout">
                           <div className="note-type-col">
-                            <span className="note-type-icon text-2xl">{config.icon}</span>
+                            <span className="note-type-icon">{config.icon}</span>
                             <span className="page-label text-[10px] font-semibold uppercase tracking-wider">
                               {config.label}
                             </span>
                           </div>
 
                           <div className="note-body">
-                            <div className="note-type-label">
-                              <span className="page-label text-xs font-medium uppercase tracking-wider">
-                                log / {note.type}
-                              </span>
-                            </div>
-                            <span className="note-title text-lg font-bold text-[var(--page-text)] group-hover:text-[var(--notes-accent)] transition-colors">
+                            <span className="note-title text-lg font-bold text-[var(--page-text)] transition-colors">
                               {note.title}
                             </span>
                             <span className="note-excerpt text-sm text-[var(--page-text-secondary)] leading-relaxed line-clamp-2">
-                              {note.excerpt}
+                              {note.summary}
                             </span>
                             <div className="note-meta text-xs text-[var(--page-text-muted)]">
                               <span className="note-meta-items">
@@ -232,13 +414,16 @@ export function Notes() {
                               </span>
                               <span className="note-meta-items">
                                 <Clock className="w-3.5 h-3.5" />
+                                {formatUpdatedAt(note.updatedAt)}
+                              </span>
+                              <span className="note-meta-items">
                                 {note.readTime}
                               </span>
                               <div className="note-tags">
                                 {note.tags.map((tag) => (
                                   <span
                                     key={tag}
-                                    className="page-tag group-hover:text-[var(--notes-accent)] transition-colors"
+                                    className="page-tag transition-colors"
                                   >
                                     {tag}
                                   </span>
@@ -251,6 +436,34 @@ export function Notes() {
                     </motion.button>
                   )
                 })}
+                {directoryAssets.map((asset) => (
+                  <motion.button
+                    key={asset.slug}
+                    variants={itemVariants}
+                    type="button"
+                    className="page-card note-card group relative overflow-hidden cursor-pointer transition-all text-left"
+                    onClick={() => navigate(`/notes/${asset.slug}`)}
+                  >
+                    <div className="note-card-inner">
+                      <div className="note-layout">
+                        <div className="note-type-col">
+                          <span className="note-type-icon">--</span>
+                          <span className="page-label text-[10px] font-semibold uppercase tracking-wider">
+                            {assetKindLabel(asset)}
+                          </span>
+                        </div>
+                        <div className="note-body">
+                          <span className="note-title text-lg font-bold text-[var(--page-text)] transition-colors">
+                            {asset.name}
+                          </span>
+                          <span className="note-excerpt text-sm text-[var(--page-text-secondary)] leading-relaxed line-clamp-2">
+                            Open with a lightweight browser-native preview
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.button>
+                ))}
               </motion.div>
             </>
           )}

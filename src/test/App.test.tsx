@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { fireEvent, render, screen } from '@testing-library/react'
 
 import App from '@/App'
 
@@ -26,14 +26,7 @@ describe('App routing shell', () => {
   it('renders the home page with terminal content', () => {
     render(<App />)
 
-    expect(screen.getByText('SYSTEM ONLINE')).toBeInTheDocument()
-  })
-
-  it('renders the moon throw intro on the game route', async () => {
-    window.location.hash = '#/moon-throw'
-    render(<App />)
-
-    expect(await screen.findByText('Panic Edition')).toBeInTheDocument()
+    expect(screen.getByText('system online')).toBeInTheDocument()
   })
 
   it('renders the projects page on the projects route', async () => {
@@ -41,6 +34,96 @@ describe('App routing shell', () => {
     render(<App />)
 
     expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
-    expect(screen.getByText('[React] [CSS] [A11y]')).toBeInTheDocument()
+    expect(screen.queryByText('月抛模拟器')).not.toBeInTheDocument()
+  })
+
+  it('redirects the removed moon throw route to home', async () => {
+    window.location.hash = '#/moon-throw'
+    render(<App />)
+
+    expect(await screen.findByText('system online')).toBeInTheDocument()
+  })
+
+  it('navigates to projects with the p shortcut', async () => {
+    render(<App />)
+
+    fireEvent.keyDown(window, { key: 'p' })
+
+    expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
+  })
+
+  it('opens shortcut help with question mark', () => {
+    render(<App />)
+
+    fireEvent.keyDown(window, { key: '?' })
+    expect(screen.getByRole('dialog', { name: 'Keyboard shortcuts' })).toBeInTheDocument()
+  })
+
+  it('navigates to notes with the n shortcut', async () => {
+    render(<App />)
+
+    fireEvent.keyDown(window, { key: 'n' })
+
+    expect(await screen.findByText('$ ls -la ~/notes/')).toBeInTheDocument()
+  })
+
+  it('uses escape as parent-level navigation', async () => {
+    window.location.hash = '#/projects'
+    render(<App />)
+
+    expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+
+    expect(await screen.findByText('system online')).toBeInTheDocument()
+  })
+
+  it('renders a note detail route from markdown content', async () => {
+    window.location.hash = '#/notes/terminal-notes'
+    render(<App />)
+
+    expect(await screen.findByText('$ cat ~/notes/terminal-notes.md')).toBeInTheDocument()
+    expect(screen.getAllByText('Terminal Notes Workflow').length).toBeGreaterThan(0)
+    expect(screen.getByRole('heading', { name: 'Backlinks' })).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Weekly Sync/i })).toBeInTheDocument()
+  })
+
+  it('lists nested note folders and opens recursive note routes', async () => {
+    window.location.hash = '#/notes'
+    render(<App />)
+
+    expect(await screen.findByText('worklogs')).toBeInTheDocument()
+
+    window.location.hash = '#/notes/worklogs/weekly-sync'
+    render(<App />)
+
+    expect(await screen.findByText('$ cat ~/notes/worklogs/weekly-sync.md')).toBeInTheDocument()
+    expect(screen.getAllByText('Weekly Sync').length).toBeGreaterThan(0)
+  })
+
+  it('renders note sorting controls', async () => {
+    window.location.hash = '#/notes'
+    render(<App />)
+
+    expect(await screen.findByRole('button', { name: /updated/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /title/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /type/i })).toBeInTheDocument()
+  })
+
+  it('renders dev-only note creation controls in development', async () => {
+    window.location.hash = '#/notes'
+    render(<App />)
+
+    expect(await screen.findByRole('textbox', { name: 'New note filename' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /new\.md/i })).toBeInTheDocument()
+  })
+
+  it('renders project sorting controls', async () => {
+    window.location.hash = '#/projects'
+    render(<App />)
+
+    expect(await screen.findByRole('button', { name: /updated/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /title/i })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: /stack/i })).toBeInTheDocument()
   })
 })

@@ -12,10 +12,9 @@
 
 - 💻 **终端 UI** — CRT 扫描线 + 霓虹光标 + 命令行美学
 - 🎨 **原型参考** — `theme/` 保留视觉小说等 HTML/CSS 原型，不参与运行时主题切换
-- 🎲 **月抛模拟器** — 关于选择与后果的实验性互动叙事游戏
+- 📝 **递归笔记索引** — 从 `src/content/notes/` 递归读取 Markdown，展示文件夹与文件
 - 🌐 **自动 i18n** — 根据浏览器语言自动切换中英文
 - 🎯 **HashRouter** — 支持 GitHub Pages 部署的单页应用
-- 💾 **游戏进度存储** — 使用浏览器存储保存月抛模拟器成就进度
 
 ## 🛠️ 技术栈
 
@@ -23,7 +22,7 @@
 - **构建**: Vite
 - **样式**: Tailwind CSS + CSS Variables
 - **动画**: Framer Motion
-- **状态**: React Context + 浏览器存储（游戏成就）
+- **状态**: React Context
 - **测试**: Vitest (单元) + Playwright (E2E)
 
 ## 🚀 快速开始
@@ -53,21 +52,18 @@ owltree/
 ├── src/
 │   ├── components/     # UI 组件
 │   │   ├── portal/     # 终端门户首页组件
-│   │   ├── moon-throw/ # 游戏组件
 │   │   ├── layout/     # 全局布局组件
 │   │   └── ui/         # 基础 UI 组件
 │   ├── contexts/       # React Context
 │   ├── pages/          # 页面
 │   ├── hooks/          # React Hooks
-│   ├── game/           # 游戏引擎与数据
-│   │   ├── engine/     # 游戏逻辑
-│   │   └── data/       # 配置数据
+│   ├── content/        # Markdown 内容目录
+│   │   └── notes/      # 递归读取的笔记源文件
 │   ├── styles/         # 全局样式
 │   └── lib/            # 工具函数
 ├── theme/            # HTML 原型（主题参考）
 │   ├── archive/      # 废弃样式归档
-│   ├── themes/       # 主题原型
-│   └── moon-throw.html # 原始游戏原型
+│   └── themes/       # 主题原型
 ├── e2e/                # Playwright E2E 测试
 ├── dist/               # 构建输出（生成物，默认忽略）
 └── docs/               # 设计文档
@@ -91,30 +87,55 @@ owltree/
 
 首页项目列表的外部链接集中配置在 `src/config/projectLinks.ts`。
 
-本地开发时可以复制 `.env.example` 为 `.env.local`，填写对应的 `VITE_PROJECT_LINK_*`：
+本地开发时可以复制 `.env.example` 为 `.env.local`，分别控制是否显示和是否可点击：
 
 ```bash
+VITE_PROJECT_VISIBLE_API_GATEWAY=false
 VITE_PROJECT_LINK_API_GATEWAY=https://example.com/api-gateway
+VITE_PROJECT_VISIBLE_DATA_PIPELINE=true
 VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
 ```
 
-留空或不配置时，对应项目会保持不可点击；内部项目如 `moon-throw` 仍使用站内路由。
+- `VITE_PROJECT_VISIBLE_*` 控制是否显示该项目
+- `VITE_PROJECT_LINK_*` 控制点击后跳转到哪里
+- 链接留空时，项目可以显示但保持不可点击
 
-## 🌙 月抛模拟器
+## 📝 Notes 目录
 
-一个关于性行为风险教育的实验性互动叙事游戏。
+笔记内容从 `src/content/notes/` 递归读取，支持子文件夹显示与嵌套路由。
 
-**游戏机制**:
-- 管理「生理压抑」与「心理压力」两个核心数值
-- 与随机生成的伙伴互动，每个伙伴有独特的标签和约束
-- 选择不同的性行为方式，权衡风险与收益
-- 使用检测试剂识别潜在风险
-- 避免「欲火焚身」或「精神崩溃」导致游戏结束
+可用写法：
 
-**技术实现**:
-- 纯 TypeScript 游戏引擎，无 React 依赖
-- 完整的单元测试覆盖（ characterization tests ）
-- 确定性随机数生成器（RNG）支持可重现测试
+```text
+src/content/notes/2026年05月21日-工作.md
+src/content/notes/worklogs/weekly-sync.md
+```
+
+推荐 frontmatter：
+
+```md
+---
+title: "2026年05月21日-工作"
+date: 2026-05-21
+type: dailywork
+tags:
+  - 工作日报
+  - 日记
+summary: 今日工作记录摘要
+---
+```
+
+说明：
+- 当前支持 `article`、`log`、`thought`、`dailywork`
+- `tags` 支持逗号分隔或 YAML 列表
+- 列表页支持按文件夹浏览，详情页路径为 `#/notes/<folder>/<file>`
+
+## ⌨️ 快捷键
+
+- `n` — 打开 `notes`
+- `p` — 打开 `projects`
+- `Esc` — 退到上一级路径，等价于 `..`
+- `?` — 打开快捷键帮助
 
 ## 🚀 部署
 
@@ -130,7 +151,6 @@ VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
 
 `theme/` 目录包含原始 HTML/JS 原型（参考实现）：
 
-- `theme/moon-throw.html` — 原始游戏原型
 - `theme/themes/style-visual-novel-personal.html` — 视觉小说主题原型
 - `theme/layouts/terminal.html` — 终端布局原型
 

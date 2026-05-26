@@ -1,9 +1,0 @@
-## 2026-04-15
-- Splitting a large hook worked cleanly by separating pure feedback builders, progress/achievement helpers, reducer orchestration, and derived selectors into `src/hooks/useGameState/`, leaving the top-level hook as a thin orchestration wrapper.
-- Characterization tests for extracted pure helpers gave a safe refactor seam without touching gameplay engine modules or consumer components.
-
-- 2026-04-15: Restoring pre-refactor behavior requires validating both historical code and current product expectations. For `handleChat`, the regression fix needed explicit feedback state (`phase: 'feedback'`, `feedback.keepPartner: true`) plus passing `trigger: 'END_DIALOGUE'` into `applyProgressChecks`; tightening shared option types can require updating sibling call sites like `handleUseTestkit`.
-
-- 2026-04-15: With project-reference TypeScript configs, `tsc --noEmit` can miss application files; use `tsc -b --noEmit` for real typechecking. When widening a reducer helper from `ActionType` to `GameAction`, narrow back to `ActionType` only after excluding non-action cases before indexing action-based config maps.
-
-- 2026-04-15: Replacing manual `document.body.appendChild` portal wiring with `ReactDOM.createPortal` is cleaner — no ref collection, no cleanup effect, each component owns its own portal. The `useHoverCard` hook pattern (anchor ref + position state + renderPortal callback) isolates positioning logic from markup cleanly. Extracting inline data arrays (`stackList`, `modules`) into module-level constants and small sub-components (`StackLine`, `ModuleItem`, `ProjectRow`) reduces the composition root to a readable layout skeleton. Always verify E2E failures are pre-existing before investigating — the `navigation back to home` portal test has a pre-existing timeout (moon-throw page doesn't contain `SYSTEM ONLINE` text).

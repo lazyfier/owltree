@@ -151,3 +151,30 @@
 | Project link focused tests | `npm run test:unit -- src/config/projectLinks.test.ts src/components/portal/TerminalHome.test.tsx` | Link config and terminal homepage tests pass | 2 files, 7 tests passed | pass |
 | Phase 6 final verification | `npm run typecheck && npm run lint && npm run test:unit && npm run build` | Static checks, unit tests, and production build pass | 24 files, 116 tests passed; build passed | pass |
 | Browser smoke test | Open `http://127.0.0.1:5173/owltree/#/` | Homepage renders without console errors | Page title `Owltree`, terminal homepage rendered | pass |
+
+## Session: 2026-05-21
+
+### Phase 7: Conservative Runtime Cleanup
+- **Status:** complete
+- Actions taken:
+  - Re-read the planning files and current worktree before starting a new cleanup pass.
+  - Confirmed the `.sisyphus/` deletions are pre-existing worktree changes and left them untouched.
+  - Audited runtime imports and found `Button`, `Badge`, `Card`, and `PixelDivider` only survive through tests, not the running app.
+  - Verified that `Games`, `Tools`, and `Trends` still have live routes in `src/App.tsx`, so they are not safe dead-code deletions in this pass.
+  - Removed `src/components/ui/Button.tsx`, `Badge.tsx`, `Card.tsx`, and `PixelDivider.tsx`.
+  - Removed `src/test/Button.test.tsx` and `src/test/UIComponents.test.tsx` because they only protected deleted orphan UI components.
+  - Reduced `src/data/i18n.ts` to the footer's active `copyright` translation key.
+  - Re-ran `npm run typecheck && npm run lint && npm run test:unit && npm run build` successfully.
+- Files created/modified:
+  - `src/components/ui/Button.tsx` deleted.
+  - `src/components/ui/Badge.tsx` deleted.
+  - `src/components/ui/Card.tsx` deleted.
+  - `src/components/ui/PixelDivider.tsx` deleted.
+  - `src/test/Button.test.tsx` deleted.
+  - `src/test/UIComponents.test.tsx` deleted.
+  - `src/data/i18n.ts` modified.
+
+### Phase 7 Test Results
+| Test | Input | Expected | Actual | Status |
+|------|-------|----------|--------|--------|
+| Conservative cleanup verification | `npm run typecheck && npm run lint && npm run test:unit && npm run build` | Runtime checks still pass after removing orphan UI files | 22 files, 100 tests passed; build passed | pass |

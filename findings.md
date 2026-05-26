@@ -28,6 +28,11 @@
 - Project links are consumed by the host terminal homepage data in `src/data/projects.ts`, so centralized link configuration belongs in `src/config/projectLinks.ts`.
 - Vite exposes browser-safe environment variables only when they use the `VITE_` prefix; `.env.example` now documents the optional `VITE_PROJECT_LINK_*` values.
 - Built-in Moon Throw must stay as an internal route (`/moon-throw`), while configured `http` and `https` links should open in a new tab.
+- `src/components/ui/Button.tsx`, `Badge.tsx`, `Card.tsx`, and `PixelDivider.tsx` are no longer imported by runtime code; they are only referenced by `src/test/Button.test.tsx` and `src/test/UIComponents.test.tsx`.
+- `src/data/i18n.ts` currently serves only the footer copyright string plus the exported `Locale` type; the rest of the translation table is dead payload in the current app.
+- `Games`, `Tools`, and `Trends` are not linked from the homepage, but they are still mounted in `src/App.tsx`; they remain accessible routes and should not be treated as dead code in a conservative cleanup pass.
+- Removing `Button`, `Badge`, `Card`, and `PixelDivider` plus their tests is safe in the current app because no runtime import points at them and verification still passes afterward.
+- `src/data/i18n.ts` can be reduced to the single `copyright` key without affecting runtime behavior, because the footer is the only consumer.
 
 ## Technical Decisions
 | Decision | Rationale |
@@ -40,6 +45,8 @@
 | Simplify `Home` to render `TerminalHome` directly | `ThemeContext` only exposes `terminal`, so the alternative homepage branch was dead code. |
 | Update docs instead of reintroducing theme switching | Current tests explicitly assert terminal-only behavior and ignoring old theme localStorage values. |
 | Treat only `http` and `https` project links as external | Keeps placeholders, app routes, and non-web schemes from triggering `window.open` project navigation. |
+| Prefer removing test-only orphan components before route-backed pages | This reduces maintenance surface without narrowing the app's currently reachable behavior. |
+| Keep cleanup conservative around route files | Unlinked does not mean unused when a page is still mounted in `App.tsx`. |
 
 ## Issues Encountered
 | Issue | Resolution |

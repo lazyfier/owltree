@@ -1,11 +1,12 @@
 import { useNavigate } from 'react-router-dom'
 import { isExternalProjectUrl } from '@/config/projectLinks'
-import { projects } from '@/data/projects'
+import { visibleProjects } from '@/data/projects'
+import { OwltreeMark } from '@/components/portal/OwltreeMark'
 import { ProjectRow } from '@/components/portal/ProjectRow'
 
 const modules = [
-  { label: 'NOTES', color: 't-m-cyan', inlineColor: 'var(--cyan)', href: '/notes' },
-  { label: 'PROJECTS', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/projects' },
+  { label: 'notes', color: 't-m-cyan', inlineColor: 'var(--cyan)', href: '/notes' },
+  { label: 'projects', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/projects' },
 ]
 
 const stackRows = [
@@ -74,16 +75,35 @@ export function TerminalHome() {
       <div className="t-crt-lines" />
 
       <section className="t-screen">
-        <h1 className="t-mega-title">
-          <span className="t-line-1">[owltree]</span>
-          <span className="t-line-2">SYSTEM ONLINE</span>
-          <span className="t-line-3">{'// TERMINAL INTERFACE'}</span>
-        </h1>
+        <div className="t-grid-furniture" aria-hidden="true">
+          <span className="t-corner t-corner-tl" />
+          <span className="t-corner t-corner-br" />
+          <span className="t-axis t-axis-x" />
+          <span className="t-axis t-axis-y" />
+        </div>
+
+        <div className="t-brand-lockup">
+          <h1 className="t-mega-title">
+            <span className="t-brand-token">
+              <span className="t-brand-bracket">[</span>
+              <span className="t-line-1">owltree</span>
+              <span className="t-brand-bracket">]</span>
+            </span>
+            <span className="t-brand-pulse" aria-hidden="true" />
+            <span className="t-line-2">system online</span>
+          </h1>
+        </div>
 
         <div className="t-identity">
           <div className="t-terminal-window t-glass">
-            <div className="t-id-manifesto">
-              Building systems at the edge of narrative and code.
+            <div className="t-id-head">
+              <div>
+                <div className="t-id-command">➜  ~ whoami</div>
+                <div className="t-id-manifesto">
+                  Building systems at the edge of narrative and code.
+                </div>
+              </div>
+              <OwltreeMark />
             </div>
             <hr className="t-id-divider" />
             <div className="t-id-line">
@@ -113,34 +133,32 @@ export function TerminalHome() {
           <div className="t-terminal-header">➜  ~/projects git:(main) ls -la</div>
           <div className="t-terminal-content">
             <div className="t-cmd-line" style={{ marginBottom: 16 }}>
-              <span className="t-cmd-prompt" style={{ color: 'var(--green)', textShadow: '0 0 8px rgba(74, 222, 128, 0.5)' }}>➜  </span>
+              <span className="t-cmd-prompt">➜  </span>
+              <span className="t-cmd-input" style={{ color: 'var(--t-text)' }}>./list_modules.sh</span>
+            </div>
+
+            <div className="t-module-list">
+              {modules.map((m) => (
+                <ModuleItem key={m.label} m={m} onNavigate={navigate} />
+              ))}
+            </div>
+
+            <div className="t-cmd-line" style={{ marginBottom: 16 }}>
+              <span className="t-cmd-prompt">➜  </span>
               <span className="t-cmd-input" style={{ color: 'var(--t-text)' }}>./show_projects.sh</span>
               <span className="t-cursor" />
             </div>
 
             <div style={{ marginTop: 4, paddingLeft: 16 }}>
               <div className="t-projects-output">
-                {projects.map((p) => (
+                {visibleProjects.map((p) => (
                   <ProjectRow key={p.id} project={p} onNavigate={handleProjectNavigate} />
                 ))}
               </div>
             </div>
 
-            <div className="t-cmd-line" style={{ marginTop: 24, marginBottom: 16 }}>
-              <span className="t-cmd-prompt" style={{ color: 'var(--green)', textShadow: '0 0 8px rgba(74, 222, 128, 0.5)' }}>➜  </span>
-              <span className="t-cmd-input" style={{ color: 'var(--t-text)' }}>./list_modules.sh</span>
-            </div>
-
-            <div style={{ marginTop: 4, paddingLeft: 16 }}>
-              <div className="t-module-list">
-                {modules.map((m) => (
-                  <ModuleItem key={m.label} m={m} onNavigate={navigate} />
-                ))}
-              </div>
-            </div>
-
             <div className="t-cmd-line" style={{ marginTop: 24 }}>
-              <span className="t-cmd-prompt" style={{ color: 'var(--green)', textShadow: '0 0 8px rgba(74, 222, 128, 0.5)' }}>➜  </span>
+              <span className="t-cmd-prompt">➜  </span>
               <span className="t-cursor" />
             </div>
           </div>

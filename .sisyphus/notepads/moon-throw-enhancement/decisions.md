@@ -1,3 +1,0 @@
-- 2026-04-12: 成就持久化 key 固定为 `moon-throw-achievements`，在 `src/game/engine/achievements.ts` 中集中处理读写、校验和运行态重置逻辑。
-- 2026-04-12: 结局判断统一收敛到 `checkEnding(state)`，`checkGameOver` 只补充阈值型终局的 ending 信息；UI 反馈文案在 `useGameState` 根据 ending 映射，避免把展示文案塞回纯引擎层。
-- 2026-04-12: 随机事件触发概率采用 `(10% + turn * 2%) * difficulty` 并设置上限，事件链通过 `choice.nextEventId + getActiveEvent()` 解析，避免为临时事件状态修改 `GameState` 结构。

@@ -32,11 +32,29 @@ export function useHoverCard(options: UseHoverCardOptions = {}) {
     if (!anchor) return
     const rect = anchor.getBoundingClientRect()
     const vw = window.innerWidth
+    const vh = window.innerHeight
+    const actualCardWidth =
+      vw <= 1024 ? Math.min(320, vw - viewportPadding * 2) : cardWidth
+    const rightSide = rect.right + gap
+    const leftSide = rect.left - actualCardWidth - gap
+    const maxLeft = Math.max(viewportPadding, vw - actualCardWidth - viewportPadding)
     let left = rect.right + gap
-    if (left + cardWidth > vw - viewportPadding) {
-      left = rect.left - cardWidth - gap
+
+    if (rightSide + actualCardWidth <= vw - viewportPadding) {
+      left = rightSide
+    } else if (leftSide >= viewportPadding) {
+      left = leftSide
+    } else {
+      left = Math.min(Math.max(rect.left, viewportPadding), maxLeft)
     }
-    setPosition({ left, top: rect.top - 10, visible: true })
+
+    const preferredTop =
+      rightSide + actualCardWidth <= vw - viewportPadding || leftSide >= viewportPadding
+        ? rect.top - 10
+        : rect.bottom + gap
+    const top = Math.min(Math.max(preferredTop, viewportPadding), vh - viewportPadding)
+
+    setPosition({ left, top, visible: true })
   }, [cardWidth, gap, viewportPadding])
 
   const hide = useCallback(() => {

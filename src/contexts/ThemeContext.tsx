@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect } from 'react'
+import React, { createContext, useContext, useLayoutEffect } from 'react'
 
 export type Theme = 'terminal'
 
@@ -13,7 +13,7 @@ const FIXED_THEME: Theme = 'terminal'
 const noop = () => {}
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  useEffect(() => {
+  useLayoutEffect(() => {
     document.documentElement.setAttribute('data-theme', FIXED_THEME)
   }, [])
 

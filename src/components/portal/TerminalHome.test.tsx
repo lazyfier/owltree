@@ -13,7 +13,7 @@ describe('TerminalHome', () => {
       </MemoryRouter>,
     )
 
-    expect(screen.getByText('SYSTEM ONLINE')).toBeInTheDocument()
+    expect(screen.getByText('system online')).toBeInTheDocument()
     expect(screen.getByText('Building Owltree Portal')).toBeInTheDocument()
   })
 
@@ -26,8 +26,8 @@ describe('TerminalHome', () => {
 
     expect(screen.getByText('./show_projects.sh')).toBeInTheDocument()
     expect(screen.getByText('./list_modules.sh')).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'NOTES' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: 'PROJECTS' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'notes' })).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'projects' })).toBeInTheDocument()
   })
 
   it('navigates to a module route when a module button is clicked', async () => {
@@ -42,7 +42,7 @@ describe('TerminalHome', () => {
       </MemoryRouter>,
     )
 
-    await user.click(screen.getByRole('button', { name: 'PROJECTS' }))
+    await user.click(screen.getByRole('button', { name: 'projects' }))
     expect(screen.getByTestId('projects-page')).toBeInTheDocument()
   })
 

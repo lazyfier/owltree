@@ -51,6 +51,13 @@ Complete
 - [x] Confirm the dev server URL for local viewing.
 - **Status:** complete
 
+### Phase 7: Conservative Runtime Cleanup
+- [x] Identify files that are only referenced by tests and not by the running app.
+- [x] Remove confirmed dead UI components and test-only coverage that no longer protects runtime behavior.
+- [x] Trim obvious unused support code left over from older UI directions.
+- [x] Re-run verification after cleanup.
+- **Status:** complete
+
 ## Key Questions
 1. Why does the current Vitest run fail on `window.localStorage.setItem`?
 2. Which tracked files are obvious machine cruft rather than useful project artifacts?
@@ -64,6 +71,7 @@ Complete
 | Fix current failing test first | It gives a reliable baseline before broader cleanup. |
 | Treat plan files as project working memory | The invoked skill requires `task_plan.md`, `findings.md`, and `progress.md` in the project root. |
 | Put project links in `src/config` | These links are host portal navigation config, not one project's private implementation. |
+| Keep route-backed pages unless they are truly unreachable | Hidden routes are still product surface; test-only UI helpers are a safer cleanup target first. |
 
 ## Errors Encountered
 | Error | Attempt | Resolution |
@@ -79,3 +87,4 @@ Complete
 - Worktree was clean before creating planning files.
 - Final verification passed: lint, typecheck, unit tests, production build, and E2E.
 - Link configuration verification passed: typecheck, lint, unit tests, production build, and browser smoke test at `http://127.0.0.1:5173/owltree/#/`.
+- Conservative cleanup verification passed: typecheck, lint, unit tests, and production build after removing test-only orphan UI files.

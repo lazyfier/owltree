@@ -4,7 +4,7 @@ Guidelines for AI agents working in this repository.
 
 ## Project Overview
 
-Owltree is a personal portal homepage built with React, Vite, and TypeScript. It currently ships a terminal-first UI (`data-theme="terminal"`) and an experimental narrative game "月抛模拟器" (moon-throw simulator). The `theme/` directory contains HTML/CSS prototypes for visual reference only.
+Owltree is a personal portal homepage built with React, Vite, and TypeScript. It currently ships a terminal-first UI (`data-theme="terminal"`). The `theme/` directory contains HTML/CSS prototypes for visual reference only.
 
 **Stack**: React 18 + TypeScript + Vite + Tailwind CSS + Framer Motion.
 
@@ -40,8 +40,8 @@ npm run preview
 
 - **Framework**: React 18 with functional components and hooks
 - **Types**: Strict TypeScript with explicit return types on exported functions
-- **Components**: One component per file, PascalCase naming (`TerminalHome.tsx`, `GameContainer.tsx`)
-- **Hooks**: Custom hooks in `src/hooks/`, camelCase with `use` prefix (`useGameState.ts`)
+- **Components**: One component per file, PascalCase naming (`TerminalHome.tsx`)
+- **Hooks**: Custom hooks in `src/hooks/`, camelCase with `use` prefix
 - **Imports**: Use path aliases (`@/components`, `@/hooks`, `@/contexts`)
 
 ### File Organization
@@ -51,22 +51,17 @@ owltree/
 ├── src/
 │   ├── components/     # React components
 │   │   ├── portal/     # Terminal portal homepage components (TerminalHome, ProjectRow)
-│   │   ├── moon-throw/ # Game UI components (VNDialogueBox, VNPortrait, etc.)
 │   │   ├── layout/     # Layout components (Footer)
 │   │   └── ui/         # Base UI components (Button, Card, Badge)
 │   ├── contexts/       # React Context (ThemeContext)
-│   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends, MoonThrow)
+│   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends)
 │   ├── hooks/          # Custom React hooks
-│   ├── game/           # Game engine (pure TypeScript)
-│   │   ├── engine/     # Core game logic
-│   │   ├── data/       # Game data (tags, diseases, partners, events, etc.)
-│   │   └── types.ts    # Game type definitions
+│   ├── content/        # Markdown content sources
+│   │   └── notes/      # Recursively indexed note files
 │   ├── styles/         # Global CSS + page-specific styles
-│   │   ├── game.css    # Visual novel game theme
 │   │   └── pages/      # Per-page CSS
 │   └── lib/            # Utility functions
 ├── theme/              # HTML prototypes (reference only)
-│   ├── moon-throw.html # Original game prototype
 │   └── themes/         # Theme prototypes
 ├── e2e/                # Playwright E2E tests
 ├── dist/               # Build output (generated, ignored)
@@ -212,7 +207,6 @@ If you cannot clearly justify why something must live in `src/`, it does not bel
 - **Primary**: Tailwind CSS utility classes
 - **Custom**: CSS variables for the terminal theme (defined in `globals.css`)
 - **Theme**: Runtime is fixed to `data-theme="terminal"` by `ThemeContext`
-- **Game Theme**: Independent CSS variable system in `game.css` (cyberpunk neon aesthetic)
 - **Pattern**: Use CSS variables for theme-dependent colors: `var(--bg-primary)`, `var(--text-primary)`
 
 ### Naming Conventions
@@ -243,59 +237,16 @@ Theme behavior:
 
 ### Common Components
 
-- **Button**: `Button.tsx` with variants (primary, secondary, ghost)
-- **Card**: `Card.tsx` for content containers
-- **Badge**: `Badge.tsx` for tags and labels
 - **ParticleBackground**: Animated particle effect background
-
----
-
-## Game Engine (月抛模拟器)
-
-The "月抛模拟器" game uses a pure TypeScript engine in `src/game/`:
-
-### Architecture
-
-- **Engine**: Deterministic game logic with RNG
-- **State**: Managed via `useGameState` hook
-- **UI**: Visual novel style with dialogue boxes, ASCII portraits, and choice buttons
-- **Tests**: Unit coverage with Vitest for engine and UI flows
-
-### Key Components
-
-| Component | Description |
-|-----------|-------------|
-| `VNDialogueBox.tsx` | Typewriter effect dialogue display |
-| `VNPortrait.tsx` | ASCII art character portraits |
-| `VNChoices.tsx` | Action selection buttons |
-| `GameContainer.tsx` | Main game layout (split-screen design) |
-
-### Game Systems
-
-- **Dialogue System**: Multi-turn conversations with partner characters
-- **Event System**: Random events that trigger during gameplay
-- **Achievement System**: Tracks unlocked achievements and endings
-- **Difficulty Progression**: Disease probability increases with turns
-- **Panic Mode**: Special visual effects when anxiety is high
-
-### Game Data Files
-
-- `tags.ts` — Partner attribute tags (30+ tags)
-- `diseases.ts` — Disease definitions (7 types)
-- `partners.ts` — Partner templates (10+ characters with ASCII portraits)
-- `events.ts` — Random event templates (15 events)
-- `achievements.ts` — Achievement definitions
-- `endings.ts` — Game ending definitions
-- `dialogues.ts` — Preset dialogue trees
-- `flirtLines.ts` — Partner dialogue lines (60+ lines)
+- **ShortcutHelp**: Global keyboard shortcut help overlay
 
 ---
 
 ## Testing
 
-- **Unit**: Vitest for game logic and utilities (`npm run test:unit`)
+- **Unit**: Vitest for utilities and app flows (`npm run test:unit`)
 - **E2E**: Playwright for UI flows (`npm run test:e2e`)
-- **Coverage**: Unit tests cover game engine, actions, UI helpers, and app routing
+- **Coverage**: Unit tests cover UI helpers and app routing
 
 ---
 
@@ -305,7 +256,6 @@ The "月抛模拟器" game uses a pure TypeScript engine in `src/game/`:
 
 - Not part of the build
 - Reference implementations for UI design
-- `theme/moon-throw.html` — original game prototype
 
 ---
 
@@ -331,9 +281,32 @@ The terminal theme uses **completely different layouts** per page:
 | Page | Terminal Layout | Command Style |
 |------|----------------|---------------|
 | Notes | `ls -la` file listing | Permissions, dates, type icons, tags |
+| Note detail | `cat` document view | Markdown rendered inside a terminal reading surface |
 | Games | `ps aux` process table | PID, STATUS, progress bars, tags |
 | Tools | `neofetch` system info | ASCII header, system stats, categorized list |
 | Trends | `top` monitor | PID, %CPU indicator, topic, source, status |
+
+### Notes Content Rules
+
+- Put published markdown notes under `src/content/notes/`
+- Recursive subfolders are supported and shown in the notes browser
+- Supported frontmatter keys: `title`, `date`, `type`, `tags`, `summary`, `readTime`
+- Supported note types: `article`, `log`, `thought`, `dailywork`
+- `tags` may be a comma-separated line or a YAML list
+
+### Project Visibility Rules
+
+- Project presence in the UI is controlled by `VITE_PROJECT_VISIBLE_*`
+- Project click behavior is controlled separately by `VITE_PROJECT_LINK_*`
+- A hidden project should not render at all
+- A visible project with an empty link should render but stay non-clickable
+
+### Keyboard Shortcuts
+
+- `n` opens notes
+- `p` opens projects
+- `Esc` navigates to the parent path, equivalent to `..`
+- `?` opens the shortcut help dialog
 
 ---
 
