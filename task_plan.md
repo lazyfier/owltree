@@ -4,7 +4,7 @@
 Bring the Owltree repository to a clean, maintainable baseline by fixing current verification failures, removing obvious repository cruft, correcting stale maintenance documentation, and re-running the standard checks.
 
 ## Current Phase
-Complete
+Phase 8: Final Cleanup Commit
 
 ## Phases
 
@@ -57,6 +57,12 @@ Complete
 - [x] Trim obvious unused support code left over from older UI directions.
 - [x] Re-run verification after cleanup.
 - **Status:** complete
+
+### Phase 8: Final Cleanup Commit
+- [x] Reconcile the current worktree with prior cleanup findings and new terminal-only work.
+- [x] Verify the staged result still passes the core checks.
+- [ ] Create a Lore-compliant git commit for the cleaned and validated state.
+- **Status:** in_progress
 
 ## Key Questions
 1. Why does the current Vitest run fail on `window.localStorage.setItem`?

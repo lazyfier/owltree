@@ -1,6 +1,11 @@
 import { fireEvent, render, screen } from '@testing-library/react'
+import { vi } from 'vitest'
 
 import App from '@/App'
+
+vi.mock('@/components/ui/ParticleBackground', () => ({
+  ParticleBackground: () => null,
+}))
 
 describe('App routing shell', () => {
   beforeEach(() => {
