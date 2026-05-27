@@ -32,3 +32,6 @@ blob-report/
 # Worktrees
 .worktrees/
 .omx/
+
+# Local indexes
+.codegraph/
