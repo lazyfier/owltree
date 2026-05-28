@@ -22,6 +22,17 @@ function projectVisible(envKey: string, fallback = true): boolean {
   return fallback
 }
 
+export function projectEnvKey(id: string, kind: 'link' | 'visible'): string {
+  const normalizedId = id
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, '$1_$2')
+    .replace(/[^a-zA-Z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .toUpperCase()
+
+  return `VITE_PROJECT_${kind.toUpperCase()}_${normalizedId}`
+}
+
 export function isExternalProjectUrl(url: string): boolean {
   try {
     const parsed = new URL(url.trim())
@@ -31,26 +42,10 @@ export function isExternalProjectUrl(url: string): boolean {
   }
 }
 
-export const PROJECT_LINKS = {
-  'owltree-portal': projectLink('VITE_PROJECT_LINK_OWLTREE_PORTAL'),
-  'secret-project': projectLink('VITE_PROJECT_LINK_SECRET_PROJECT'),
-  'api-gateway': projectLink('VITE_PROJECT_LINK_API_GATEWAY'),
-  'data-pipeline': projectLink('VITE_PROJECT_LINK_DATA_PIPELINE'),
-  'design-system': projectLink('VITE_PROJECT_LINK_DESIGN_SYSTEM'),
-  'neobrutal-ui': projectLink('VITE_PROJECT_LINK_NEOBRUTAL_UI'),
-  'cli-toolkit': projectLink('VITE_PROJECT_LINK_CLI_TOOLKIT'),
-  'ai-agent': projectLink('VITE_PROJECT_LINK_AI_AGENT'),
-} as const
+export function getProjectLink(id: string): string {
+  return projectLink(projectEnvKey(id, 'link'))
+}
 
-export const PROJECT_VISIBILITY = {
-  'owltree-portal': projectVisible('VITE_PROJECT_VISIBLE_OWLTREE_PORTAL'),
-  'secret-project': projectVisible('VITE_PROJECT_VISIBLE_SECRET_PROJECT'),
-  'api-gateway': projectVisible('VITE_PROJECT_VISIBLE_API_GATEWAY'),
-  'data-pipeline': projectVisible('VITE_PROJECT_VISIBLE_DATA_PIPELINE'),
-  'design-system': projectVisible('VITE_PROJECT_VISIBLE_DESIGN_SYSTEM'),
-  'neobrutal-ui': projectVisible('VITE_PROJECT_VISIBLE_NEOBRUTAL_UI'),
-  'cli-toolkit': projectVisible('VITE_PROJECT_VISIBLE_CLI_TOOLKIT'),
-  'ai-agent': projectVisible('VITE_PROJECT_VISIBLE_AI_AGENT'),
-} as const
-
-export type ProjectId = keyof typeof PROJECT_LINKS
+export function getProjectVisibility(id: string): boolean {
+  return projectVisible(projectEnvKey(id, 'visible'))
+}

@@ -1,8 +1,8 @@
-import { PROJECT_LINKS, PROJECT_VISIBILITY, type ProjectId } from '@/config/projectLinks'
+import { getProjectLink, getProjectVisibility } from '@/config/projectLinks'
 import { projectUpdatedAt } from '@/data/contentMetadata.generated'
 
 export interface Project {
-  id: ProjectId
+  id: string
   name: string
   description: string
   url: string
@@ -27,8 +27,8 @@ export const projects: Project[] = [
     id: 'owltree-portal',
     name: 'owltree portal',
     description: '个人终端门户，集中浏览 notes 和 projects，并支持 Markdown 笔记发布。',
-    url: PROJECT_LINKS['owltree-portal'],
-    visible: PROJECT_VISIBILITY['owltree-portal'],
+    url: getProjectLink('owltree-portal'),
+    visible: getProjectVisibility('owltree-portal'),
     isFrontendProject: true,
     tags: ['React', 'Vite', 'Markdown'],
     icon: 'owltree',

@@ -83,7 +83,7 @@ owltree/
 
 ## 🔗 项目链接配置
 
-首页和 `#/projects` 的项目列表集中配置在 `src/data/projects.ts`，外部链接与显示开关集中配置在 `src/config/projectLinks.ts`。
+首页和 `#/projects` 的项目列表集中配置在 `src/data/projects.ts`，外部链接与显示开关由项目 `id` 自动推导环境变量名。
 
 本地开发时可以复制 `.env.example` 为 `.env.local`，分别控制是否显示和是否可点击：
 
@@ -97,7 +97,16 @@ VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
 - `VITE_PROJECT_VISIBLE_*` 控制是否显示该项目
 - `VITE_PROJECT_LINK_*` 控制点击后跳转到哪里
 - 链接留空时，项目可以显示但保持不可点击
-- 目前默认只保留真实前端项目 `owltree portal`；新增项目时先在 `src/data/projects.ts` 登记，再补充对应链接配置
+- 例如项目 `id: "owltree-portal"` 对应 `VITE_PROJECT_VISIBLE_OWLTREE_PORTAL` 和 `VITE_PROJECT_LINK_OWLTREE_PORTAL`
+- 目前默认只保留真实前端项目 `owltree portal`；新增项目只需要先在 `src/data/projects.ts` 登记，再按推导出的环境变量配置显示和跳转
+
+## 🕒 更新时间元数据
+
+`src/data/contentMetadata.generated.ts` 会在 `npm run dev` 和 `npm run build` 时由 Vite 自动刷新。
+
+- notes 更新时间来自 `src/content/notes/**/*.md` 的本地文件修改时间
+- projects 更新时间来自对应项目源文件的本地修改时间
+- 不需要手动编辑这个 generated 文件
 
 ## 📝 Notes 目录
 
