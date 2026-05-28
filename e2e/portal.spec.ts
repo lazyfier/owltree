@@ -14,14 +14,8 @@ test.describe('Portal homepage', () => {
     await expect(page.getByRole('button', { name: 'projects' })).toBeVisible({ timeout: 10000 })
   })
 
-  test('moon-throw route redirects home after removal', async ({ page }) => {
-    await page.goto('/#/moon-throw')
-    await expect(page).toHaveURL(/#\/$/)
-    await expect(page.locator('text=system online')).toBeVisible({ timeout: 10000 })
-  })
-
-  test('removed games route redirects home', async ({ page }) => {
-    await page.goto('/#/games')
+  test('unknown routes redirect home', async ({ page }) => {
+    await page.goto('/#/unknown-module')
     await expect(page).toHaveURL(/#\/$/)
     await expect(page.locator('text=system online')).toBeVisible({ timeout: 10000 })
   })

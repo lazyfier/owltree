@@ -42,15 +42,8 @@ describe('App routing shell', () => {
     expect(screen.getByText('owltree portal')).toBeInTheDocument()
   })
 
-  it('redirects the removed moon throw route to home', async () => {
-    window.location.hash = '#/moon-throw'
-    render(<App />)
-
-    expect(await screen.findByText('system online')).toBeInTheDocument()
-  })
-
-  it('redirects the removed games route to home', async () => {
-    window.location.hash = '#/games'
+  it('redirects unknown routes to home', async () => {
+    window.location.hash = '#/unknown-module'
     render(<App />)
 
     expect(await screen.findByText('system online')).toBeInTheDocument()

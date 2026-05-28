@@ -9,9 +9,10 @@
     "typecheck": "tsc -b --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "analyze": "vite-bundle-visualizer",
+    "notes:sync": "node scripts/sync-notes.mjs",
     "test:unit": "vitest run",
-    "preview": "vite preview",
-    "test:e2e": "playwright test --pass-with-no-tests"
+    "preview": "env -u NO_COLOR vite preview",
+    "test:e2e": "env -u NO_COLOR playwright test --pass-with-no-tests"
   },
   "dependencies": {
     "clsx": "^2.1.1",

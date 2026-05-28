@@ -12,7 +12,8 @@ describe('cn utility', () => {
   })
 
   it('handles conditional classes', () => {
-    const result = cn('base', false && 'hidden', 'visible')
+    const shouldHide = false
+    const result = cn('base', shouldHide ? 'hidden' : false, 'visible')
     expect(result).toBe('base visible')
   })
 

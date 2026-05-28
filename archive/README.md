@@ -29,6 +29,9 @@ Deleted React components that are no longer used.
 ### legacy-hooks/
 Deleted custom hooks that are no longer used.
 
+### maintenance/
+Old cleanup notes, progress logs, and obsolete implementation plans.
+
 ---
 
 **Important**: Files in this directory are NOT part of the build and should not be imported in production code.

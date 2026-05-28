@@ -88,10 +88,8 @@ owltree/
 本地开发时可以复制 `.env.example` 为 `.env.local`，分别控制是否显示和是否可点击：
 
 ```bash
-VITE_PROJECT_VISIBLE_API_GATEWAY=false
-VITE_PROJECT_LINK_API_GATEWAY=https://example.com/api-gateway
-VITE_PROJECT_VISIBLE_DATA_PIPELINE=true
-VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
+VITE_PROJECT_VISIBLE_OWLTREE_PORTAL=true
+VITE_PROJECT_LINK_OWLTREE_PORTAL=
 ```
 
 - `VITE_PROJECT_VISIBLE_*` 控制是否显示该项目
@@ -106,8 +104,8 @@ Footer 社交链接集中在 `src/config/socialLinks.ts`，默认只显示 GitHu
 
 ```bash
 VITE_SOCIAL_GITHUB_URL=https://github.com/lazyfier
-VITE_SOCIAL_X_URL=https://x.com/your-handle
-VITE_SOCIAL_EMAIL=hello@example.com
+VITE_SOCIAL_X_URL=
+VITE_SOCIAL_EMAIL=
 ```
 
 `VITE_SOCIAL_X_URL` 和 `VITE_SOCIAL_EMAIL` 留空时不会显示占位图标。
@@ -150,6 +148,16 @@ summary: 今日工作记录摘要
 - 当前支持 `article`、`log`、`thought`、`dailywork`
 - `tags` 支持逗号分隔或 YAML 列表
 - 列表页支持按文件夹浏览，详情页路径为 `#/notes/<folder>/<file>`
+
+### Obsidian 发布流
+
+建议在 Obsidian vault 里维护一个单独的公开目录，例如 `~/notes/published/`，只把要发布到 GitHub Pages 的 md 放进去。
+
+```bash
+OWLTREE_NOTES_SOURCE_DIR=~/notes/published npm run notes:sync
+```
+
+同步脚本会递归复制 `.md` 到 `src/content/notes/`，不会删除已有发布文件。详细说明见 `docs/notes-publishing.md`。
 
 ## ⌨️ 快捷键
 

@@ -289,6 +289,8 @@ The terminal theme uses **focused terminal-style layouts** per page:
 
 - Put published markdown notes under `src/content/notes/`
 - Recursive subfolders are supported and shown in the notes browser
+- Obsidian publishing should sync from a dedicated public folder via `npm run notes:sync`
+- Do not point the site at an entire private Obsidian vault
 - Supported frontmatter keys: `title`, `date`, `type`, `tags`, `summary`, `readTime`
 - Supported note types: `article`, `log`, `thought`, `dailywork`
 - `tags` may be a comma-separated line or a YAML list

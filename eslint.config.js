@@ -12,12 +12,6 @@ export default tseslint.config(
       'test-results',
       'blob-report',
       '.worktrees',
-      'src/components/moon-throw/VNDialogueBox.tsx',
-      'src/components/portal/TerminalHome.tsx',
-      'src/contexts/ThemeContext.tsx',
-      'src/game/data/partners.ts',
-      'src/hooks/useGameState.ts',
-      'src/test/cn.test.ts',
     ],
   },
   {
