@@ -1,16 +1,28 @@
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
+import type { ReactNode } from 'react'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import { describe, expect, it } from 'vitest'
 
 import { TerminalHome } from './TerminalHome'
 
+function TestRouter({ children, initialEntries = ['/'] }: { children: ReactNode; initialEntries?: string[] }) {
+  return (
+    <MemoryRouter
+      initialEntries={initialEntries}
+      future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+    >
+      {children}
+    </MemoryRouter>
+  )
+}
+
 describe('TerminalHome', () => {
   it('renders the terminal shell content', () => {
     render(
-      <MemoryRouter>
+      <TestRouter>
         <TerminalHome />
-      </MemoryRouter>,
+      </TestRouter>,
     )
 
     expect(screen.getByText('system online')).toBeInTheDocument()
@@ -19,9 +31,9 @@ describe('TerminalHome', () => {
 
   it('renders projects and modules', () => {
     render(
-      <MemoryRouter>
+      <TestRouter>
         <TerminalHome />
-      </MemoryRouter>,
+      </TestRouter>,
     )
 
     expect(screen.getByText('./show_projects.sh')).toBeInTheDocument()
@@ -34,12 +46,12 @@ describe('TerminalHome', () => {
     const user = userEvent.setup()
 
     render(
-      <MemoryRouter initialEntries={['/#/']}>
+      <TestRouter>
         <Routes>
           <Route path="/" element={<TerminalHome />} />
           <Route path="/projects" element={<div data-testid="projects-page">Projects</div>} />
         </Routes>
-      </MemoryRouter>,
+      </TestRouter>,
     )
 
     await user.click(screen.getByRole('button', { name: 'projects' }))
@@ -48,9 +60,9 @@ describe('TerminalHome', () => {
 
   it('shows a project row for clickable projects', () => {
     render(
-      <MemoryRouter>
+      <TestRouter>
         <TerminalHome />
-      </MemoryRouter>,
+      </TestRouter>,
     )
 
     const projectButtons = screen.getAllByRole('button')

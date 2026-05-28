@@ -13,6 +13,10 @@ const rawEndpoint = '/__owltree/notes/raw'
 const projectMetadataSources: Record<string, string[]> = {
   'owltree-portal': ['src', 'public', 'index.html', 'package.json', 'vite.config.ts'],
 }
+const watchedMetadataPaths = [
+  notesRoot,
+  ...new Set(Object.values(projectMetadataSources).flat().map((relativePath) => path.resolve(projectRoot, relativePath))),
+]
 
 function sendJson(response: import('node:http').ServerResponse, status: number, payload: unknown): void {
   response.statusCode = status
@@ -141,6 +145,17 @@ async function refreshContentMetadata(): Promise<void> {
   await writeFile(generatedMetadataFile, content, 'utf8')
 }
 
+function isWatchedMetadataFile(filePath: string): boolean {
+  if (filePath === generatedMetadataFile) {
+    return false
+  }
+
+  return watchedMetadataPaths.some((watchedPath) => {
+    const relativePath = path.relative(watchedPath, filePath)
+    return relativePath === '' || (!relativePath.startsWith('..') && !path.isAbsolute(relativePath))
+  })
+}
+
 export function owltreeNotesPlugin(): Plugin {
   return {
     name: 'owltree-notes-dev-api',
@@ -148,6 +163,25 @@ export function owltreeNotesPlugin(): Plugin {
       await refreshContentMetadata()
     },
     configureServer(server) {
+      let refreshTimer: ReturnType<typeof setTimeout> | null = null
+
+      server.watcher.add(watchedMetadataPaths)
+      server.watcher.on('all', (_eventName, filePath) => {
+        if (!isWatchedMetadataFile(filePath)) {
+          return
+        }
+
+        if (refreshTimer) {
+          clearTimeout(refreshTimer)
+        }
+
+        refreshTimer = setTimeout(() => {
+          refreshContentMetadata()
+            .then(() => server.ws.send({ type: 'full-reload' }))
+            .catch((error: unknown) => server.config.logger.warn(String(error)))
+        }, 100)
+      })
+
       server.middlewares.use(async (request, response, next) => {
         if (!request.url?.startsWith(rawEndpoint)) {
           next()

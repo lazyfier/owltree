@@ -100,12 +100,25 @@ VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
 - 例如项目 `id: "owltree-portal"` 对应 `VITE_PROJECT_VISIBLE_OWLTREE_PORTAL` 和 `VITE_PROJECT_LINK_OWLTREE_PORTAL`
 - 目前默认只保留真实前端项目 `owltree portal`；新增项目只需要先在 `src/data/projects.ts` 登记，再按推导出的环境变量配置显示和跳转
 
+## 👤 Footer 链接配置
+
+Footer 社交链接集中在 `src/config/socialLinks.ts`，默认只显示 GitHub：
+
+```bash
+VITE_SOCIAL_GITHUB_URL=https://github.com/lazyfier
+VITE_SOCIAL_X_URL=https://x.com/your-handle
+VITE_SOCIAL_EMAIL=hello@example.com
+```
+
+`VITE_SOCIAL_X_URL` 和 `VITE_SOCIAL_EMAIL` 留空时不会显示占位图标。
+
 ## 🕒 更新时间元数据
 
 `src/data/contentMetadata.generated.ts` 会在 `npm run dev` 和 `npm run build` 时由 Vite 自动刷新。
 
 - notes 更新时间来自 `src/content/notes/**/*.md` 的本地文件修改时间
 - projects 更新时间来自对应项目源文件的本地修改时间
+- dev server 会监听 notes 和项目源文件变动并刷新元数据
 - 不需要手动编辑这个 generated 文件
 
 ## 📝 Notes 目录
