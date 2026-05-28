@@ -54,6 +54,7 @@ function ModuleItem({ m, onNavigate }: { m: typeof modules[number]; onNavigate: 
 
 export function TerminalHome() {
   const navigate = useNavigate()
+  const hasProjects = visibleProjects.length > 0
 
   const handleProjectNavigate = (url: string) => {
     if (isExternalProjectUrl(url)) {
@@ -67,10 +68,6 @@ export function TerminalHome() {
   return (
     <>
       <div className="t-bg-glow">
-        <div className="t-orb t-orb-1" />
-        <div className="t-orb t-orb-2" />
-        <div className="t-orb t-orb-3" />
-        <div className="t-orb t-orb-4" />
       </div>
       <div className="t-crt-lines" />
 
@@ -115,7 +112,7 @@ export function TerminalHome() {
             <hr className="t-id-divider" />
             <div className="t-id-line">
               <span className="t-id-key">FOCUS:</span>
-              <span className="t-id-value">Portal UX + Game</span>
+              <span className="t-id-value">Notes + Projects</span>
             </div>
             <div className="t-id-line">
               <span className="t-id-key">NOW:</span>
@@ -151,9 +148,13 @@ export function TerminalHome() {
 
             <div style={{ marginTop: 4, paddingLeft: 16 }}>
               <div className="t-projects-output">
-                {visibleProjects.map((p) => (
-                  <ProjectRow key={p.id} project={p} onNavigate={handleProjectNavigate} />
-                ))}
+                {hasProjects ? (
+                  visibleProjects.map((p) => (
+                    <ProjectRow key={p.id} project={p} onNavigate={handleProjectNavigate} />
+                  ))
+                ) : (
+                  <div className="t-empty-output">$ echo "no visible projects"</div>
+                )}
               </div>
             </div>
 

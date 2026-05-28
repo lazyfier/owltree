@@ -111,6 +111,12 @@ export function Projects() {
               <span className="projects-cell projects-cell-link">LINK</span>
               <span className="projects-cell projects-cell-tags">TAGS</span>
             </div>
+            {sortedProjects.length === 0 ? (
+              <div className="terminal-empty-state" role="status">
+                <span className="terminal-empty-command">$ echo "no visible frontend projects"</span>
+                <span>Project rows are empty until a visible project is configured.</span>
+              </div>
+            ) : null}
             {sortedProjects.map((project) => {
               const hasExternalLink = isExternalProjectUrl(project.url)
               const isClickable = project.url !== '#'

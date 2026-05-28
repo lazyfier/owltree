@@ -54,7 +54,7 @@ owltree/
 │   │   ├── layout/     # Layout components (Footer)
 │   │   └── ui/         # Base UI components (Button, Card, Badge)
 │   ├── contexts/       # React Context (ThemeContext)
-│   ├── pages/          # Page components (Home, Games, Notes, Tools, Trends)
+│   ├── pages/          # Page components (Home, Notes, NoteDetail, Projects)
 │   ├── hooks/          # Custom React hooks
 │   ├── content/        # Markdown content sources
 │   │   └── notes/      # Recursively indexed note files
@@ -276,15 +276,14 @@ archive/
 
 ## Terminal Theme Implementation
 
-The terminal theme uses **completely different layouts** per page:
+The terminal theme uses **focused terminal-style layouts** per page:
 
 | Page | Terminal Layout | Command Style |
 |------|----------------|---------------|
+| Home | `./list_modules.sh` / `./show_projects.sh` | Notes/projects entry points and configured project rows |
 | Notes | `ls -la` file listing | Permissions, dates, type icons, tags |
 | Note detail | `cat` document view | Markdown rendered inside a terminal reading surface |
-| Games | `ps aux` process table | PID, STATUS, progress bars, tags |
-| Tools | `neofetch` system info | ASCII header, system stats, categorized list |
-| Trends | `top` monitor | PID, %CPU indicator, topic, source, status |
+| Projects | `ls -la ~/projects/frontend/` | Name, updated time, status, stack, link, tags |
 
 ### Notes Content Rules
 
@@ -310,37 +309,12 @@ The terminal theme uses **completely different layouts** per page:
 
 ---
 
-## Game UI Layout
-
-The visual novel game uses a **split-screen desktop layout**:
-
-```
-┌─────────────────────┬─────────────────────┐
-│                     │                     │
-│  Header + Stats     │  Action Buttons     │
-│                     │                     │
-├─────────────────────┼─────────────────────┤
-│                     │                     │
-│                     │                     │
-│   ASCII Portrait    │   Dialogue Box      │
-│   + Tags            │   / Choice Buttons  │
-│                     │                     │
-│                     │                     │
-└─────────────────────┴─────────────────────┘
-```
-
-- **Fixed 50/50 split** — CSS Grid ensures stable layout
-- **Full viewport** — Uses `h-screen w-screen`, no scrolling
-- **Cyberpunk theme** — Cyan (#00f0ff) + Pink (#ff006e) neon colors
-
----
-
 ## Anti-Patterns to Avoid
 
 1. **Don't import from barrel files** — Import directly from source
 2. **Don't use `any`** — Strict typing required
 3. **Don't mix theme logic** — Keep theme-specific styles in CSS variables
-4. **Don't modify game engine** — Keep pure TypeScript, no React dependencies
+4. **Don't reintroduce placeholder app modules** — Keep runtime navigation focused on notes and projects unless a real module is added
 
 ---
 

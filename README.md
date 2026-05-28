@@ -11,8 +11,8 @@
 ## ✨ 特性
 
 - 💻 **终端 UI** — CRT 扫描线 + 霓虹光标 + 命令行美学
-- 🎨 **原型参考** — `theme/` 保留视觉小说等 HTML/CSS 原型，不参与运行时主题切换
 - 📝 **递归笔记索引** — 从 `src/content/notes/` 递归读取 Markdown，展示文件夹与文件
+- 📂 **项目入口配置** — `projects` 只展示真实配置的前端项目，显示与跳转可分开控制
 - 🌐 **自动 i18n** — 根据浏览器语言自动切换中英文
 - 🎯 **HashRouter** — 支持 GitHub Pages 部署的单页应用
 
@@ -55,15 +55,13 @@ owltree/
 │   │   ├── layout/     # 全局布局组件
 │   │   └── ui/         # 基础 UI 组件
 │   ├── contexts/       # React Context
-│   ├── pages/          # 页面
+│   ├── pages/          # Home / Notes / NoteDetail / Projects
 │   ├── hooks/          # React Hooks
 │   ├── content/        # Markdown 内容目录
 │   │   └── notes/      # 递归读取的笔记源文件
 │   ├── styles/         # 全局样式
 │   └── lib/            # 工具函数
-├── theme/            # HTML 原型（主题参考）
-│   ├── archive/      # 废弃样式归档
-│   └── themes/       # 主题原型
+├── theme/              # HTML 原型（主题参考，不参与运行时）
 ├── e2e/                # Playwright E2E 测试
 ├── dist/               # 构建输出（生成物，默认忽略）
 └── docs/               # 设计文档
@@ -85,7 +83,7 @@ owltree/
 
 ## 🔗 项目链接配置
 
-首页项目列表的外部链接集中配置在 `src/config/projectLinks.ts`。
+首页和 `#/projects` 的项目列表集中配置在 `src/data/projects.ts`，外部链接与显示开关集中配置在 `src/config/projectLinks.ts`。
 
 本地开发时可以复制 `.env.example` 为 `.env.local`，分别控制是否显示和是否可点击：
 
@@ -99,6 +97,7 @@ VITE_PROJECT_LINK_DATA_PIPELINE=https://example.com/data-pipeline
 - `VITE_PROJECT_VISIBLE_*` 控制是否显示该项目
 - `VITE_PROJECT_LINK_*` 控制点击后跳转到哪里
 - 链接留空时，项目可以显示但保持不可点击
+- 目前默认只保留真实前端项目 `owltree portal`；新增项目时先在 `src/data/projects.ts` 登记，再补充对应链接配置
 
 ## 📝 Notes 目录
 
@@ -149,10 +148,7 @@ summary: 今日工作记录摘要
 
 ## 📜 原型文件
 
-`theme/` 目录包含原始 HTML/JS 原型（参考实现）：
-
-- `theme/themes/style-visual-novel-personal.html` — 视觉小说主题原型
-- `theme/layouts/terminal.html` — 终端布局原型
+`theme/` 目录只作为视觉参考，不作为运行时路由或主题入口。
 
 ## 📝 License
 

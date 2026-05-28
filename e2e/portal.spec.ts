@@ -20,8 +20,9 @@ test.describe('Portal homepage', () => {
     await expect(page.locator('text=system online')).toBeVisible({ timeout: 10000 })
   })
 
-  test('games page no longer lists moon-throw', async ({ page }) => {
+  test('removed games route redirects home', async ({ page }) => {
     await page.goto('/#/games')
-    await expect(page.locator('text=月抛模拟器')).toHaveCount(0)
+    await expect(page).toHaveURL(/#\/$/)
+    await expect(page.locator('text=system online')).toBeVisible({ timeout: 10000 })
   })
 })

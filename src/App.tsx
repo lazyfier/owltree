@@ -5,12 +5,9 @@ import { ThemeProvider } from '@/contexts/ThemeContext'
 import { useGlobalShortcuts } from '@/hooks/useGlobalShortcuts'
 import { Home } from '@/pages/Home'
 
-const Games = lazy(() => import('@/pages/Games').then(m => ({ default: m.Games })))
 const Notes = lazy(() => import('@/pages/Notes').then(m => ({ default: m.Notes })))
 const NoteDetail = lazy(() => import('@/pages/NoteDetail').then(m => ({ default: m.NoteDetail })))
 const Projects = lazy(() => import('@/pages/Projects').then(m => ({ default: m.Projects })))
-const Tools = lazy(() => import('@/pages/Tools').then(m => ({ default: m.Tools })))
-const Trends = lazy(() => import('@/pages/Trends').then(m => ({ default: m.Trends })))
 
 function PageLoader() {
   return (
@@ -28,12 +25,9 @@ function AppShell() {
       <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/games" element={<Games />} />
           <Route path="/notes" element={<Notes />} />
           <Route path="/notes/*" element={<NoteDetail />} />
           <Route path="/projects" element={<Projects />} />
-          <Route path="/tools" element={<Tools />} />
-          <Route path="/trends" element={<Trends />} />
           <Route path="*" element={<Navigate replace to="/" />} />
         </Routes>
       </Suspense>

@@ -20,8 +20,8 @@ describe('App routing shell', () => {
   })
 
   it('ignores any pre-existing theme-related localStorage values', () => {
-    window.localStorage.setItem('owltree-theme', 'galgame')
-    window.localStorage.setItem('owltree-theme-v2', 'cyber')
+    window.localStorage.setItem('owltree-theme', 'legacy-theme')
+    window.localStorage.setItem('owltree-theme-v2', 'custom-theme')
 
     render(<App />)
 
@@ -39,11 +39,18 @@ describe('App routing shell', () => {
     render(<App />)
 
     expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
-    expect(screen.queryByText('月抛模拟器')).not.toBeInTheDocument()
+    expect(screen.getByText('owltree portal')).toBeInTheDocument()
   })
 
   it('redirects the removed moon throw route to home', async () => {
     window.location.hash = '#/moon-throw'
+    render(<App />)
+
+    expect(await screen.findByText('system online')).toBeInTheDocument()
+  })
+
+  it('redirects the removed games route to home', async () => {
+    window.location.hash = '#/games'
     render(<App />)
 
     expect(await screen.findByText('system online')).toBeInTheDocument()
