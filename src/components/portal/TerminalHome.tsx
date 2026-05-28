@@ -7,6 +7,7 @@ import { ProjectRow } from '@/components/portal/ProjectRow'
 const modules = [
   { label: 'notes', color: 't-m-cyan', inlineColor: 'var(--cyan)', href: '/notes' },
   { label: 'projects', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/projects' },
+  { label: 'tools', color: 't-m-mauve', inlineColor: 'var(--mauve)', href: '/tools' },
 ]
 
 const stackRows = [
@@ -112,7 +113,7 @@ export function TerminalHome() {
             <hr className="t-id-divider" />
             <div className="t-id-line">
               <span className="t-id-key">FOCUS:</span>
-              <span className="t-id-value">Notes + Projects</span>
+              <span className="t-id-value">Notes + Projects + Tools</span>
             </div>
             <div className="t-id-line">
               <span className="t-id-key">NOW:</span>

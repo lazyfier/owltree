@@ -9,6 +9,7 @@ const shortcuts = [
   { keys: ['h'], description: 'Go to home' },
   { keys: ['n'], description: 'Go to notes' },
   { keys: ['p'], description: 'Go to projects' },
+  { keys: ['t'], description: 'Go to tools' },
   { keys: ['Esc'], description: 'Go to parent level or close shortcut help' },
 ]
 

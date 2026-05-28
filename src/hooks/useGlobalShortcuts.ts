@@ -58,6 +58,7 @@ export function useGlobalShortcuts() {
         h: '/',
         n: '/notes',
         p: '/projects',
+        t: '/tools',
       }
 
       const nextRoute = shortcutMap[event.key.toLowerCase()]
