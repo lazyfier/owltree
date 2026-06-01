@@ -1,5 +1,5 @@
 import { ShortLinkTool } from './ShortLinkTool'
-import type { ToolManifest } from '../types'
+import type { ToolManifest } from '@/content/tools/types'
 
 export const shortLinkTool = {
   id: 'short-link',

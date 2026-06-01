@@ -13,6 +13,7 @@
 - 💻 **终端 UI** — CRT 扫描线 + 霓虹光标 + 命令行美学
 - 📝 **递归笔记索引** — 从 `src/content/notes/` 递归读取 Markdown，展示文件夹与文件
 - 📂 **项目入口配置** — `projects` 只展示真实配置的前端项目，显示与跳转可分开控制
+- 🧰 **本地工具入口** — `tools` 提供浏览器本地运行的小工具，例如 short-link
 - 🌐 **自动 i18n** — 根据浏览器语言自动切换中英文
 - 🎯 **HashRouter** — 支持 GitHub Pages 部署的单页应用
 
@@ -55,12 +56,15 @@ owltree/
 │   │   ├── layout/     # 全局布局组件
 │   │   └── ui/         # 基础 UI 组件
 │   ├── contexts/       # React Context
-│   ├── pages/          # Home / Notes / NoteDetail / Projects
+│   ├── pages/          # Home / Notes / NoteDetail / Projects / Tools
 │   ├── hooks/          # React Hooks
-│   ├── content/        # Markdown 内容目录
-│   │   └── notes/      # 递归读取的笔记源文件
+│   ├── content/        # Markdown 内容与 host 注册
+│   │   ├── notes/      # 递归读取的笔记源文件
+│   │   └── tools/      # 工具清单和运行时注册
 │   ├── styles/         # 全局样式
 │   └── lib/            # 工具函数
+├── projects/           # 独立项目/工具实现目录
+│   └── short-link/     # 浏览器本地短链工具
 ├── theme/              # HTML 原型（主题参考，不参与运行时）
 ├── e2e/                # Playwright E2E 测试
 ├── dist/               # 构建输出（生成物，默认忽略）
@@ -109,6 +113,18 @@ VITE_SOCIAL_EMAIL=
 ```
 
 `VITE_SOCIAL_X_URL` 和 `VITE_SOCIAL_EMAIL` 留空时不会显示占位图标。
+
+## 🧰 Tools
+
+工具入口在 `#/tools`，首页可通过 `tools` 模块或快捷键 `t` 打开。
+
+`src/content/tools/` 只负责 host 级注册；具体工具实现放在 `projects/<tool-name>/`，方便以后按文件夹替换或独立维护。
+
+当前内置：
+
+- `short-link`：把文本、图片、音频、视频写入当前浏览器 localStorage，并生成本地 hash 链接。
+
+注意：`short-link` 不连接后端，生成的链接只在同一个浏览器配置文件中可用，不适合作为跨设备分享链接。
 
 ## 🕒 更新时间元数据
 
@@ -163,6 +179,7 @@ OWLTREE_NOTES_SOURCE_DIR=~/notes/published npm run notes:sync
 
 - `n` — 打开 `notes`
 - `p` — 打开 `projects`
+- `t` — 打开 `tools`
 - `Esc` — 退到上一级路径，等价于 `..`
 - `?` — 打开快捷键帮助
 
