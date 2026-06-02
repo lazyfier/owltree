@@ -57,22 +57,6 @@ describe('App routing shell', () => {
     expect(await screen.findByText('$ ls -la ~/projects/frontend/')).toBeInTheDocument()
   })
 
-  it('renders the tools page on the tools route', async () => {
-    window.location.hash = '#/tools'
-    render(<App />)
-
-    expect(await screen.findByText('$ ls -la ~/tools/')).toBeInTheDocument()
-    expect(screen.getByText('short-link')).toBeInTheDocument()
-  })
-
-  it('navigates to tools with the t shortcut', async () => {
-    render(<App />)
-
-    fireEvent.keyDown(window, { key: 't' })
-
-    expect(await screen.findByText('$ ls -la ~/tools/')).toBeInTheDocument()
-  })
-
   it('opens shortcut help with question mark', () => {
     render(<App />)
 
@@ -148,33 +132,10 @@ describe('App routing shell', () => {
     expect(screen.getByRole('button', { name: /stack/i })).toBeInTheDocument()
   })
 
-  it('renders the short-link tool runner', async () => {
+  it('redirects removed tool routes to home', async () => {
     window.location.hash = '#/tools/short-link'
     render(<App />)
 
-    expect(await screen.findByText('$ ./short-link')).toBeInTheDocument()
-    expect(screen.getByRole('textbox', { name: 'Text to shorten' })).toBeInTheDocument()
-    expect(screen.getByRole('button', { name: /link text/i })).toBeInTheDocument()
-  })
-
-  it('creates a local short text link', async () => {
-    window.location.hash = '#/tools/short-link'
-    render(<App />)
-
-    fireEvent.change(await screen.findByRole('textbox', { name: 'Text to shorten' }), {
-      target: { value: 'hello owltree' },
-    })
-    fireEvent.click(screen.getByRole('button', { name: /link text/i }))
-
-    expect(await screen.findByText(/#\/tools\/short-link\//)).toBeInTheDocument()
-    expect(screen.getByText('text-snippet.txt')).toBeInTheDocument()
-    expect(screen.getByRole('status')).toHaveTextContent('created')
-  })
-
-  it('redirects unknown tools back to the tools list', async () => {
-    window.location.hash = '#/tools/missing-tool'
-    render(<App />)
-
-    expect(await screen.findByText('$ ls -la ~/tools/')).toBeInTheDocument()
+    expect(await screen.findByText('system online')).toBeInTheDocument()
   })
 })

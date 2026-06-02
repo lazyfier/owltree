@@ -42,7 +42,7 @@ npm run preview
 - **Types**: Strict TypeScript with explicit return types on exported functions
 - **Components**: One component per file, PascalCase naming (`TerminalHome.tsx`)
 - **Hooks**: Custom hooks in `src/hooks/`, camelCase with `use` prefix
-- **Imports**: Use path aliases (`@/components`, `@/hooks`, `@/contexts`, `@projects/*`)
+- **Imports**: Use path aliases (`@/components`, `@/hooks`, `@/contexts`)
 
 ### File Organization
 
@@ -54,18 +54,15 @@ owltree/
 │   │   ├── layout/     # Layout components (Footer)
 │   │   └── ui/         # Base UI components (Button, Card, Badge)
 │   ├── contexts/       # React Context (ThemeContext)
-│   ├── pages/          # Page components (Home, Notes, NoteDetail, Projects, Tools)
+│   ├── pages/          # Page components (Home, Notes, NoteDetail, Projects)
 │   ├── hooks/          # Custom React hooks
-│   ├── content/        # Markdown content + host registries
-│   │   ├── notes/      # Recursively indexed note files
-│   │   └── tools/      # Host-level tools registry
+│   ├── content/        # Markdown content sources
+│   │   └── notes/      # Recursively indexed note files
 │   ├── styles/         # Global CSS + page-specific styles
 │   │   └── pages/      # Per-page CSS
 │   └── lib/            # Utility functions
 ├── theme/              # HTML prototypes (reference only)
 │   └── themes/         # Theme prototypes
-├── projects/           # Isolated project/tool implementations
-│   └── short-link/     # Browser-local short-link tool
 ├── e2e/                # Playwright E2E tests
 ├── dist/               # Build output (generated, ignored)
 ├── docs/               # Design documentation
@@ -287,7 +284,6 @@ The terminal theme uses **focused terminal-style layouts** per page:
 | Notes | `ls -la` file listing | Permissions, dates, type icons, tags |
 | Note detail | `cat` document view | Markdown rendered inside a terminal reading surface |
 | Projects | `ls -la ~/projects/frontend/` | Name, updated time, status, stack, link, tags |
-| Tools | `ls -la ~/tools/` | Browser-local utility entry points |
 
 ### Notes Content Rules
 
@@ -307,13 +303,6 @@ The terminal theme uses **focused terminal-style layouts** per page:
 - A visible project with an empty link should render but stay non-clickable
 - Example: `id: "owltree-portal"` maps to `VITE_PROJECT_VISIBLE_OWLTREE_PORTAL` and `VITE_PROJECT_LINK_OWLTREE_PORTAL`
 
-### Tools Placement Rules
-
-- Tool routing and registration belong in `src/content/tools/`
-- Tool-private implementation belongs in `projects/<tool-name>/`
-- Do not put tool-private components, logic, styles, or assets under `src/`
-- Import mounted tools through the `@projects/*` alias from the host registry
-
 ### Footer Link Rules
 
 - Footer social links live in `src/config/socialLinks.ts`
@@ -331,7 +320,6 @@ The terminal theme uses **focused terminal-style layouts** per page:
 
 - `n` opens notes
 - `p` opens projects
-- `t` opens tools
 - `Esc` navigates to the parent path, equivalent to `..`
 - `?` opens the shortcut help dialog
 
@@ -342,7 +330,7 @@ The terminal theme uses **focused terminal-style layouts** per page:
 1. **Don't import from barrel files** — Import directly from source
 2. **Don't use `any`** — Strict typing required
 3. **Don't mix theme logic** — Keep theme-specific styles in CSS variables
-4. **Don't reintroduce placeholder app modules** — Keep runtime navigation focused on notes, projects, and real tools unless a real module is added
+4. **Don't reintroduce placeholder app modules** — Keep runtime navigation focused on notes and projects unless a real module is added
 
 ---
 

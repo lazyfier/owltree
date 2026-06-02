@@ -11,7 +11,6 @@ The active runtime surface is intentionally small:
 - Home terminal shell
 - Recursive Markdown notes browser and reader
 - Configurable frontend projects list
-- Lightweight browser-local tools
 
 Legacy game/trends routes have been removed from the runtime. Static visual references may still live under `theme/` or `archive/`, but they are not mounted by the app.
 
@@ -38,17 +37,13 @@ src/
 │   ├── portal/                 # TerminalHome, ProjectRow, mark
 │   └── ui/                     # Shared host UI
 ├── config/                     # Project/social link env helpers
-├── content/
-│   ├── notes/                  # Published Markdown source files
-│   └── tools/                  # Host tool registry
+├── content/notes/              # Published Markdown source files
 ├── contexts/                   # Fixed terminal ThemeContext
 ├── data/                       # Notes/projects/index metadata
 ├── hooks/                      # Global shortcuts and hover card
 ├── lib/                        # Utility helpers
-├── pages/                      # Home, Notes, NoteDetail, Projects, Tools
+├── pages/                      # Home, Notes, NoteDetail, Projects
 └── styles/                     # Terminal global and page CSS
-projects/
-└── short-link/                 # Browser-local short-link tool implementation
 ```
 
 ## Notes
@@ -68,14 +63,6 @@ projects/
   - `VITE_PROJECT_LINK_OWLTREE_PORTAL`
 - Empty links render as visible but non-clickable rows.
 
-## Tools
-
-- Runtime tools are mounted under `#/tools`.
-- Host registration lives in `src/content/tools/`.
-- Tool-private implementation lives under `projects/<tool-name>/`.
-- `short-link` stores text/media records in browser localStorage only.
-- Tool URLs are local to the current browser profile and are not shared through a backend.
-
 ## Footer Links
 
 Footer social links live in `src/config/socialLinks.ts`.
@@ -89,12 +76,11 @@ Optional links should stay hidden when unset; do not hardcode placeholder profil
 - Keyboard shortcuts:
   - `n`: notes
   - `p`: projects
-  - `t`: tools
   - `Esc`: parent path
   - `?`: shortcut help
 
 ## Testing Notes
 
-- Unit tests cover route shell, notes parsing, Markdown rendering, config helpers, tools, and UI utilities.
-- E2E tests cover the homepage modules, tools entry, and unknown route fallback behavior.
+- Unit tests cover route shell, notes parsing, Markdown rendering, config helpers, and UI utilities.
+- E2E tests cover the homepage modules and unknown route fallback behavior.
 - Keep new behavior covered before broad cleanup.

@@ -7,7 +7,6 @@ import { ProjectRow } from '@/components/portal/ProjectRow'
 const modules = [
   { label: 'notes', color: 't-m-cyan', inlineColor: 'var(--cyan)', href: '/notes' },
   { label: 'projects', color: 't-m-yellow', inlineColor: 'var(--yellow)', href: '/projects' },
-  { label: 'tools', color: 't-m-mauve', inlineColor: 'var(--mauve)', href: '/tools' },
 ]
 
 const stackRows = [
@@ -22,6 +21,26 @@ const stackRows = [
     { name: 'Rust', color: 'var(--peach)' },
     { name: 'Figma', color: 'var(--pink)' },
   ],
+]
+
+const liveSignals = [
+  { label: 'vault', value: 'indexed', color: 'var(--cyan)' },
+  { label: 'branch', value: 'main', color: 'var(--green)' },
+  { label: 'mode', value: 'night-build', color: 'var(--yellow)' },
+]
+
+const ritualRows = [
+  { key: 'capture', value: 'notes before noise', color: 'var(--cyan)' },
+  { key: 'shape', value: 'small portals, sharp edges', color: 'var(--green)' },
+  { key: 'ship', value: 'quiet commits, visible traces', color: 'var(--yellow)' },
+]
+
+const ambientLines = [
+  'git status --short',
+  'rg "next idea" ~/notes',
+  'npm run build && write',
+  'vim terminal-notes.md',
+  'deploy pages when ready',
 ]
 
 function StackLine({ items }: { items: { name: string; color: string }[] }) {
@@ -68,8 +87,7 @@ export function TerminalHome() {
 
   return (
     <>
-      <div className="t-bg-glow">
-      </div>
+      <div className="t-bg-glow" />
       <div className="t-crt-lines" />
 
       <section className="t-screen">
@@ -78,6 +96,13 @@ export function TerminalHome() {
           <span className="t-corner t-corner-br" />
           <span className="t-axis t-axis-x" />
           <span className="t-axis t-axis-y" />
+        </div>
+        <div className="t-ambient-code" aria-hidden="true">
+          {ambientLines.map((line, index) => (
+            <span key={line} style={{ ['--line-index' as string]: index }}>
+              {line}
+            </span>
+          ))}
         </div>
 
         <div className="t-brand-lockup">
@@ -90,6 +115,15 @@ export function TerminalHome() {
             <span className="t-brand-pulse" aria-hidden="true" />
             <span className="t-line-2">system online</span>
           </h1>
+          <div className="t-live-strip" aria-label="Current portal signals">
+            {liveSignals.map((signal) => (
+              <span key={signal.label} className="t-live-chip">
+                <span className="t-live-dot" style={{ background: signal.color }} />
+                <span>{signal.label}</span>
+                <strong style={{ color: signal.color }}>{signal.value}</strong>
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="t-identity">
@@ -113,7 +147,7 @@ export function TerminalHome() {
             <hr className="t-id-divider" />
             <div className="t-id-line">
               <span className="t-id-key">FOCUS:</span>
-              <span className="t-id-value">Notes + Projects + Tools</span>
+              <span className="t-id-value">Notes + Projects</span>
             </div>
             <div className="t-id-line">
               <span className="t-id-key">NOW:</span>
@@ -124,6 +158,19 @@ export function TerminalHome() {
               <span className="t-id-key">GITHUB:</span>
               <span className="t-id-value" style={{ color: 'var(--t-dim)' }}>github.com/lazyfier</span>
             </div>
+          </div>
+        </div>
+
+        <div className="t-ritual-panel t-glass">
+          <div className="t-ritual-command">➜  ~/now tail -f ritual.log</div>
+          <div className="t-ritual-list">
+            {ritualRows.map((row) => (
+              <div key={row.key} className="t-ritual-row">
+                <span className="t-ritual-key" style={{ color: row.color }}>{row.key}</span>
+                <span className="t-ritual-arrow">::</span>
+                <span className="t-ritual-value">{row.value}</span>
+              </div>
+            ))}
           </div>
         </div>
 

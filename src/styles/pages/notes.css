@@ -73,13 +73,13 @@
   padding: 1rem 1.25rem;
 }
 
-[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main {
+[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main {
   min-height: 100svh;
   padding-inline: clamp(0.75rem, 2.6vw, 2.5rem);
   padding-block: clamp(1rem, 3vh, 3rem);
 }
 
-[data-theme="terminal"]:has(:is([data-page="notes"], [data-page="projects"], [data-page="tools"])) body {
+[data-theme="terminal"]:has(:is([data-page="notes"], [data-page="projects"])) body {
   height: auto;
   min-height: 100vh;
   overflow-y: auto;
@@ -88,23 +88,23 @@
   -ms-overflow-style: none;
 }
 
-[data-theme="terminal"]:has(:is([data-page="notes"], [data-page="projects"], [data-page="tools"])) body::-webkit-scrollbar {
+[data-theme="terminal"]:has(:is([data-page="notes"], [data-page="projects"])) body::-webkit-scrollbar {
   width: 0;
   height: 0;
 }
 
-[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]).page-root {
+[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]).page-root {
   min-height: 100vh;
   overflow-y: visible;
   overflow-x: hidden;
 }
 
-[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main > div:first-child {
+[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main > div:first-child {
   width: min(100%, 82rem);
   max-width: calc(100vw - clamp(1.5rem, 5.2vw, 5rem));
 }
 
-[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) .note-shell {
+[data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) .note-shell {
   display: flex;
   flex-direction: column;
   min-height: 0;
@@ -677,7 +677,7 @@
 }
 
 @media (min-width: 1180px) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main > div:first-child {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main > div:first-child {
     width: min(100%, 92rem);
   }
 
@@ -704,7 +704,7 @@
 }
 
 @media (max-width: 1040px) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main > div:first-child {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main > div:first-child {
     max-width: calc(100vw - 2rem);
   }
 
@@ -906,17 +906,17 @@
 }
 
 @media (max-width: 520px) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main {
     padding-inline: 0.65rem;
     padding-block: 0.75rem;
   }
 
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main > div:first-child {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main > div:first-child {
     max-width: calc(100vw - 1.3rem);
     min-width: 0;
   }
 
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) .note-shell {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) .note-shell {
     overflow-x: clip;
   }
 
@@ -982,11 +982,11 @@
 }
 
 @media (max-height: 720px) and (min-width: 769px) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main {
     padding-block: 1rem;
   }
 
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) .note-shell {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) .note-shell {
     max-height: calc(100svh - 5rem);
     overflow: hidden;
   }
@@ -1004,7 +1004,7 @@
 }
 
 @media (min-aspect-ratio: 16 / 9) and (min-width: 1100px) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main {
     padding-block: clamp(0.9rem, 2vh, 2rem);
   }
 
@@ -1015,7 +1015,7 @@
 }
 
 @media (max-aspect-ratio: 3 / 4) {
-  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"], [data-page="tools"]) main {
+  [data-theme="terminal"] :is([data-page="notes"], [data-page="projects"]) main {
     justify-content: flex-start;
   }
 

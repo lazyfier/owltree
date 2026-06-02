@@ -27,6 +27,8 @@ describe('TerminalHome', () => {
 
     expect(screen.getByText('system online')).toBeInTheDocument()
     expect(screen.getByText('Building Owltree Portal')).toBeInTheDocument()
+    expect(screen.getByText('night-build')).toBeInTheDocument()
+    expect(screen.getByText('notes before noise')).toBeInTheDocument()
   })
 
   it('renders projects and modules', () => {
@@ -40,6 +42,7 @@ describe('TerminalHome', () => {
     expect(screen.getByText('./list_modules.sh')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'notes' })).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'projects' })).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'tools' })).not.toBeInTheDocument()
   })
 
   it('navigates to a module route when a module button is clicked', async () => {
