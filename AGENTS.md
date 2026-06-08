@@ -248,6 +248,31 @@ Theme behavior:
 - **E2E**: Playwright for UI flows (`npm run test:e2e`)
 - **Coverage**: Unit tests cover UI helpers and app routing
 
+## OMX Performance Goal Workflow
+
+Use the `performance-goal` workflow when the user asks to optimize performance through a goal-oriented loop instead of a one-off review.
+
+- Create durable OMX state under `.omx/goals/performance/<slug>/`
+- Define the evaluator command and pass/fail contract before making any optimization changes
+- Keep optimization patches small, reversible, and tied to the declared evaluator
+- Record each validation outcome with `omx performance-goal checkpoint`
+- Do not mark the work complete until the evaluator has a passing checkpoint and `omx performance-goal complete` has been run with a fresh Codex `get_goal` snapshot
+
+Typical sequence:
+
+1. Run `omx performance-goal create` with the objective, evaluator command, evaluator contract, and slug
+2. Run `omx performance-goal start --slug <slug>` and follow the handoff
+3. Create or reuse the active Codex goal only after the objective is explicit
+4. Implement small reversible performance changes
+5. Run the evaluator and related regression tests after each meaningful change
+6. Record `pass`, `fail`, or `blocked` checkpoints with evidence
+7. Only after a passing checkpoint and completion audit, call `update_goal({status: "complete"})`, fetch a fresh `get_goal` snapshot, and run `omx performance-goal complete`
+
+Completion rule:
+
+- A performance goal is not complete unless `.omx/goals/performance/<slug>/state.json` reports `lastValidation.status` as `pass`
+- Passing ordinary tests is not enough unless those tests are the declared evaluator contract
+
 ---
 
 ## Theme Directory
@@ -340,4 +365,4 @@ GitHub Actions auto-deploys to GitHub Pages on push to `main`.
 
 ---
 
-*Last updated: repository cleanup and terminal-only maintenance alignment*
+*Last updated: repository cleanup, terminal-only maintenance alignment, and OMX performance-goal guidance*
